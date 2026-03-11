@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block titulo %} Directorio Docente  {% endblock %}
+
+{% block main %}
+<main class="flex-1 flex flex-col md:flex-row max-w-[1440px] mx-auto w-full p-4 md:p-8 gap-8">
+    <!-- Sidebar Filters -->
+    <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-primary">filter_list</span>
+                <h3 class="font-bold text-lg">Filtros</h3>
+            </div>
+            <div class="space-y-6">
+                <!-- Department Filter -->
+                <div>
+                <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Departamento</p>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                    <input checked="" class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                    <span class="text-sm group-hover:text-primary transition-colors">Todos</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                    <input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                    <span class="text-sm group-hover:text-primary transition-colors">Matemáticas</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                    <input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                    <span class="text-sm group-hover:text-primary transition-colors">Historia</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                    <input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                    <span class="text-sm group-hover:text-primary transition-colors">Ciencias</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                    <input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                    <span class="text-sm group-hover:text-primary transition-colors">Lenguaje</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                    <input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                    <span class="text-sm group-hover:text-primary transition-colors">Artes</span>
+                    </label>
+                </div>
+                </div>
+                <hr class="border-slate-100 dark:border-slate-800"/>
+                <!-- Shift Filter -->
+                <div>
+                <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Jornada</p>
+                    <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex">
+                        <button class="flex-1 text-xs font-semibold py-2 rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary">Todas</button>
+                        <button class="flex-1 text-xs font-semibold py-2 rounded-md hover:bg-white/50 dark:hover:bg-slate-700/50 transition-all">Mañana</button>
+                        <button class="flex-1 text-xs font-semibold py-2 rounded-md hover:bg-white/50 dark:hover:bg-slate-700/50 transition-all">Tarde</button>
+                    </div>
+                </div>
+                <button class="w-full mt-4 py-3 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-lg transition-all text-sm">
+                                            Limpiar Filtros
+                                        </button>
+            </div>
+        </div>
+        <!-- Stats/Info Card -->
+        <div class="bg-primary p-6 rounded-xl text-white shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined mb-2">groups</span>
+            <p class="text-primary-100 text-xs font-medium opacity-80 uppercase tracking-widest">Total Docentes</p>
+            <h4 class="text-3xl font-black mt-1">5</h4>
+            <p class="text-xs mt-4 leading-relaxed opacity-90">Gestión activa del personal académico de la institución.</p>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <section class="flex-1 flex flex-col gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Directorio Docente</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">SGE Chile - Colegio </p>
+            </div>
+            <div class="flex items-center gap-3">
+
+                <button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all">
+                <span class="material-symbols-outlined text-lg">person_add</span>
+                                            Nuevo Docente
+                                    </button>
+            </div>
+        </div>
+        <!-- Teacher Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Teacher Card 1 -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="h-2 bg-primary"></div>
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="size-16 rounded-full border-2 border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <img class="w-full h-full object-cover" data-alt="Portrait of a smiling female teacher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBES5e3_Y5fqf0GYANW8RgdKEfIHeoUE82Am2K-VN-kBS858i1s0j0gQ9da-cDnL_eKG68Rya3tCrFmnt2FvZd2tp4NlcRjmRfCxF8ZCpmFM-1P4uzbTz7lUJ9Y2ZFJukdDhAJOv2rtXlrF7IYEJoqR3bSU-TZ_iZSjWt2KchmrJLAmG1-2RhmpBgCxr63NDTkI-u1zQ5Oz1mpMevg_Q6DU850zqsWudOcRkoG8MyKDRewhy9hLeoJ6tjYVnI1mCzZZz8ybRuHXa0IJ"/>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Activo</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">Ana María Rojas</h3>
+                <p class="text-sm font-medium text-primary mt-1">Matemáticas</p>
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                        <span class="text-xs truncate">a.rojas@sge.cl</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">schedule</span>
+                        <span class="text-xs">Jornada Mañana</span>
+                    </div>
+                </div>
+                <button class="w-full mt-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                                Ver Perfil
+                                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+        <!-- Teacher Card 2 -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="h-2 bg-primary"></div>
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="size-16 rounded-full border-2 border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <img class="w-full h-full object-cover" data-alt="Portrait of a male history teacher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBiEf1QsbVJNrr_Po-9cTeeZTJu586o6rlTLsF6wk72VQCIeWCntEUvXlOg_LRCUd4NDNWmcXybVpw0Ijm8_tJmalBuedy1pHhim6NfkI59qH-kUFbATWSS0FDUleUMWl4tYiPTtsPhLthFHzinHcNMKHpO0K5xYrshv5opBszRjUnJTfCFDbfZlb9WCuC8BC9Bt0vwxbjHvzlKa1e3Hge56Y6lB7OS1f0CSUO8NeYonXImT96f1gftVS2-fpbhM_3tGrKVWn0kzsi"/>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Activo</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">Carlos Fuentes P.</h3>
+                <p class="text-sm font-medium text-primary mt-1">Historia y Geografía</p>
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                        <span class="text-xs truncate">c.fuentes@sge.cl</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">schedule</span>
+                        <span class="text-xs">Jornada Tarde</span>
+                    </div>
+                </div>
+                <button class="w-full mt-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                                Ver Perfil
+                                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+        <!-- Teacher Card 3 -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="h-2 bg-primary"></div>
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="size-16 rounded-full border-2 border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <img class="w-full h-full object-cover" data-alt="Portrait of a female science teacher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0-RlHPCpny7shGnWFOHWUlsllrCv2NQT5xB81dKWUpE_JoyZcQ2OuREE-RYqS8VsC0llzkA-sfmYCqvr_ZaxvWsQ--WXQXuh4MrE02C5lmrqIXuG14Vr0QcDObn6plD6y2tIeMz6TYYFtuwWyIxodRfjsQgAWRSCR551LkdFc6Csiw9b-u6xh3NRwN6Dp6wdt3vYFoXByghSCDyYN1mer98z5b0A4laCxO4kL1AsKbuvOw-VNZHMfnM5_XVWk66HATUcKfv6nePnV"/>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider">Licencia</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">Elena Salazar V.</h3>
+                <p class="text-sm font-medium text-primary mt-1">Ciencias Naturales</p>
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                        <span class="text-xs truncate">e.salazar@sge.cl</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">schedule</span>
+                        <span class="text-xs">Jornada Mañana</span>
+                    </div>
+                </div>
+                <button class="w-full mt-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                                Ver Perfil
+                                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+        <!-- Teacher Card 4 -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="h-2 bg-primary"></div>
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="size-16 rounded-full border-2 border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <img class="w-full h-full object-cover" data-alt="Portrait of a male language teacher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdM0xgt1WcgmAkJs7QFLSotNLVTsQqO5zwpIhm2KeQqyXGjiUjD0NTQnEA7ER6inigfOK5t5EtNy8a1XRe7u7ftoPLwO8dohwY5oorEHcgEdbuAPZkGXjxNbP3Hv7P44oz0gq7amOTH8jt7qZ1m9PyqrPaC5lYc7sgevnkelMKVg7SONTQz-aSTywoGi6gosQYaPQ4yA8IjvPbOzz-demKJP5ByrlpPibl7mte4MPYRTxsIGj6KL3H33XasHqL_LJPstrnop3uJVMh"/>
+                    </div>
+                     <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Activo</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">Roberto Jara S.</h3>
+                <p class="text-sm font-medium text-primary mt-1">Lenguaje y Comunicación</p>
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                        <span class="text-xs truncate">r.jara@sge.cl</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">schedule</span>
+                        <span class="text-xs">Jornada Completa</span>
+                    </div>
+                </div>
+                <button class="w-full mt-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                                Ver Perfil
+                                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+        <!-- Teacher Card 5 -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="h-2 bg-primary"></div>
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="size-16 rounded-full border-2 border-slate-100 dark:border-slate-800 overflow-hidden">
+                            <img class="w-full h-full object-cover" data-alt="Portrait of a female art teacher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ0nu4IOA94AKGgjeBX1RRzqSf_ztJZe7mZvs337WhJ80uQIw95A9f_oRM_jmkC22Py95eJHSTUlzMnKx7maXYhxn9PwogviDZV7ePphNdXVnLX2qeSY7K9178M6SfB5B7cpx3Cj0meNt3tKVXbfEGKcRVIeANFCi5xfyZtPvVIYJAT7Y0WoftfnKV1F7ikERY6DaSf7Ip8hQnLXcBmLbjtYeT-p7p-1smM7DcPAEHzK7jAxpXTlkRh5Hy-zlClH4TfPdB-WGw1u60"/>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Activo</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">Camila Osorio L.</h3>
+                    <p class="text-sm font-medium text-primary mt-1">Artes Visuales</p>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                            <span class="material-symbols-outlined text-lg">mail</span>
+                            <span class="text-xs truncate">c.osorio@sge.cl</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                            <span class="material-symbols-outlined text-lg">schedule</span>
+                            <span class="text-xs">Jornada Tarde</span>
+                        </div>
+                    </div>
+                    <button class="w-full mt-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                                    Ver Perfil
+                                                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                </div>
+        </div>
+        <!-- Teacher Card 6 -->
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="h-2 bg-primary"></div>
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="size-16 rounded-full border-2 border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <img class="w-full h-full object-cover" data-alt="Portrait of a male physical education teacher" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE59Lk-De2U9xmjpIst2vAzQYYBKehWDdquqZCZxmKkD5gDZlANEAHryaMNIhR9TsgVeZqhFrUmLa0wBfHeEVXehIbMhQCdZ4z4VCkGf5fFMgHlZ2z7n7sNaDdjKJ4PZ4Fw-viizwhWAFJvK8K6Bx-bMVOVTCQ97K069RbhIlLt-hxY_vUvccVR043Q3CmfDOKkL9CtvpgZxoGPjjt43GKzBY1mRxTZUkuEwPwov4WyyK8oNmAwJ0Ja4l1OfJ1IsTt-oPUO1mh7Gtk"/>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider">Inactivo</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">Miguel Ángel Torres</h3>
+                <p class="text-sm font-medium text-primary mt-1">Educación Física</p>
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                        <span class="text-xs truncate">m.torres@sge.cl</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-lg">schedule</span>
+                        <span class="text-xs">Sin Asignar</span>
+                    </div>
+                </div>
+                <button class="w-full mt-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                                Ver Perfil
+                                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+            </div>
+        </div>
+        <!-- Pagination -->
+        <div class="mt-8 flex items-center justify-between">
+            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Mostrando 1-6 de 124 docentes</p>
+            <div class="flex items-center gap-2">
+                <button class="p-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50" disabled="">
+                <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button class="size-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-sm">1</button>
+                <button class="size-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium">2</button>
+                <button class="size-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium">3</button>
+                <button class="p-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+{% endblock %}

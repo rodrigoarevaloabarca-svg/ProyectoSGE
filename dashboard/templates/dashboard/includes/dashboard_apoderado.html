@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% block titulo %}Portal Apoderado - SGE{% endblock %}
+
+{% block main %}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-0 min-h-[calc(100vh-64px)] -mx-4 md:-mx-10 lg:-mx-20 -mt-8">
+
+    {# ===== SIDEBAR IZQUIERDO ===== #}
+    <aside class="md:col-span-3 lg:col-span-2 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <div class="flex flex-col h-full justify-between">
+            <div class="flex flex-col gap-4">
+                <div class="px-3 pt-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Portal Apoderado</p>
+                </div>
+                <nav class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl
+                              {% if seccion == 'general' or not seccion %}bg-primary/10 text-primary font-semibold{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800{% endif %} transition-all group"
+                       href="{% url 'dashboard:inicio' %}">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="text-sm">Vista General</span>
+                    </a>
+
+                    {# Notificaciones con badge #}
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'notificaciones:bandeja' %}">
+                        <span class="relative">
+                            <span class="material-symbols-outlined group-hover:text-primary">notifications</span>
+                            {% if notif_no_leidas %}
+                            <span class="absolute -top-1 -right-1 size-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">
+                                {{ notif_no_leidas }}
+                            </span>
+                            {% endif %}
+                        </span>
+                        <span class="text-sm">Avisos</span>
+                        {% if notif_no_leidas %}
+                        <span class="ml-auto px-1.5 py-0.5 bg-red-100 text-red-600 text-[10px] font-black rounded-full">{{ notif_no_leidas }}</span>
+                        {% endif %}
+                    </a>
+
+                    {# Links por cada pupilo #}
+                    {% for datos in datos_pupilos %}
+                    <div class="px-3 py-1">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                            {{ datos.alumno.usuario.first_name }}
+                        </p>
+                    </div>
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'alumnos:detalle' datos.alumno.pk %}">
+                        <span class="material-symbols-outlined text-sm group-hover:text-primary">person</span>
+                        <span class="text-sm truncate">Ficha</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'asistencia:historial_alumno' datos.alumno.pk %}">
+                        <span class="material-symbols-outlined text-sm group-hover:text-primary">event_available</span>
+                        <span class="text-sm truncate">Asistencia</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'anotaciones:alumno' datos.alumno.pk %}">
+                        <span class="material-symbols-outlined text-sm group-hover:text-primary">notes</span>
+                        <span class="text-sm truncate">Anotaciones</span>
+                    </a>
+                    {% endfor %}
+                </nav>
+
+                <div class="px-3 mt-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Mi Cuenta</p>
+                </div>
+                <nav class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'usuarios:perfil' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">manage_accounts</span>
+                        <span class="text-sm">Mi Perfil</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shrink-0">
+                        {{ apoderado.usuario.first_name|slice:":1" }}{{ apoderado.usuario.last_name|slice:":1" }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-navy-deep dark:text-white leading-tight">
+                            {{ apoderado.usuario.first_name }}
+                        </p>
+                        <p class="text-sm font-bold text-navy-deep dark:text-white leading-tight">
+                            {{ apoderado.usuario.last_name }}
+                        </p>
+                        <p class="text-xs text-muted-blue mt-0.5">{{ apoderado.parentesco|default:"Apoderado" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    {# ===== CONTENIDO CENTRAL ===== #}
+    <section class="md:col-span-6 lg:col-span-7 p-6 overflow-y-auto bg-background-light dark:bg-background-dark">
+        <div class="max-w-5xl mx-auto space-y-8">
+
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100">Portal del Apoderado</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">
+                    Bienvenido, <span class="font-bold text-primary">{{ apoderado.nombre_completo }}</span>.
+                </p>
+            </div>
+
+            {# ── Card por cada pupilo ── #}
+            {% for datos in datos_pupilos %}
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+
+                {# Header #}
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+                            {{ datos.alumno.usuario.first_name|slice:":1" }}{{ datos.alumno.usuario.last_name|slice:":1" }}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-navy-deep dark:text-white">{{ datos.alumno.nombre_completo }}</h3>
+                            <p class="text-sm text-muted-blue">{{ datos.alumno.curso }} · Matrícula N° {{ datos.alumno.numero_matricula }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'alumnos:detalle' datos.alumno.pk %}"
+                       class="text-primary text-sm font-bold hover:underline hidden md:block">
+                        Ver ficha →
+                    </a>
+                </div>
+
+                {# Stats #}
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
+                    <div class="p-6 flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 text-sm font-medium">Promedio General</span>
+                            <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">grade</span>
+                        </div>
+                        <p class="text-3xl font-bold
+                            {% if datos.promedio_general >= 4.0 %}text-emerald-600
+                            {% elif datos.promedio_general %}text-red-500
+                            {% else %}text-slate-400{% endif %}">
+                            {{ datos.promedio_general|default:"—" }}
+                        </p>
+                        <p class="text-xs font-semibold
+                            {% if datos.promedio_general >= 4.0 %}text-emerald-600
+                            {% elif datos.promedio_general %}text-red-500
+                            {% else %}text-slate-400{% endif %}">
+                            {% if datos.promedio_general >= 4.0 %}✓ Aprobado
+                            {% elif datos.promedio_general %}⚠ En riesgo
+                            {% else %}Sin notas aún{% endif %}
+                        </p>
+                    </div>
+
+                    <div class="p-6 flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 text-sm font-medium">Asistencia</span>
+                            <span class="material-symbols-outlined text-amber-500 bg-amber-500/10 p-2 rounded-lg">event_available</span>
+                        </div>
+                        <p class="text-3xl font-bold
+                            {% if datos.porcentaje_asistencia >= 85 %}text-emerald-600
+                            {% elif datos.porcentaje_asistencia %}text-amber-500
+                            {% else %}text-slate-400{% endif %}">
+                            {% if datos.porcentaje_asistencia %}{{ datos.porcentaje_asistencia }}%{% else %}—{% endif %}
+                        </p>
+                        <a href="{% url 'asistencia:historial_alumno' datos.alumno.pk %}"
+                           class="text-xs font-bold text-primary hover:underline mt-1">
+                            Ver días por día →
+                        </a>
+                    </div>
+
+                    <div class="p-6 flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 text-sm font-medium">Anotaciones</span>
+                            <span class="material-symbols-outlined text-purple-500 bg-purple-500/10 p-2 rounded-lg">notes</span>
+                        </div>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white">
+                            {{ datos.anotaciones_recientes|length|default:"0" }}
+                        </p>
+                        <a href="{% url 'anotaciones:alumno' datos.alumno.pk %}"
+                           class="text-xs font-bold text-primary hover:underline mt-1">
+                            Ver todas →
+                        </a>
+                    </div>
+                </div>
+
+                {# Ausencias recientes #}
+                {% if datos.ausencias_recientes %}
+                <div class="px-6 pb-4 border-t border-slate-100 dark:border-slate-800">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mt-4 mb-3">
+                        Ausencias Recientes
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for reg in datos.ausencias_recientes %}
+                        <span class="px-3 py-1.5 rounded-lg text-xs font-bold
+                            {% if reg.estado == 'ausente' %}bg-red-100 text-red-600
+                            {% elif reg.estado == 'atrasado' %}bg-amber-100 text-amber-600
+                            {% else %}bg-blue-100 text-blue-600{% endif %}">
+                            {{ reg.fecha|date:"d/m" }} — {{ reg.get_estado_display }} · {{ reg.asignatura }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'asistencia:historial_alumno' datos.alumno.pk %}"
+                       class="text-xs text-primary font-bold hover:underline mt-3 inline-block">
+                        Ver historial completo →
+                    </a>
+                </div>
+                {% endif %}
+
+                {# Últimas anotaciones #}
+                {% if datos.anotaciones_recientes %}
+                <div class="px-6 pb-4 border-t border-slate-100 dark:border-slate-800">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mt-4 mb-3">Últimas Anotaciones</p>
+                    <div class="space-y-2">
+                        {% for anotacion in datos.anotaciones_recientes %}
+                        <div class="flex items-start gap-3 p-3 rounded-lg
+                            {% if anotacion.tipo == 'positiva' %}bg-emerald-50 dark:bg-emerald-900/10
+                            {% elif anotacion.tipo == 'negativa' %}bg-red-50 dark:bg-red-900/10
+                            {% else %}bg-slate-50 dark:bg-slate-800{% endif %}">
+                            <span class="material-symbols-outlined text-sm mt-0.5
+                                {% if anotacion.tipo == 'positiva' %}text-emerald-600
+                                {% elif anotacion.tipo == 'negativa' %}text-red-500
+                                {% else %}text-slate-400{% endif %}">
+                                {% if anotacion.tipo == 'positiva' %}thumb_up
+                                {% elif anotacion.tipo == 'negativa' %}warning
+                                {% else %}info{% endif %}
+                            </span>
+                            <div>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">
+                                    {{ anotacion.descripcion|truncatechars:80 }}
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    {{ anotacion.fecha }} · {{ anotacion.creado_por.get_full_name|default:"Sistema" }}
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+            {% empty %}
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-12 text-center">
+                <span class="material-symbols-outlined text-5xl text-slate-300 block mb-3">family_restroom</span>
+                <p class="text-slate-500">No tienes pupilos asignados aún.</p>
+                <p class="text-xs text-slate-400 mt-1">Contacta al administrador del sistema.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# ===== SIDEBAR DERECHO ===== #}
+    <aside class="md:col-span-3 lg:col-span-3 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 overflow-y-auto">
+        <div class="space-y-6">
+
+            {# Panel de notificaciones reales del sistema #}
+            {% include 'dashboard/includes/panel_notif_apoderado.html' %}
+
+            {# Contacto del colegio #}
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                <h4 class="text-sm font-bold mb-4 text-navy-deep dark:text-white">Contacto del Colegio</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-sm text-slate-500">
+                        <span class="material-symbols-outlined text-primary text-lg">call</span>
+                        <span>+56 9 9999999</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-500">
+                        <span class="material-symbols-outlined text-primary text-lg">mail</span>
+                        <span>contacto@colegio.cl</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-500">
+                        <span class="material-symbols-outlined text-primary text-lg">schedule</span>
+                        <span>Lun-Vie 08:00 - 17:00</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+</div>
+{% endblock %}

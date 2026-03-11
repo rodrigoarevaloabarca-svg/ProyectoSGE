@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block titulo %}Generar Informe - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'informes:lista_periodos' %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Generar Informe</h2>
+        <p class="text-muted-blue mt-1">Selecciona el período y el alumno</p>
+    </div>
+</div>
+
+{% if not periodos %}
+<div class="text-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800">
+    <span class="material-symbols-outlined text-6xl text-slate-300 block mb-4">calendar_month</span>
+    <p class="font-bold text-navy-deep dark:text-white text-lg mb-2">No hay períodos activos</p>
+    <p class="text-muted-blue text-sm mb-6">Debes crear al menos un período antes de generar informes</p>
+    {% if user.es_admin %}
+    <a href="{% url 'informes:crear_periodo' %}"
+       class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm">
+        Crear período
+    </a>
+    {% endif %}
+</div>
+{% else %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    {# Panel izquierdo: seleccionar período y filtro curso #}
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-6">
+            <h3 class="font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">calendar_month</span>
+                Filtrar
+            </h3>
+            <form method="GET" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">Período</label>
+                    <select name="periodo" id="sel-periodo"
+                            class="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        <option value="">— Todos los períodos —</option>
+                        {% for p in periodos %}
+                        <option value="{{ p.pk }}" {% if request.GET.periodo == p.pk|stringformat:"i" %}selected{% endif %}>
+                            {{ p }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">Curso</label>
+                    <select name="curso"
+                            class="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        <option value="">— Todos los cursos —</option>
+                        {% for curso in cursos %}
+                        <option value="{{ curso.pk }}" {% if curso_id == curso.pk|stringformat:"i" %}selected{% endif %}>
+                            {{ curso }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit"
+                        class="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 transition-all">
+                    Filtrar
+                </button>
+            </form>
+        </div>
+
+        {# Acceso rápido a períodos #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-6">
+            <h3 class="font-bold text-navy-deep dark:text-white mb-3 text-sm">Períodos disponibles</h3>
+            <div class="space-y-2">
+                {% for p in periodos %}
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-sm">
+                    <span class="font-medium text-slate-700 dark:text-slate-300">{{ p }}</span>
+                    <span class="text-xs text-muted-blue">{{ p.tipo|capfirst }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# Panel derecho: lista de alumnos #}
+    <div class="lg:col-span-2">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800 flex items-center justify-between">
+                <h3 class="font-bold text-navy-deep dark:text-white">
+                    Alumnos
+                    <span class="text-muted-blue font-normal text-sm ml-2">({{ alumnos.count }} total)</span>
+                </h3>
+                <input type="text" id="buscador" placeholder="Buscar alumno..."
+                       onkeyup="filtrar()"
+                       class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm w-48 focus:ring-2 focus:ring-primary/20 transition-all"/>
+            </div>
+
+            {# Aviso si no hay período seleccionado #}
+            {% if not request.GET.periodo %}
+            <div class="px-6 py-3 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-900/30">
+                <p class="text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">info</span>
+                    Selecciona un período para poder generar el informe PDF
+                </p>
+            </div>
+            {% endif %}
+
+            <div id="tabla-alumnos">
+                {% for alumno in alumnos %}
+                <div class="alumno-row flex items-center justify-between px-6 py-4
+                            border-b border-soft-grey dark:border-slate-800 last:border-0
+                            hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                            {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-navy-deep dark:text-white text-sm alumno-nombre">
+                                {{ alumno.nombre_completo }}
+                            </p>
+                            <p class="text-xs text-muted-blue">{{ alumno.curso }}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        {% if request.GET.periodo %}
+                        <a href="{% url 'informes:ver_informe' alumno.pk request.GET.periodo %}"
+                           class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg hover:bg-primary/10 hover:text-primary transition-all">
+                            Ver informe
+                        </a>
+                        <a href="{% url 'informes:descargar_pdf' alumno.pk request.GET.periodo %}"
+                           class="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">download</span>
+                            PDF
+                        </a>
+                        {% else %}
+                        <span class="text-xs text-muted-blue italic">Elige período</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="px-6 py-16 text-center text-slate-400">
+                    <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">group</span>
+                    No hay alumnos con los filtros seleccionados.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function filtrar() {
+    const v = document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('.alumno-row').forEach(row => {
+        const nombre = row.querySelector('.alumno-nombre').textContent.toLowerCase();
+        row.style.display = nombre.includes(v) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

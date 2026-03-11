@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block titulo %}Asistencia - {{ alumno.nombre_completo }} - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center gap-3 mb-8">
+    <a href="javascript:history.back()" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Historial de Asistencia</h2>
+        <p class="text-muted-blue mt-1">{{ alumno.nombre_completo }} · {{ alumno.curso }}</p>
+    </div>
+</div>
+
+{# ── Estadísticas ── #}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-5 text-center">
+        <p class="text-3xl font-extrabold
+            {% if stats.porcentaje >= 85 %}text-emerald-600{% elif stats.porcentaje %}text-amber-500{% else %}text-slate-400{% endif %}">
+            {{ stats.porcentaje }}%
+        </p>
+        <p class="text-xs text-muted-blue font-medium mt-1">Asistencia</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-5 text-center">
+        <p class="text-3xl font-extrabold text-emerald-600">{{ stats.presentes }}</p>
+        <p class="text-xs text-muted-blue font-medium mt-1">Presentes</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-5 text-center">
+        <p class="text-3xl font-extrabold text-red-500">{{ stats.ausentes }}</p>
+        <p class="text-xs text-muted-blue font-medium mt-1">Ausentes</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-5 text-center">
+        <p class="text-3xl font-extrabold text-amber-500">{{ stats.atrasados }}</p>
+        <p class="text-xs text-muted-blue font-medium mt-1">Atrasos</p>
+    </div>
+</div>
+
+{# ── Tabla de registros ── #}
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800 flex items-center justify-between">
+        <h4 class="font-bold text-navy-deep dark:text-white">Registros por día</h4>
+        <span class="text-xs text-muted-blue">{{ stats.total }} registro{{ stats.total|pluralize }}</span>
+    </div>
+
+    {# Buscador #}
+    <div class="px-4 py-3 border-b border-soft-grey dark:border-slate-800">
+        <input type="text" id="buscador" placeholder="Filtrar por fecha o asignatura..."
+               onkeyup="filtrar()"
+               class="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"/>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="tabla">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-3 text-left">Fecha</th>
+                    <th class="px-6 py-3 text-left">Asignatura</th>
+                    <th class="px-6 py-3 text-center">Estado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for reg in registros %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors
+                           {% if reg.estado == 'ausente' %}bg-red-50/50 dark:bg-red-900/5{% endif %}">
+                    <td class="px-6 py-3 font-mono text-sm text-navy-deep dark:text-white font-semibold">
+                        {{ reg.fecha|date:"d/m/Y" }}
+                        <span class="text-xs text-muted-blue ml-1">{{ reg.fecha|date:"l" }}</span>
+                    </td>
+                    <td class="px-6 py-3 text-slate-600 dark:text-slate-400">
+                        {{ reg.asignatura }}
+                    </td>
+                    <td class="px-6 py-3 text-center">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold
+                            {% if reg.estado == 'presente' %}bg-emerald-100 text-emerald-700
+                            {% elif reg.estado == 'ausente' %}bg-red-100 text-red-600
+                            {% elif reg.estado == 'atrasado' %}bg-amber-100 text-amber-700
+                            {% else %}bg-blue-100 text-blue-600{% endif %}">
+                            {% if reg.estado == 'presente' %}✓ Presente
+                            {% elif reg.estado == 'ausente' %}✗ Ausente
+                            {% elif reg.estado == 'atrasado' %}⚠ Atrasado
+                            {% else %}{{ reg.get_estado_display }}{% endif %}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">event_busy</span>
+                        No hay registros de asistencia aún.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function filtrar() {
+    const v = document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('#tabla tbody tr').forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(v) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

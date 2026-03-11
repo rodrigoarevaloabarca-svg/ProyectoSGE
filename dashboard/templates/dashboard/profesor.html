@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% block titulo %}Portal Profesores - SGE{% endblock %}
+{% block main %}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-0 min-h-[calc(100vh-64px)] -mx-4 md:-mx-10 lg:-mx-20 -mt-8">
+
+    {# ===== SIDEBAR IZQUIERDO ===== #}
+    <aside class="md:col-span-3 lg:col-span-2 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <div class="flex flex-col h-full justify-between">
+            <div class="flex flex-col gap-4">
+                <div class="px-3 pt-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Gestión Docente</p>
+                </div>
+                <nav class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-primary/10 text-primary font-semibold"
+                       href="{% url 'dashboard:inicio' %}">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="text-sm">Vista General</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'asignaturas:lista' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">assignment</span>
+                        <span class="text-sm">Asignaturas</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'cursos:lista' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">calendar_month</span>
+                        <span class="text-sm">Ver Cursos</span>
+                    </a>
+                </nav>
+
+                <div class="px-3 mt-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Seguimiento</p>
+                </div>
+                <nav class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'alumnos:lista' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">fact_check</span>
+                        <span class="text-sm">Mis Alumnos</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'asignaturas:lista' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">analytics</span>
+                        <span class="text-sm">Mis Asignaturas</span>
+                    </a>
+                </nav>
+
+                {# ── NUEVO: sección Informes en sidebar ── #}
+                <div class="px-3 mt-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Informes</p>
+                </div>
+                <nav class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 transition-all group"
+                       href="{% url 'informes:lista_periodos' %}">
+                        <span class="material-symbols-outlined group-hover:text-emerald-600">calendar_month</span>
+                        <span class="text-sm">Períodos</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 transition-all group"
+                       href="{% url 'informes:seleccionar' %}">
+                        <span class="material-symbols-outlined group-hover:text-emerald-600">picture_as_pdf</span>
+                        <span class="text-sm">Generar Informe</span>
+                    </a>
+                </nav>
+            </div>
+
+            <a href="{% url 'profesores:crear' %}"
+               class="w-full flex items-center justify-center gap-2 rounded-xl h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span>Nuevo Registro</span>
+            </a>
+        </div>
+    </aside>
+
+    {# ===== CONTENIDO CENTRAL ===== #}
+    <section class="md:col-span-6 lg:col-span-7 p-6 overflow-y-auto bg-background-light dark:bg-background-dark">
+        <div class="max-w-5xl mx-auto space-y-8">
+
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100">Dashboard de Profesores</h1>
+                <p class="text-slate-500 dark:text-slate-400">
+                    Bienvenido, <span class="font-bold text-primary">{{ profesor.nombre_completo }}</span>.
+                    Panel de gestión y seguimiento docente.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 text-sm font-medium">Mis Alumnos</span>
+                        <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">supervisor_account</span>
+                    </div>
+                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ total_alumnos|default:"0" }}</p>
+                    <div class="flex items-center gap-1 text-emerald-600 text-sm font-semibold">
+                        <span class="material-symbols-outlined text-sm">school</span>
+                        <span>en mis cursos</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 text-sm font-medium">Mis Asignaturas</span>
+                        <span class="material-symbols-outlined text-amber-500 bg-amber-500/10 p-2 rounded-lg">menu_book</span>
+                    </div>
+                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ asignaturas.count|default:"0" }}</p>
+                    <div class="flex items-center gap-1 text-slate-500 text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">schedule</span>
+                        <span>asignaturas activas</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 text-sm font-medium">Mis Cursos</span>
+                        <span class="material-symbols-outlined text-emerald-500 bg-emerald-500/10 p-2 rounded-lg">auto_stories</span>
+                    </div>
+                    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ mis_cursos.count|default:"0" }}</p>
+                    <div class="flex items-center gap-1 text-emerald-600 text-sm font-semibold">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        <span>cursos asignados</span>
+                    </div>
+                </div>
+            </div>
+
+            {# Tabla de asignaturas #}
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-navy-deep dark:text-white">Mis Asignaturas</h3>
+                    <a href="{% url 'asignaturas:lista' %}" class="text-primary text-sm font-semibold hover:underline">Ver todas</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-xs">
+                            <tr>
+                                <th class="px-6 py-3">Asignatura</th>
+                                <th class="px-6 py-3">Curso</th>
+                                <th class="px-6 py-3">Alumnos</th>
+                                <th class="px-6 py-3">Hrs/semana</th>
+                                <th class="px-6 py-3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            {% for asignatura in asignaturas %}
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
+                                            {{ asignatura.nombre|slice:":2"|upper }}
+                                        </div>
+                                        <span class="font-medium text-navy-deep dark:text-white">{{ asignatura.nombre }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600 dark:text-slate-400">{{ asignatura.curso }}</td>
+                                <td class="px-6 py-4 font-bold text-navy-deep dark:text-white">{{ asignatura.curso.alumnos.count }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ asignatura.horas_semanales }}h</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <a href="{% url 'notas:libro' asignatura.curso.pk %}"
+                                           class="px-2 py-1 rounded-lg bg-primary/10 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-all">
+                                            Notas
+                                        </a>
+                                        <a href="{% url 'asistencia:tomar' asignatura.pk %}"
+                                           class="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all">
+                                            Asistencia
+                                        </a>
+                                        {# ── NUEVO: informe directo por asignatura ── #}
+                                        <a href="{% url 'informes:seleccionar' %}?curso={{ asignatura.curso.pk }}"
+                                           class="px-2 py-1 rounded-lg bg-amber-100 text-amber-700 text-xs font-bold hover:bg-amber-500 hover:text-white transition-all">
+                                            Informe
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                                    <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">menu_book</span>
+                                    No tienes asignaturas asignadas aún.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    {# ===== SIDEBAR DERECHO ===== #}
+    <aside class="md:col-span-3 lg:col-span-3 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 overflow-y-auto">
+        <div class="space-y-6">
+
+            <div class="flex items-center gap-3 p-4 bg-primary/5 rounded-xl border border-primary/20">
+                <div class="size-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg shrink-0">
+                    {{ profesor.usuario.first_name|slice:":1" }}{{ profesor.usuario.last_name|slice:":1" }}
+                </div>
+                <div>
+                    <p class="font-bold text-navy-deep dark:text-white text-sm">{{ profesor.nombre_completo }}</p>
+                    <p class="text-xs text-muted-blue">{{ profesor.especialidad|default:"Docente" }}</p>
+                    <p class="text-xs text-primary font-bold">{{ profesor.usuario.rut|default:"" }}</p>
+                </div>
+            </div>
+            {% include 'dashboard/includes/panel_notif_profesor.html' %}
+
+
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                <h4 class="text-sm font-bold mb-4 text-navy-deep dark:text-white">Accesos Rápidos</h4>
+                <div class="space-y-2">
+                    <a href="{% url 'alumnos:lista' %}"
+                       class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group">
+                        <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">group</span>
+                        <span class="text-sm text-slate-600 dark:text-slate-400 group-hover:text-primary">Ver mis alumnos</span>
+                    </a>
+                    <a href="{% url 'alumnos:lista' %}"
+                       class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group">
+                        <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">note_add</span>
+                        <span class="text-sm text-slate-600 dark:text-slate-400 group-hover:text-primary">Nueva anotación</span>
+                    </a>
+                    {# ── NUEVO: acceso rápido informes en sidebar derecho ── #}
+                    <a href="{% url 'informes:seleccionar' %}"
+                       class="flex items-center gap-3 p-3 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all group">
+                        <span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600">picture_as_pdf</span>
+                        <span class="text-sm text-slate-600 dark:text-slate-400 group-hover:text-emerald-600">Generar informe</span>
+                    </a>
+                    <a href="{% url 'usuarios:perfil' %}"
+                       class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group">
+                        <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">manage_accounts</span>
+                        <span class="text-sm text-slate-600 dark:text-slate-400 group-hover:text-primary">Mi perfil</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block titulo %}Ranking por Curso - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Ranking por Curso</h2>
+        <p class="text-muted-blue mt-1">Mejores promedios, asistencia y anotaciones — todos los períodos del año</p>
+    </div>
+    <a href="{% url 'informes:lista_periodos' %}"
+       class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+              text-slate-600 dark:text-slate-400 px-4 py-2.5 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Volver
+    </a>
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 max-w-xl">
+    <h3 class="font-bold text-navy-deep dark:text-white mb-5 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">leaderboard</span>
+        Seleccionar año escolar
+    </h3>
+
+    <form method="get" class="space-y-5">
+
+        <div>
+            <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">Año</label>
+            <div class="flex gap-2 flex-wrap">
+                {% for a in anios %}
+                <button type="submit" name="anio" value="{{ a }}"
+                        class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all
+                               {% if a == anio_sel %}bg-primary text-white shadow-md shadow-primary/20
+                               {% else %}bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %}">
+                    {{ a }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if periodos_anio %}
+        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">Períodos incluidos</p>
+            <div class="flex flex-wrap gap-2">
+                {% for p in periodos_anio %}
+                <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">{{ p }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <input type="hidden" name="anio" value="{{ anio_sel }}">
+
+        <button type="submit" name="descargar" value="1"
+                class="w-full flex items-center justify-center gap-2 bg-primary text-white
+                       px-4 py-3 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">download</span>
+            Descargar PDF — Ranking {{ anio_sel }}
+        </button>
+
+        {% else %}
+        <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 rounded-xl flex items-center gap-3">
+            <span class="material-symbols-outlined text-amber-500">warning</span>
+            <p class="text-sm text-amber-700 dark:text-amber-400">
+                No hay períodos para <strong>{{ anio_sel }}</strong>.
+                <a href="{% url 'informes:crear_periodo' %}" class="underline font-bold">Crear período</a>
+            </p>
+        </div>
+        {% endif %}
+
+    </form>
+</div>
+
+{% endblock %}

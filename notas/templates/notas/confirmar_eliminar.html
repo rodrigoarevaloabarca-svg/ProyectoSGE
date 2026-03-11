@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block titulo %}Eliminar Nota - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'notas:detalle' alumno_id=nota.alumno.pk asignatura_id=nota.asignatura.pk %}"
+       class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Eliminar Nota</h2>
+</div>
+
+<div class="max-w-md mx-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-red-200 dark:border-red-800 shadow-sm p-8 text-center">
+
+        <div class="size-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-red-500 text-3xl">delete</span>
+        </div>
+
+        <h3 class="text-xl font-bold text-navy-deep dark:text-white mb-2">¿Eliminar esta nota?</h3>
+        <p class="text-muted-blue text-sm mb-6">Esta acción no se puede deshacer. El promedio se recalculará automáticamente.</p>
+
+        {# Datos de la nota #}
+        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-6 text-left space-y-2">
+            <div class="flex justify-between text-sm">
+                <span class="text-muted-blue">Alumno</span>
+                <span class="font-semibold text-navy-deep dark:text-white">{{ nota.alumno.nombre_completo }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-muted-blue">Asignatura</span>
+                <span class="font-semibold text-navy-deep dark:text-white">{{ nota.asignatura.nombre }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-muted-blue">Valor</span>
+                <span class="font-extrabold text-xl
+                    {% if nota.valor >= 4.0 %}text-emerald-600
+                    {% elif nota.valor >= 3.0 %}text-amber-500
+                    {% else %}text-red-500{% endif %}">
+                    {{ nota.valor }}
+                </span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-muted-blue">Fecha</span>
+                <span class="font-semibold text-navy-deep dark:text-white">{{ nota.fecha|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+
+        <form method="POST" class="flex gap-3">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition-all">
+                Sí, eliminar
+            </button>
+            <a href="{% url 'notas:detalle' alumno_id=nota.alumno.pk asignatura_id=nota.asignatura.pk %}"
+               class="flex-1 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-3 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                Cancelar
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

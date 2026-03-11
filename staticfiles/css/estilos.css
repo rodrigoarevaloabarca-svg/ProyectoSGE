@@ -1,0 +1,11 @@
+/* Configuración de Fuente */
+body {
+    font-family: 'Lexend', sans-serif;
+}
+
+/* Configuración de Iconos Material Symbols */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Puedes agregar aquí estilos adicionales que no maneje Tailwind directamente */

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block titulo %}Períodos Académicos - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Períodos Académicos</h2>
+        <p class="text-muted-blue mt-1">Gestiona trimestres y semestres del año escolar</p>
+    </div>
+    <div class="flex gap-3 flex-wrap">
+        <a href="{% url 'informes:seleccionar' %}"
+           class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700 text-slate-600 dark:text-slate-400 px-4 py-2.5 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">description</span>
+            Informe Alumno
+        </a>
+        <a href="{% url 'informes:ranking_curso' %}"
+           class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700 text-slate-600 dark:text-slate-400 px-4 py-2.5 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">leaderboard</span>
+            Ranking por Curso
+        </a>
+        <a href="{% url 'informes:fin_anio' %}"
+           class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700 text-slate-600 dark:text-slate-400 px-4 py-2.5 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">event_available</span>
+            Fin de Año
+        </a>
+        {% if user.es_admin %}
+        <a href="{% url 'informes:crear_periodo' %}"
+           class="flex items-center gap-2 bg-primary text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">add</span>
+            Nuevo Período
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{# Semestres #}
+{% if periodos %}
+
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">calendar_view_month</span>
+            Semestres
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for periodo in periodos %}{% if periodo.tipo == 'semestre' %}
+            <div class="bg-white dark:bg-slate-900 rounded-xl border
+                {% if periodo.activo %}border-primary/30 shadow-md shadow-primary/10{% else %}border-soft-grey dark:border-slate-800{% endif %}
+                p-6 relative">
+                {% if periodo.activo %}
+                <span class="absolute top-3 right-3 px-2 py-0.5 bg-emerald-100 text-emerald-600 text-xs font-bold rounded-full">Activo</span>
+                {% endif %}
+                <div class="flex items-start gap-4">
+                    <div class="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-lg">
+                        {{ periodo.numero }}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-navy-deep dark:text-white">{{ periodo }}</h4>
+                        <p class="text-xs text-muted-blue mt-0.5">Semestre</p>
+                        <p class="text-xs text-muted-blue mt-2">{{ periodo.fecha_inicio|date:"d/m/Y" }} → {{ periodo.fecha_fin|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-soft-grey dark:border-slate-800 flex gap-2">
+                    <a href="{% url 'informes:seleccionar' %}?periodo={{ periodo.pk }}"
+                       class="flex-1 text-center py-2 rounded-lg bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all">
+                        Ver Informes
+                    </a>
+                    {% if user.es_admin %}
+                    <a href="{% url 'informes:editar_periodo' periodo.pk %}"
+                       class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-bold hover:bg-slate-200 transition-all">
+                        Editar
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}{% endfor %}
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-purple-500">view_week</span>
+            Trimestres
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for periodo in periodos %}{% if periodo.tipo == 'trimestre' %}
+            <div class="bg-white dark:bg-slate-900 rounded-xl border
+                {% if periodo.activo %}border-purple-300 shadow-md shadow-purple-100{% else %}border-soft-grey dark:border-slate-800{% endif %}
+                p-6 relative">
+                {% if periodo.activo %}
+                <span class="absolute top-3 right-3 px-2 py-0.5 bg-emerald-100 text-emerald-600 text-xs font-bold rounded-full">Activo</span>
+                {% endif %}
+                <div class="flex items-start gap-4">
+                    <div class="size-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-black text-lg">
+                        {{ periodo.numero }}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-navy-deep dark:text-white">{{ periodo }}</h4>
+                        <p class="text-xs text-muted-blue mt-0.5">Trimestre</p>
+                        <p class="text-xs text-muted-blue mt-2">{{ periodo.fecha_inicio|date:"d/m/Y" }} → {{ periodo.fecha_fin|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-soft-grey dark:border-slate-800 flex gap-2">
+                    <a href="{% url 'informes:seleccionar' %}?periodo={{ periodo.pk }}"
+                       class="flex-1 text-center py-2 rounded-lg bg-purple-50 text-purple-600 text-xs font-bold hover:bg-purple-100 transition-all">
+                        Ver Informes
+                    </a>
+                    {% if user.es_admin %}
+                    <a href="{% url 'informes:editar_periodo' periodo.pk %}"
+                       class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-bold hover:bg-slate-200 transition-all">
+                        Editar
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}{% endfor %}
+        </div>
+    </div>
+
+{% else %}
+<div class="text-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800">
+    <span class="material-symbols-outlined text-6xl text-slate-300 block mb-4">calendar_month</span>
+    <p class="font-bold text-navy-deep dark:text-white text-lg mb-2">No hay períodos creados</p>
+    <p class="text-muted-blue text-sm mb-6">Crea el primer período para comenzar a generar informes</p>
+    {% if user.es_admin %}
+    <a href="{% url 'informes:crear_periodo' %}"
+       class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Crear primer período
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block titulo %}Mensajes enviados — SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Notificaciones</h2>
+        <p class="text-muted-blue mt-1">Historial de mensajes enviados</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{% url 'notificaciones:redactar' %}"
+           class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">edit</span> Redactar
+        </a>
+        {% if user.es_admin %}
+        <a href="{% url 'notificaciones:masivo' %}"
+           class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all">
+            <span class="material-symbols-outlined text-sm">campaign</span> Envío masivo
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{# Tabs #}
+<div class="flex gap-1 mb-6 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+    <a href="{% url 'notificaciones:bandeja' %}"
+       class="px-4 py-2 rounded-lg text-sm font-bold text-muted-blue hover:text-navy-deep dark:hover:text-white transition-all">
+        Recibidas
+    </a>
+    <a href="{% url 'notificaciones:enviadas' %}"
+       class="px-4 py-2 rounded-lg text-sm font-bold bg-white dark:bg-slate-900 text-navy-deep dark:text-white shadow-sm">
+        Enviadas
+    </a>
+</div>
+
+{# Envíos masivos (solo admin) #}
+{% if user.es_admin and masivos %}
+<div class="mb-8">
+    <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">Envíos masivos</p>
+    <div class="space-y-2">
+        {% for e in masivos %}
+        <div class="flex items-start gap-4 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl">
+            <div class="size-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                <span class="material-symbols-outlined text-sm">campaign</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="font-bold text-navy-deep dark:text-white truncate">{{ e.titulo }}</p>
+                    <span class="text-xs text-muted-blue shrink-0">{{ e.fecha_envio|date:"d/m/Y H:i" }}</span>
+                </div>
+                <p class="text-sm text-slate-600 dark:text-slate-400 truncate mt-0.5">{{ e.mensaje|truncatechars:80 }}</p>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">{{ e.get_destino_display }}</span>
+                    <span class="text-xs text-muted-blue">· {{ e.total_enviados }} destinatarios</span>
+                    {% if e.enviado_email %}
+                    <span class="text-xs text-emerald-600 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs">mail</span> Email enviado
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{# Mensajes individuales #}
+<div>
+    {% if individuales %}
+    <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">Mensajes individuales</p>
+    <div class="space-y-2">
+        {% for n in individuales %}
+        <div class="flex items-start gap-4 p-4 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-800 rounded-xl">
+            <div class="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-muted-blue shrink-0">
+                <span class="material-symbols-outlined text-sm">send</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="font-semibold text-navy-deep dark:text-white truncate">{{ n.titulo }}</p>
+                    <span class="text-xs text-muted-blue shrink-0">{{ n.fecha_envio|date:"d/m/Y H:i" }}</span>
+                </div>
+                <p class="text-sm text-muted-blue truncate mt-0.5">{{ n.mensaje|truncatechars:80 }}</p>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-xs text-muted-blue">Para: <strong>{{ n.destinatario.get_full_name }}</strong></span>
+                    {% if n.leida %}
+                    <span class="text-xs text-emerald-600 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs">done_all</span> Leída
+                    </span>
+                    {% else %}
+                    <span class="text-xs text-amber-500 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs">schedule</span> Sin leer
+                    </span>
+                    {% endif %}
+                    {% if n.enviada_por_email %}
+                    <span class="text-xs text-primary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs">mail</span> Email
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+        <span class="material-symbols-outlined text-5xl text-slate-300 mb-3">outbox</span>
+        <p class="font-bold text-navy-deep dark:text-white">No has enviado mensajes aún</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

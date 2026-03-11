@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block titulo %}  Reglamento Interno {% endblock %}
+
+{% block main %}
+<main class="mx-auto flex w-full max-w-7xl flex-1 flex-col lg:flex-row gap-8 px-4 md:px-10 py-8">
+<!-- Left Sidebar: Table of Contents -->
+    <aside class="w-full lg:w-72 shrink-0">
+    <div class="sticky top-24 flex flex-col gap-6">
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+            <div class="mb-4">
+                <h3 class="text-slate-900 dark:text-white font-bold text-lg">Índice</h3>
+                <p class="text-slate-500 text-xs">Documento institucional</p>
+            </div>
+            <nav class="flex flex-col gap-1">
+                <a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">info</span>
+                                                Introducción
+                                            </a>
+                <a class="group flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-2 text-sm font-semibold text-primary" href="#derechos">
+                <span class="material-symbols-outlined text-[20px] fill-current">balance</span>
+                                                Derechos y Deberes
+                                            </a>
+                <a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-all" href="#convivencia">
+                <span class="material-symbols-outlined text-[20px]">group</span>
+                                                Normas de Convivencia
+                                            </a>
+                <a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">gavel</span>
+                                                Procesos Disciplinarios
+                                            </a>
+                <a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">school</span>
+                                                Evaluación y Promoción
+                                            </a>
+                <a class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">description</span>
+                                            Anexos
+                                        </a>
+            </nav>
+        </div>
+        <div class="rounded-xl bg-primary p-5 text-white shadow-lg shadow-primary/20">
+            <p class="text-xs font-semibold uppercase tracking-wider opacity-80 mb-2">Ayuda Académica</p>
+            <p class="text-sm leading-relaxed mb-4">¿Tienes dudas sobre la aplicación del reglamento? Contacta a coordinación.</p>
+            <button class="w-full rounded-lg bg-white/20 py-2 text-xs font-bold hover:bg-white/30 transition-colors">Contactar</button>
+        </div>
+    </div>
+    </aside>
+<!-- Main Content Area -->
+<div class="flex-1 min-w-0">
+<!-- Content Header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+        <div>
+        <nav class="flex items-center gap-2 text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">
+        <a class="hover:text-primary" href="{% url 'inicio' %}">Inicio</a>
+        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+        <span class="text-slate-600 dark:text-slate-300">Reglamento Estudiantil</span>
+        </nav>
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">Reglamento Estudiantil SGE</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Institución  • Versión 1.1 • Última actualización: Marzo 2026</p>
+        </div>
+        <div class="flex gap-2">
+        <a href="/static/doc/reglamento.pdf" download="Nombre_del_Archivo.pdf" class="no-underline">
+          <button class="flex items-center gap-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2 text-sm font-bold shadow-sm hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+            Descargar PDF
+          </button>
+        </a>
+        </div>
+    </div>
+<!-- Document Body -->
+    <div class="rounded-xl bg-white dark:bg-slate-900 p-6 md:p-10 shadow-sm border border-slate-200 dark:border-slate-800 prose dark:prose-invert max-w-none">
+        <section class="mb-12" id="derechos">
+            <div class="flex items-center gap-2 mb-4">
+            <span class="inline-flex items-center justify-center rounded-md bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary uppercase">Título I</span>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">balance</span>
+                                        Derechos y Deberes del Estudiante
+                                    </h2>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+                                        El presente reglamento establece el marco de convivencia y las responsabilidades académicas que rigen para todos los estudiantes matriculados en la institución.
+                                    </p>
+            <div class="space-y-6">
+                <div class="rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-5">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-3">Artículo 1: Derechos Fundamentales</h3>
+                    <ul class="list-none space-y-3 pl-0">
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                                                            Recibir una educación de calidad que fomente el desarrollo integral de la personalidad.
+                                                        </li>
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                                                            Ser respetado en su integridad física, moral y psicológica por todos los miembros de la comunidad.
+                                                        </li>
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                                                            Participar en las actividades académicas, culturales y deportivas programadas.
+                                                        </li>
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                                                            Ser evaluado con objetividad y conocer oportunamente los resultados de sus procesos.
+                                                        </li>
+                    </ul>
+                </div>
+                <div class="rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-5">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-3">Artículo 2: Deberes Esenciales</h3>
+                    <ul class="list-none space-y-3 pl-0">
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-amber-500 text-[18px] shrink-0">priority_high</span>
+                                                            Cumplir con los horarios de clase y las actividades curriculares obligatorias.
+                                                        </li>
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-amber-500 text-[18px] shrink-0">priority_high</span>
+                                                            Mantener una conducta respetuosa y ética frente a docentes y compañeros.
+                                                        </li>
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-amber-500 text-[18px] shrink-0">priority_high</span>
+                                                            Cuidar el mobiliario, las instalaciones y los recursos tecnológicos de la institución.
+                                                        </li>
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <span class="material-symbols-outlined text-amber-500 text-[18px] shrink-0">priority_high</span>
+                                                            Portar correctamente el uniforme y la identificación institucional en todo momento.
+                                                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="mb-12 border-t border-slate-100 dark:border-slate-800 pt-10" id="convivencia">
+                <div class="flex items-center gap-2 mb-4">
+                <span class="inline-flex items-center justify-center rounded-md bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary uppercase">Título II</span>
+                </div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">diversity_3</span>
+                                        Normas de Convivencia Escolar
+                                </h2>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                                        La convivencia armónica es la base de nuestro proyecto educativo. Se promueve el diálogo y la resolución pacífica de conflictos.
+                                    </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+                    <span class="material-symbols-outlined text-primary mb-2">forum</span>
+                    <h4 class="font-bold text-slate-800 dark:text-slate-200">Comunicación Asertiva</h4>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">Uso de canales oficiales para peticiones y quejas siguiendo el conducto regular preestablecido.</p>
+                </div>
+                <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+                    <span class="material-symbols-outlined text-primary mb-2">verified_user</span>
+                    <h4 class="font-bold text-slate-800 dark:text-slate-200">Seguridad Digital</h4>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">Normas de uso de redes sociales y plataformas de SGE, prohibiendo el cyberbullying.</p>
+                </div>
+            </div>
+        </section>
+        <section class="mb-12 border-t border-slate-100 dark:border-slate-800 pt-10" id="procesos">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="inline-flex items-center justify-center rounded-md bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary uppercase">Título III</span>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">gavel</span>
+                                        Procesos Disciplinarios
+                                    </h2>
+            <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+                <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+                <thead class="bg-slate-50 dark:bg-slate-800/50">
+                <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Falta</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Gravedad</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Sanción Sugerida</th>
+                </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+                <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800 dark:text-slate-200">Impuntualidad reiterada</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 uppercase">Leve</span></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Amonestación verbal</td>
+                </tr>
+                <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800 dark:text-slate-200">Uso de celular en clase</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 uppercase">Leve</span></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Retiro de equipo</td>
+                </tr>
+                <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800 dark:text-slate-200">Agresión física/verbal</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Grave</span></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Suspensión temporal</td>
+                </tr>
+                </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+</div>
+</main>
+
+
+
+{% endblock %}

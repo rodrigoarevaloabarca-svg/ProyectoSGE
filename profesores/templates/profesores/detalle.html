@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ profesor.nombre_completo }} - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'profesores:lista' %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Perfil Docente</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 text-center">
+            <div class="size-20 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-3xl mx-auto mb-4">
+                {{ profesor.usuario.first_name|slice:":1" }}{{ profesor.usuario.last_name|slice:":1" }}
+            </div>
+            <h3 class="text-xl font-bold text-navy-deep dark:text-white">{{ profesor.nombre_completo }}</h3>
+            <p class="text-muted-blue text-sm mt-1">{{ profesor.especialidad|default:"Docente" }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+            <h4 class="font-bold text-navy-deep dark:text-white mb-4">Datos de Contacto</h4>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between"><span class="text-muted-blue">RUT</span><span class="font-semibold">{{ profesor.usuario.rut|default:"—" }}</span></div>
+                <div class="flex justify-between"><span class="text-muted-blue">Email</span><span class="font-semibold text-xs">{{ profesor.usuario.email|default:"—" }}</span></div>
+                <div class="flex justify-between"><span class="text-muted-blue">Teléfono</span><span class="font-semibold">{{ profesor.usuario.telefono|default:"—" }}</span></div>
+                <div class="flex justify-between"><span class="text-muted-blue">Ingreso</span><span class="font-semibold">{{ profesor.fecha_ingreso|default:"—" }}</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="lg:col-span-2">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800">
+                <h4 class="font-bold text-navy-deep dark:text-white">Asignaturas que Dicta</h4>
+            </div>
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Asignatura</th>
+                        <th class="px-6 py-3 text-left">Curso</th>
+                        <th class="px-6 py-3 text-center">Hrs/sem</th>
+                        <th class="px-6 py-3 text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                    {% for asig in profesor.asignaturas.all %}
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                        <td class="px-6 py-3 font-medium text-navy-deep dark:text-white">{{ asig.nombre }}</td>
+                        <td class="px-6 py-3 text-muted-blue">{{ asig.curso }}</td>
+                        <td class="px-6 py-3 text-center text-muted-blue">{{ asig.horas_semanales }}h</td>
+                        <td class="px-6 py-3 text-center">
+                            <a href="{% url 'notas:libro' asig.curso.pk %}" class="text-primary text-xs font-bold hover:underline">Libro notas</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="px-6 py-8 text-center text-muted-blue">Sin asignaturas asignadas.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block titulo %}Envío masivo — SGE{% endblock %}
+{% block main %}
+
+<div class="max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-extrabold text-navy-deep dark:text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">campaign</span>
+                Envío masivo
+            </h2>
+            <p class="text-muted-blue text-sm mt-1">Envía un mensaje a múltiples destinatarios a la vez</p>
+        </div>
+        <a href="{% url 'notificaciones:bandeja' %}"
+           class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+                  text-slate-600 dark:text-slate-400 px-4 py-2 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            Volver
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+
+            {# Destinatarios #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">
+                    Enviar a <span class="text-red-500">*</span>
+                </label>
+
+                {# Grupo: Envíos generales #}
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-1">Envíos generales</p>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option">
+                        <input type="radio" name="destino" value="todos_apoderados" required class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Todos los apoderados</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option">
+                        <input type="radio" name="destino" value="todos_profesores" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Todos los profesores</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option">
+                        <input type="radio" name="destino" value="todos_alumnos" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Todos los alumnos</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option">
+                        <input type="radio" name="destino" value="todos" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Apoderados y profesores</span>
+                        </div>
+                    </label>
+                    <label class="col-span-2 flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option">
+                        <input type="radio" name="destino" value="todos_comunidad" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Toda la comunidad</span>
+                            <span class="text-xs text-slate-400">Alumnos + apoderados + profesores</span>
+                        </div>
+                    </label>
+                </div>
+
+                {# Grupo: Por curso #}
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-3">Por curso</p>
+                <div class="grid grid-cols-1 gap-2">
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option destino-curso">
+                        <input type="radio" name="destino" value="curso_apoderados" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Apoderados de un curso</span>
+                            <span class="text-xs text-slate-400">Solo los apoderados del curso seleccionado</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option destino-curso">
+                        <input type="radio" name="destino" value="curso_alumnos" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Alumnos de un curso</span>
+                            <span class="text-xs text-slate-400">Solo los alumnos del curso seleccionado</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-primary/50 destino-option destino-curso">
+                        <input type="radio" name="destino" value="curso_todos" class="accent-primary w-4 h-4">
+                        <div>
+                            <span class="text-sm font-bold text-navy-deep dark:text-white block">Alumnos + apoderados de un curso</span>
+                            <span class="text-xs text-slate-400">Todos los involucrados del curso</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            {# Selector de curso (aparece solo si elige opción de curso) #}
+            <div id="selector-curso" class="hidden">
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Curso <span class="text-red-500">*</span>
+                </label>
+                <select name="curso"
+                        class="w-full px-4 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                               bg-white dark:bg-slate-800 text-sm text-navy-deep dark:text-white
+                               focus:outline-none focus:border-primary transition-all">
+                    <option value="">— Selecciona un curso —</option>
+                    {% for c in cursos %}
+                    <option value="{{ c.pk }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Asunto #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Asunto <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="titulo" required maxlength="200"
+                       placeholder="Ej: Inicio de año escolar 2026"
+                       class="w-full px-4 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                              bg-white dark:bg-slate-800 text-sm text-navy-deep dark:text-white
+                              focus:outline-none focus:border-primary transition-all">
+            </div>
+
+            {# Mensaje #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Mensaje <span class="text-red-500">*</span>
+                </label>
+                <textarea name="mensaje" required rows="7"
+                          placeholder="Escribe el mensaje que recibirán todos los destinatarios..."
+                          class="w-full px-4 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                                 bg-white dark:bg-slate-800 text-sm text-navy-deep dark:text-white
+                                 focus:outline-none focus:border-primary transition-all resize-none"></textarea>
+            </div>
+
+            {# Email #}
+            <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-soft-grey dark:border-slate-700">
+                <input type="checkbox" name="enviar_email" id="enviar_email"
+                       class="w-4 h-4 accent-primary cursor-pointer">
+                <div>
+                    <label for="enviar_email" class="text-sm font-bold text-navy-deep dark:text-white cursor-pointer flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">mail</span>
+                        Enviar también por email a todos
+                    </label>
+                    <p class="text-xs text-muted-blue mt-0.5">Se enviará al correo registrado de cada destinatario</p>
+                </div>
+            </div>
+
+            {# Botón #}
+            <button type="submit"
+                    class="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white
+                           py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">
+                <span class="material-symbols-outlined text-sm">campaign</span>
+                Enviar a todos los destinatarios
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const DESTINOS_CURSO = ['curso_apoderados', 'curso_alumnos', 'curso_todos'];
+
+function actualizarSelectorCurso() {
+    const seleccionado = document.querySelector('input[name="destino"]:checked');
+    const selectorCurso = document.getElementById('selector-curso');
+    if (seleccionado && DESTINOS_CURSO.includes(seleccionado.value)) {
+        selectorCurso.classList.remove('hidden');
+    } else {
+        selectorCurso.classList.add('hidden');
+    }
+}
+
+// Resaltar opción seleccionada
+document.querySelectorAll('.destino-option').forEach(label => {
+    label.querySelector('input').addEventListener('change', () => {
+        document.querySelectorAll('.destino-option').forEach(l => {
+            l.classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/20');
+            l.classList.add('border-soft-grey', 'dark:border-slate-700');
+        });
+        label.classList.add('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/20');
+        label.classList.remove('border-soft-grey', 'dark:border-slate-700');
+        actualizarSelectorCurso();
+    });
+});
+</script>
+{% endblock %}

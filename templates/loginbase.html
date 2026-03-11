@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block titulo %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#197fe6",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#111921",
+                        "navy-deep": "#0d1b2a",
+                        "muted-blue": "#6b7fa3",
+                        "soft-grey": "#e2e8f0",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark min-h-screen flex flex-col">
+
+    {# ===== HEADER ===== #}
+    <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-10 py-3 sticky top-0 z-50">
+        <div class="flex items-center gap-4 text-slate-900 dark:text-slate-100">
+            <div class="size-8 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-3xl">school</span>
+            </div>
+            <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em]">
+                Sistema de Gestión Escolar (SGE)
+            </h2>
+        </div>
+        <div class="flex flex-1 justify-end gap-8">
+            <div class="hidden md:flex items-center gap-9">
+                {# Links del header - apuntan a # hasta crear esas páginas #}
+                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
+                   href="{% url 'inicio' %}">Inicio</a>
+                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
+                   href="{% url 'sobre_nosotros' %}">Sobre Nosotros</a>
+                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
+                   href={% url 'ayuda' %}>Ayuda</a>
+                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
+                   href="mailto:Rodrigoarevaloabarca@gmail.com">Contacto</a>
+            </div>
+        </div>
+    </header>
+{% block main %}
+
+{% endblock %}
+    {# ===== FOOTER ===== #}
+    <footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 py-6 px-10">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <p>© 2026 Portal Sistema de Gestión Escolar (SGE). Todos los derechos reservados.</p>
+            <div class="flex gap-6">
+                <a class="hover:text-primary transition-colors" href="{% url 'terminos' %}">Privacidad</a>
+                <a class="hover:text-primary transition-colors" href="{% url 'terminos' %}">Términos de servicio</a>
+                <a class="hover:text-primary transition-colors" href="{% url 'terminos' %}">Accesibilidad</a>
+            </div>
+        </div>
+    </footer>
+
+    {# ===== JAVASCRIPT: mostrar/ocultar contraseña ===== #}
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('id_password');
+            const icon = document.getElementById('toggle-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        }
+    </script>
+
+</body>
+</html>

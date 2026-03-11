@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block titulo %}Usuarios - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Gestión de Usuarios</h2>
+        <p class="text-muted-blue mt-1 text-sm">
+            Total: <span class="font-bold text-primary">{{ usuarios.count }}</span> usuarios registrados
+        </p>
+    </div>
+    <a href="{% url 'usuarios:crear' %}"
+       class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-sm">person_add</span>
+        Nuevo Usuario
+    </a>
+</div>
+
+{# Mensajes #}
+{% if messages %}
+{% for msg in messages %}
+<div class="mb-4 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold
+    {% if msg.tags == 'success' %}bg-emerald-100 text-emerald-700 border border-emerald-200
+    {% elif msg.tags == 'error' %}bg-red-100 text-red-700 border border-red-200
+    {% else %}bg-blue-100 text-blue-700 border border-blue-200{% endif %}">
+    <span class="material-symbols-outlined text-sm">
+        {% if msg.tags == 'success' %}check_circle{% elif msg.tags == 'error' %}error{% else %}info{% endif %}
+    </span>
+    {{ msg }}
+</div>
+{% endfor %}
+{% endif %}
+
+{# Filtros por rol #}
+<div class="flex items-center gap-2 mb-6 flex-wrap">
+    <button onclick="filtrarRol('')"
+            class="rol-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-primary text-white" data-rol="">
+        Todos
+    </button>
+    <button onclick="filtrarRol('admin')"
+            class="rol-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-red-100 text-red-600 hover:bg-red-500 hover:text-white" data-rol="admin">
+        Admin
+    </button>
+    <button onclick="filtrarRol('profesor')"
+            class="rol-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-100 text-indigo-600 hover:bg-indigo-500 hover:text-white" data-rol="profesor">
+        Profesores
+    </button>
+    <button onclick="filtrarRol('alumno')"
+            class="rol-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white" data-rol="alumno">
+        Alumnos
+    </button>
+    <button onclick="filtrarRol('apoderado')"
+            class="rol-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-100 text-emerald-600 hover:bg-emerald-500 hover:text-white" data-rol="apoderado">
+        Apoderados
+    </button>
+
+    {# Buscador #}
+    <div class="ml-auto relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <span class="material-symbols-outlined text-sm">search</span>
+        </span>
+        <input type="text" id="buscador" placeholder="Buscar usuario..."
+               class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all w-56"
+               onkeyup="filtrarTexto()"/>
+    </div>
+</div>
+
+{# Tabla #}
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="tabla">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-4 text-left">Usuario</th>
+                    <th class="px-6 py-4 text-left">Nombre</th>
+                    <th class="px-6 py-4 text-left hidden md:table-cell">Email</th>
+                    <th class="px-6 py-4 text-left hidden lg:table-cell">RUT</th>
+                    <th class="px-6 py-4 text-center">Rol</th>
+                    <th class="px-6 py-4 text-center">Estado</th>
+                    <th class="px-6 py-4 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800" id="tbody">
+                {% for u in usuarios %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors usuario-row"
+                    data-rol="{{ u.rol }}"
+                    data-texto="{{ u.username|lower }} {{ u.get_full_name|lower }} {{ u.email|lower }}">
+
+                    {# Avatar + username #}
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="size-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0
+                                {% if u.rol == 'admin' %}bg-red-100 text-red-600
+                                {% elif u.rol == 'profesor' %}bg-indigo-100 text-indigo-600
+                                {% elif u.rol == 'alumno' %}bg-blue-100 text-blue-600
+                                {% else %}bg-emerald-100 text-emerald-600{% endif %}">
+                                {{ u.first_name|slice:":1"|upper }}{{ u.last_name|slice:":1"|upper }}
+                            </div>
+                            <span class="font-mono text-xs text-slate-500 dark:text-slate-400">@{{ u.username }}</span>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 font-semibold text-navy-deep dark:text-white">
+                        {{ u.get_full_name|default:"—" }}
+                    </td>
+
+                    <td class="px-6 py-4 text-muted-blue text-xs hidden md:table-cell">
+                        {{ u.email|default:"—" }}
+                    </td>
+
+                    <td class="px-6 py-4 font-mono text-xs text-muted-blue hidden lg:table-cell">
+                        {{ u.rut|default:"—" }}
+                    </td>
+
+                    {# Badge rol #}
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold
+                            {% if u.rol == 'admin' %}bg-red-100 text-red-600
+                            {% elif u.rol == 'profesor' %}bg-indigo-100 text-indigo-600
+                            {% elif u.rol == 'alumno' %}bg-blue-100 text-blue-600
+                            {% elif u.rol == 'apoderado' %}bg-emerald-100 text-emerald-600
+                            {% else %}bg-slate-100 text-slate-400{% endif %}">
+                            {{ u.get_rol_display|default:u.rol|default:"Sin rol" }}
+                        </span>
+                    </td>
+
+                    {# Estado #}
+                    <td class="px-6 py-4 text-center">
+                        {% if u.is_active %}
+                        <span class="inline-flex items-center gap-1 text-emerald-600 text-xs font-bold">
+                            <span class="size-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                            Activo
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1 text-red-500 text-xs font-bold">
+                            <span class="size-1.5 rounded-full bg-red-500 inline-block"></span>
+                            Inactivo
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    {# Acciones #}
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="{% url 'usuarios:editar' u.pk %}"
+                               title="Editar"
+                               class="size-8 rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </a>
+                            {% if u.pk != request.user.pk %}
+                            <a href="{% url 'usuarios:desactivar' u.pk %}"
+                               title="{% if u.is_active %}Desactivar{% else %}Activar{% endif %}"
+                               class="size-8 rounded-lg {% if u.is_active %}bg-red-100 text-red-500 hover:bg-red-500 hover:text-white{% else %}bg-emerald-100 text-emerald-600 hover:bg-emerald-500 hover:text-white{% endif %} transition-all flex items-center justify-center">
+                                <span class="material-symbols-outlined text-sm">
+                                    {% if u.is_active %}person_off{% else %}person{% endif %}
+                                </span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-16 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">group</span>
+                        <p class="font-semibold">No hay usuarios registrados.</p>
+                        <a href="{% url 'usuarios:crear' %}" class="text-primary text-sm font-bold mt-2 inline-block hover:underline">
+                            Crear el primero →
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+let rolActivo = '';
+
+function filtrarRol(rol) {
+    rolActivo = rol;
+    aplicarFiltros();
+    // Actualizar botones
+    document.querySelectorAll('.rol-btn').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+        if (btn.dataset.rol === rol) btn.classList.add('bg-primary', 'text-white');
+    });
+}
+
+function filtrarTexto() {
+    aplicarFiltros();
+}
+
+function aplicarFiltros() {
+    const texto = document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('.usuario-row').forEach(row => {
+        const coincideRol  = !rolActivo || row.dataset.rol === rolActivo;
+        const coincideTexto = !texto || row.dataset.texto.includes(texto);
+        row.style.display = (coincideRol && coincideTexto) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

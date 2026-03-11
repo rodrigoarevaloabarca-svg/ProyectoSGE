@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block titulo %}Informe Fin de Año - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Informe Fin de Año</h2>
+        <p class="text-muted-blue mt-1">Informe anual individual por alumno con promedios, asistencia y situación final</p>
+    </div>
+    <a href="{% url 'informes:lista_periodos' %}"
+       class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+              text-slate-600 dark:text-slate-400 px-4 py-2.5 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Volver
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {# ── Formulario ── #}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+        <h3 class="font-bold text-navy-deep dark:text-white mb-5 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">tune</span>
+            Configurar informe
+        </h3>
+
+        <form method="get" class="space-y-6">
+
+            {# Año #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">Año escolar</label>
+                <div class="flex gap-2 flex-wrap">
+                    {% for a in anios %}
+                    <button type="submit" name="anio" value="{{ a }}"
+                            class="px-5 py-2 rounded-xl text-sm font-bold transition-all
+                                   {% if a == anio_sel %}bg-primary text-white shadow-md shadow-primary/20
+                                   {% else %}bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %}">
+                        {{ a }}
+                    </button>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="anio" value="{{ anio_sel }}">
+            </div>
+
+            {# Períodos #}
+            {% if periodos_anio %}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">
+                    Períodos a incluir
+                </label>
+                <div class="space-y-2">
+                    {% for p in periodos_anio %}
+                    <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all
+                                  {% if p.pk|stringformat:'s' in ids_sel %}border-primary bg-primary/5 dark:bg-primary/10
+                                  {% else %}border-soft-grey dark:border-slate-700 hover:border-primary/50{% endif %}">
+                        <input type="checkbox" name="periodos" value="{{ p.pk }}"
+                               {% if p.pk|stringformat:"s" in ids_sel %}checked{% endif %}
+                               class="accent-primary w-4 h-4">
+                        <div class="flex-1">
+                            <span class="text-sm font-bold text-navy-deep dark:text-white">{{ p }}</span>
+                            <span class="text-xs text-muted-blue ml-2">{{ p.fecha_inicio|date:"d/m/Y" }} → {{ p.fecha_fin|date:"d/m/Y" }}</span>
+                        </div>
+                        {% if p.activo %}
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-600 text-xs font-bold rounded-full">Activo</span>
+                        {% endif %}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button type="submit"
+                        class="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800
+                               text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl font-bold text-sm
+                               hover:bg-slate-200 transition-all">
+                    <span class="material-symbols-outlined text-sm">preview</span>
+                    Vista previa
+                </button>
+                <button type="submit" name="descargar" value="1"
+                        class="flex items-center justify-center gap-2 bg-primary text-white
+                               px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-sm">download</span>
+                    Descargar PDF
+                </button>
+            </div>
+
+            {% else %}
+            <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 rounded-xl flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-500">warning</span>
+                <p class="text-sm text-amber-700 dark:text-amber-400">
+                    No hay períodos para <strong>{{ anio_sel }}</strong>.
+                    <a href="{% url 'informes:crear_periodo' %}" class="underline font-bold">Crear período</a>
+                </p>
+            </div>
+            {% endif %}
+
+        </form>
+    </div>
+
+    {# ── Vista previa ── #}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+        <h3 class="font-bold text-navy-deep dark:text-white mb-5 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">preview</span>
+            Vista previa
+        </h3>
+
+        {% if ids_sel and not request.GET.descargar %}
+            {# Resumen de lo que incluirá el PDF #}
+            <div class="space-y-4">
+
+                <div class="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                    <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-1">Año escolar</p>
+                    <p class="text-2xl font-black text-primary">{{ anio_sel }}</p>
+                </div>
+
+                <div>
+                    <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">Períodos incluidos</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for p in periodos_anio %}
+                            {% if p.pk|stringformat:"s" in ids_sel %}
+                            <span class="px-3 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-lg">
+                                {{ p }}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
+                        <p class="text-xs font-bold text-muted-blue uppercase">Períodos</p>
+                        <p class="text-2xl font-black text-navy-deep dark:text-white mt-1">{{ ids_sel|length }}</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
+                        <p class="text-xs font-bold text-muted-blue uppercase">Estructura del PDF</p>
+                        <p class="text-sm font-bold text-navy-deep dark:text-white mt-1">1 página por alumno</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                    <p class="font-bold text-navy-deep dark:text-white mb-2">Cada página incluye:</p>
+                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span> Promedio por asignatura en cada período</div>
+                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span> Promedio anual por asignatura</div>
+                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span> Asistencia por período y total anual</div>
+                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span> Resumen de anotaciones positivas y negativas</div>
+                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span> Situación final: Aprobado / Promovido</div>
+                    <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span> Sección de firmas</div>
+                </div>
+
+                <a href="?anio={{ anio_sel }}{% for id in ids_sel %}&periodos={{ id }}{% endfor %}&descargar=1"
+                   class="flex items-center justify-center gap-2 w-full bg-primary text-white
+                          px-4 py-3 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-sm">download</span>
+                    Generar y Descargar PDF
+                </a>
+            </div>
+
+        {% elif not ids_sel and periodos_anio %}
+            <div class="flex flex-col items-center justify-center h-48 text-center">
+                <span class="material-symbols-outlined text-5xl text-slate-300 mb-3">check_box_outline_blank</span>
+                <p class="font-bold text-navy-deep dark:text-white">Selecciona al menos un período</p>
+                <p class="text-muted-blue text-sm mt-1">Marca los períodos que quieres incluir en el informe</p>
+            </div>
+
+        {% elif not periodos_anio %}
+            <div class="flex flex-col items-center justify-center h-48 text-center">
+                <span class="material-symbols-outlined text-5xl text-slate-300 mb-3">calendar_month</span>
+                <p class="font-bold text-navy-deep dark:text-white">Sin períodos en {{ anio_sel }}</p>
+                <p class="text-muted-blue text-sm mt-1">Crea períodos para este año primero</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

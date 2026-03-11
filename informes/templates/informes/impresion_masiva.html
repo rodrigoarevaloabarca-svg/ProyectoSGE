@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% block titulo %}Impresión Masiva - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Impresión Masiva</h2>
+        <p class="text-muted-blue mt-1">Genera un PDF con todos los alumnos de un curso</p>
+    </div>
+    <a href="{% url 'informes:dashboard' %}"
+       class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+              text-slate-600 dark:text-slate-400 px-4 py-2.5 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Centro de informes
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {# ── Formulario ── #}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+        <h3 class="font-bold text-navy-deep dark:text-white mb-5 flex items-center gap-2">
+            <span class="material-symbols-outlined text-indigo-600">tune</span>
+            Configurar impresión
+        </h3>
+
+        <form method="get" id="form-masivo" class="space-y-6">
+
+            {# Curso #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Curso
+                </label>
+                <select name="curso" id="sel-curso"
+                        class="w-full border border-soft-grey dark:border-slate-700 rounded-xl px-3 py-2.5
+                               text-sm text-navy-deep dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:border-primary">
+                    <option value="">— Selecciona un curso —</option>
+                    {% for c in cursos %}
+                    <option value="{{ c.pk }}" {% if curso_id == c.pk|stringformat:"s" %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Tipo de informe #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">
+                    Tipo de informe
+                </label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label id="tab-periodo"
+                           class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20">
+                        <input type="radio" name="tipo" value="periodo" checked class="hidden" id="radio-periodo">
+                        <span class="material-symbols-outlined text-2xl text-indigo-600">calendar_view_month</span>
+                        <span class="text-sm font-bold text-navy-deep dark:text-white">Por Período</span>
+                        <span class="text-xs text-muted-blue text-center">Trimestre o semestre específico</span>
+                    </label>
+                    <label id="tab-anual"
+                           class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all border-soft-grey dark:border-slate-700 hover:border-indigo-300">
+                        <input type="radio" name="tipo" value="anual" class="hidden" id="radio-anual">
+                        <span class="material-symbols-outlined text-2xl text-slate-400">event_available</span>
+                        <span class="text-sm font-bold text-navy-deep dark:text-white">Fin de Año</span>
+                        <span class="text-xs text-muted-blue text-center">Resumen anual completo</span>
+                    </label>
+                </div>
+            </div>
+
+            {# Panel: por período #}
+            <div id="panel-periodo" class="space-y-3">
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Período académico
+                </label>
+                <select name="periodo"
+                        class="w-full border border-soft-grey dark:border-slate-700 rounded-xl px-3 py-2.5
+                               text-sm text-navy-deep dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:border-primary">
+                    <option value="">— Selecciona un período —</option>
+                    {% for p in periodos %}
+                    <option value="{{ p.pk }}" {% if periodo_id == p.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ p }} {% if p.activo %}(Activo){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Panel: fin de año #}
+            <div id="panel-anual" class="hidden space-y-3">
+                <div class="flex items-center gap-2 mb-2">
+                    <label class="text-xs font-bold text-muted-blue uppercase tracking-wider">Año</label>
+                    <div class="flex gap-2 flex-wrap">
+                        {% for a in anios %}
+                        <a href="?anio={{ a }}&curso={{ curso_id }}"
+                           class="px-3 py-1 rounded-lg text-xs font-bold transition-all
+                                  {% if a == anio_sel %}bg-indigo-600 text-white{% else %}bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600{% endif %}">
+                            {{ a }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" name="anio" value="{{ anio_sel }}">
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">Períodos a incluir</label>
+                {% if periodos_anio %}
+                <div class="space-y-2">
+                    {% for p in periodos_anio %}
+                    <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all
+                                  {% if p.pk|stringformat:'s' in ids_sel %}border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20
+                                  {% else %}border-soft-grey dark:border-slate-700 hover:border-indigo-300{% endif %}">
+                        <input type="checkbox" name="periodos_anio" value="{{ p.pk }}"
+                               {% if p.pk|stringformat:"s" in ids_sel %}checked{% endif %}
+                               class="accent-indigo-600 w-4 h-4">
+                        <span class="text-sm font-bold text-navy-deep dark:text-white">{{ p }}</span>
+                        <span class="text-xs text-muted-blue">{{ p.fecha_inicio|date:"d/m" }} → {{ p.fecha_fin|date:"d/m" }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-sm text-muted-blue italic">Sin períodos para {{ anio_sel }}.</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" name="descargar" value="1"
+                    class="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white
+                           px-4 py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">
+                <span class="material-symbols-outlined text-sm">print</span>
+                Generar PDF del curso
+            </button>
+
+        </form>
+    </div>
+
+    {# ── Info panel ── #}
+    <div class="space-y-5">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+            <h3 class="font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-600">info</span>
+                ¿Cómo funciona?
+            </h3>
+            <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                <div class="flex items-start gap-3">
+                    <span class="size-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black shrink-0 mt-0.5">1</span>
+                    <p>Selecciona el <strong class="text-navy-deep dark:text-white">curso</strong> que quieres imprimir.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="size-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black shrink-0 mt-0.5">2</span>
+                    <p>Elige <strong class="text-navy-deep dark:text-white">Por Período</strong> para un trimestre/semestre específico, o <strong class="text-navy-deep dark:text-white">Fin de Año</strong> para el informe anual completo.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="size-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black shrink-0 mt-0.5">3</span>
+                    <p>Descarga el PDF con <strong class="text-navy-deep dark:text-white">una página por alumno</strong>, listo para imprimir.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800 p-5">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-indigo-600">picture_as_pdf</span>
+                <p class="font-bold text-indigo-800 dark:text-indigo-300 text-sm">Contenido del PDF</p>
+            </div>
+            <div id="info-periodo" class="space-y-1.5 text-sm text-indigo-700 dark:text-indigo-400">
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Datos del alumno</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Notas con tipo de evaluación</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Promedio del período</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Asistencia del período</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Anotaciones y firmas</div>
+            </div>
+            <div id="info-anual" class="hidden space-y-1.5 text-sm text-indigo-700 dark:text-indigo-400">
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Promedio por asignatura en cada período</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Promedio anual por asignatura</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Asistencia por período y total anual</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Situación: Aprobado / Promovido</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check</span>Firmas de Director, Profesor y Apoderado</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const radioPeriodo = document.getElementById('radio-periodo');
+const radioAnual   = document.getElementById('radio-anual');
+const tabPeriodo   = document.getElementById('tab-periodo');
+const tabAnual     = document.getElementById('tab-anual');
+const panelPeriodo = document.getElementById('panel-periodo');
+const panelAnual   = document.getElementById('panel-anual');
+const infoPeriodo  = document.getElementById('info-periodo');
+const infoAnual    = document.getElementById('info-anual');
+
+function switchTipo(tipo) {
+    if (tipo === 'periodo') {
+        tabPeriodo.classList.add('border-indigo-500','bg-indigo-50','dark:bg-indigo-900/20');
+        tabPeriodo.classList.remove('border-soft-grey','dark:border-slate-700');
+        tabAnual.classList.remove('border-indigo-500','bg-indigo-50','dark:bg-indigo-900/20');
+        tabAnual.classList.add('border-soft-grey','dark:border-slate-700');
+        tabPeriodo.querySelector('.material-symbols-outlined').classList.replace('text-slate-400','text-indigo-600');
+        tabAnual.querySelector('.material-symbols-outlined').classList.replace('text-indigo-600','text-slate-400');
+        panelPeriodo.classList.remove('hidden');
+        panelAnual.classList.add('hidden');
+        infoPeriodo.classList.remove('hidden');
+        infoAnual.classList.add('hidden');
+        radioPeriodo.checked = true;
+    } else {
+        tabAnual.classList.add('border-indigo-500','bg-indigo-50','dark:bg-indigo-900/20');
+        tabAnual.classList.remove('border-soft-grey','dark:border-slate-700');
+        tabPeriodo.classList.remove('border-indigo-500','bg-indigo-50','dark:bg-indigo-900/20');
+        tabPeriodo.classList.add('border-soft-grey','dark:border-slate-700');
+        tabAnual.querySelector('.material-symbols-outlined').classList.replace('text-slate-400','text-indigo-600');
+        tabPeriodo.querySelector('.material-symbols-outlined').classList.replace('text-indigo-600','text-slate-400');
+        panelAnual.classList.remove('hidden');
+        panelPeriodo.classList.add('hidden');
+        infoAnual.classList.remove('hidden');
+        infoPeriodo.classList.add('hidden');
+        radioAnual.checked = true;
+    }
+}
+
+tabPeriodo.addEventListener('click', () => switchTipo('periodo'));
+tabAnual.addEventListener('click',   () => switchTipo('anual'));
+</script>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+    <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-lg">notifications</span>
+            <h3 class="font-bold text-navy-deep dark:text-white text-sm">Avisos recientes</h3>
+        </div>
+        {% if notif_no_leidas %}
+        <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+            {% if notif_no_leidas > 99 %}99+{% else %}{{ notif_no_leidas }}{% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="divide-y divide-slate-100 dark:divide-slate-800">
+        {% for notif in notifs_recibidas %}
+        <a href="{% url 'notificaciones:ver' notif.pk %}"
+           class="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+            <span class="material-symbols-outlined text-base mt-0.5 shrink-0
+                {% if not notif.leida %}text-primary{% else %}text-slate-300{% endif %}">
+                {% if not notif.leida %}mark_email_unread{% else %}drafts{% endif %}
+            </span>
+            <div class="min-w-0">
+                <p class="text-xs font-semibold text-navy-deep dark:text-white truncate
+                    {% if not notif.leida %}font-bold{% endif %}">
+                    {{ notif.titulo|truncatechars:40 }}
+                </p>
+                <p class="text-[11px] text-slate-400 mt-0.5">{{ notif.fecha_envio|date:"d/m/Y" }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <div class="px-4 py-6 text-center">
+            <span class="material-symbols-outlined text-3xl text-slate-200 block mb-2">notifications_off</span>
+            <p class="text-xs text-slate-400">Sin avisos por ahora.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="px-4 py-3 border-t border-slate-200 dark:border-slate-800">
+        <a href="{% url 'notificaciones:bandeja' %}"
+           class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">inbox</span>
+            Ver bandeja completa
+        </a>
+    </div>
+</div>

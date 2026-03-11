@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block titulo %}Redactar mensaje — SGE{% endblock %}
+{% block main %}
+
+<div class="max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            {% if solo_admin %}
+            <h2 class="text-2xl font-extrabold text-navy-deep dark:text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">support_agent</span>
+                Escribir al colegio
+            </h2>
+            <p class="text-muted-blue text-sm mt-1">Tu mensaje será recibido por la administración del colegio</p>
+            {% else %}
+            <h2 class="text-2xl font-extrabold text-navy-deep dark:text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">edit</span>
+                Redactar mensaje
+            </h2>
+            <p class="text-muted-blue text-sm mt-1">Envía una notificación interna y/o por email</p>
+            {% endif %}
+        </div>
+        <a href="{% url 'notificaciones:bandeja' %}"
+           class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+                  text-slate-600 dark:text-slate-400 px-4 py-2 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            Volver
+        </a>
+    </div>
+
+    {% if solo_admin %}
+    {# ── MODO ALUMNO / APODERADO: va directo al admin ── #}
+    <div class="bg-primary/5 border border-primary/20 rounded-xl px-5 py-4 mb-5 flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-2xl shrink-0">info</span>
+        <p class="text-sm text-slate-700 dark:text-slate-300">
+            Tu mensaje será enviado directamente a la <span class="font-bold text-primary">administración del colegio</span>.
+            Recibirás respuesta a través de esta bandeja.
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+
+            {% if not solo_admin %}
+            {# ── Selector de destinatario (admin y profesor) ── #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Destinatario <span class="text-red-500">*</span>
+                </label>
+                <select name="destinatario" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                               bg-white dark:bg-slate-800 text-sm text-navy-deep dark:text-white
+                               focus:outline-none focus:border-primary transition-all">
+                    <option value="">— Selecciona un destinatario —</option>
+                    {% regroup destinatarios by get_rol_display as grupos %}
+                    {% for grupo in grupos %}
+                    <optgroup label="{{ grupo.grouper }}">
+                        {% for u in grupo.list %}
+                        <option value="{{ u.pk }}">{{ u.get_full_name }} ({{ u.email }})</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+
+            {# Asunto #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Asunto <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="titulo" required maxlength="200"
+                       placeholder="{% if solo_admin %}Ej: Consulta sobre mi situación académica{% else %}Ej: Reunión de apoderados — Lunes 10{% endif %}"
+                       class="w-full px-4 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                              bg-white dark:bg-slate-800 text-sm text-navy-deep dark:text-white
+                              focus:outline-none focus:border-primary transition-all">
+            </div>
+
+            {# Mensaje #}
+            <div>
+                <label class="block text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">
+                    Mensaje <span class="text-red-500">*</span>
+                </label>
+                <textarea name="mensaje" required rows="7"
+                          placeholder="Escribe tu mensaje aquí..."
+                          class="w-full px-4 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                                 bg-white dark:bg-slate-800 text-sm text-navy-deep dark:text-white
+                                 focus:outline-none focus:border-primary transition-all resize-none"></textarea>
+            </div>
+
+            {# Enviar también por email #}
+            <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-soft-grey dark:border-slate-700">
+                <input type="checkbox" name="enviar_email" id="enviar_email"
+                       class="w-4 h-4 accent-primary cursor-pointer">
+                <div>
+                    <label for="enviar_email" class="text-sm font-bold text-navy-deep dark:text-white cursor-pointer flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">mail</span>
+                        Enviar también por email
+                    </label>
+                    <p class="text-xs text-muted-blue mt-0.5">
+                        {% if solo_admin %}Se enviará al correo del administrador
+                        {% else %}Se enviará al correo registrado del destinatario{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            {# Botones #}
+            <div class="flex gap-3 pt-2">
+                <button type="submit"
+                        class="flex-1 flex items-center justify-center gap-2 bg-primary text-white
+                               py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-sm">send</span>
+                    {% if solo_admin %}Enviar mensaje al colegio{% else %}Enviar notificación{% endif %}
+                </button>
+                <a href="{% url 'notificaciones:bandeja' %}"
+                   class="px-6 py-2.5 rounded-xl border border-soft-grey dark:border-slate-700
+                          text-slate-600 dark:text-slate-400 font-bold text-sm hover:border-primary hover:text-primary transition-all">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

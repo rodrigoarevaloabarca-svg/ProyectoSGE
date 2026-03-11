@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% block titulo %}Portal Alumno - SGE{% endblock %}
+{% block main %}
+{% if not alumno %}
+    <div class="max-w-lg mx-auto mt-20 text-center bg-white dark:bg-slate-900 rounded-xl border border-amber-200 p-10">
+        <span class="material-symbols-outlined text-5xl text-amber-400 block mb-4">warning</span>
+        <h2 class="text-xl font-bold text-navy-deep dark:text-white mb-2">Perfil incompleto</h2>
+        <p class="text-muted-blue text-sm">
+            Tu cuenta de usuario existe, pero aún no tiene un perfil de alumno asociado.<br>
+            Contacta al administrador del sistema.
+        </p>
+    </div>
+{% else %}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-0 min-h-[calc(100vh-64px)] -mx-4 md:-mx-10 lg:-mx-20 -mt-8">
+
+    {# ===== SIDEBAR IZQUIERDO ===== #}
+    <aside class="md:col-span-3 lg:col-span-2 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <div class="flex flex-col h-full justify-between">
+            <div class="flex flex-col gap-4">
+                <div class="px-3 pt-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Portal Alumno</p>
+                </div>
+                <nav class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-primary/10 text-primary font-semibold"
+                       href="{% url 'dashboard:inicio' %}">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="text-sm">Vista General</span>
+                    </a>
+                    {# ← Avisos con badge de notificaciones no leídas #}
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'notificaciones:bandeja' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">notifications</span>
+                        <span class="text-sm flex-1">Avisos</span>
+                        {% if notif_no_leidas %}
+                        <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                            {% if notif_no_leidas > 99 %}99+{% else %}{{ notif_no_leidas }}{% endif %}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'alumnos:detalle' alumno.pk %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">grade</span>
+                        <span class="text-sm">Mis Notas</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'asistencia:historial_alumno' alumno.pk %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">event_available</span>
+                        <span class="text-sm">Mi Asistencia</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'anotaciones:alumno' alumno.pk %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">notes</span>
+                        <span class="text-sm">Mis Anotaciones</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'usuarios:perfil' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">manage_accounts</span>
+                        <span class="text-sm">Mi Perfil</span>
+                    </a>
+                </nav>
+            </div>
+
+            {# Perfil rápido #}
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shrink-0">
+                        {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-navy-deep dark:text-white leading-tight">
+                            {{ alumno.usuario.first_name }}
+                        </p>
+                        <p class="text-sm font-bold text-navy-deep dark:text-white leading-tight">
+                            {{ alumno.usuario.last_name }}
+                        </p>
+                        <p class="text-xs text-muted-blue mt-0.5">{{ alumno.curso }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    {# ===== CONTENIDO CENTRAL ===== #}
+    <section class="md:col-span-6 lg:col-span-7 p-6 overflow-y-auto bg-background-light dark:bg-background-dark">
+        <div class="max-w-5xl mx-auto space-y-8">
+
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100">Mi Portal Académico</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">
+                    Bienvenido, <span class="font-bold text-primary">{{ alumno.nombre_completo }}</span>.
+                    Curso: <span class="font-semibold">{{ alumno.curso }}</span>
+                </p>
+            </div>
+
+            {# Tarjetas resumen #}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 text-sm font-medium">Promedio General</span>
+                        <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">grade</span>
+                    </div>
+                    <p class="text-3xl font-bold
+                        {% if promedio_general >= 4.0 %}text-emerald-600
+                        {% elif promedio_general %}text-red-500
+                        {% else %}text-slate-400{% endif %}">
+                        {{ promedio_general|default:"—" }}
+                    </p>
+                    <p class="text-sm font-semibold
+                        {% if promedio_general >= 4.0 %}text-emerald-600
+                        {% elif promedio_general %}text-red-500
+                        {% else %}text-slate-400{% endif %}">
+                        {% if promedio_general >= 4.0 %}✓ Aprobado
+                        {% elif promedio_general %}⚠ En riesgo
+                        {% else %}Sin notas aún{% endif %}
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 text-sm font-medium">Mi Asistencia</span>
+                        <span class="material-symbols-outlined text-amber-500 bg-amber-500/10 p-2 rounded-lg">event_available</span>
+                    </div>
+                    <p class="text-3xl font-bold
+                        {% if porcentaje_asistencia >= 85 %}text-emerald-600
+                        {% elif porcentaje_asistencia %}text-amber-500
+                        {% else %}text-slate-400{% endif %}">
+                        {% if porcentaje_asistencia %}{{ porcentaje_asistencia }}%{% else %}—{% endif %}
+                    </p>
+                    <a href="{% url 'asistencia:historial_alumno' alumno.pk %}"
+                       class="text-xs font-bold text-primary hover:underline mt-1">Ver días →</a>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 text-sm font-medium">Anotaciones</span>
+                        <span class="material-symbols-outlined text-purple-500 bg-purple-500/10 p-2 rounded-lg">notes</span>
+                    </div>
+                    <p class="text-3xl font-bold text-slate-900 dark:text-white">
+                        {{ anotaciones.count|default:"0" }}
+                    </p>
+                    <a href="{% url 'anotaciones:alumno' alumno.pk %}"
+                       class="text-xs font-bold text-primary hover:underline mt-1">Ver todas →</a>
+                </div>
+            </div>
+
+            {# Tabla de notas #}
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-navy-deep dark:text-white">Mis Notas por Asignatura</h3>
+                    <span class="text-xs text-muted-blue">Escala 1.0 — 7.0 · Aprobación: 4.0</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-xs">
+                            <tr>
+                                <th class="px-6 py-3">Asignatura</th>
+                                <th class="px-6 py-3">Profesor</th>
+                                <th class="px-6 py-3 text-center">Promedio</th>
+                                <th class="px-6 py-3 text-center">Estado</th>
+                                <th class="px-6 py-3 text-center">Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            {% for promedio_obj in promedios %}
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
+                                            {{ promedio_obj.asignatura.nombre|slice:":2"|upper }}
+                                        </div>
+                                        <span class="font-medium text-navy-deep dark:text-white">{{ promedio_obj.asignatura.nombre }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
+                                    {% if promedio_obj.asignatura.profesor %}
+                                        {{ promedio_obj.asignatura.profesor.nombre_completo }}
+                                    {% else %}
+                                        <span class="italic text-slate-300">Sin asignar</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-xl font-bold
+                                        {% if promedio_obj.promedio >= 4.0 %}text-emerald-600
+                                        {% elif promedio_obj.promedio %}text-red-500
+                                        {% else %}text-slate-300{% endif %}">
+                                        {{ promedio_obj.promedio|default:"—" }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    {% if promedio_obj.promedio %}
+                                        {% if promedio_obj.promedio >= 4.0 %}
+                                        <span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">Aprobado</span>
+                                        {% else %}
+                                        <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold">En riesgo</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-400 text-xs font-bold">Sin notas</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <a href="{% url 'notas:detalle' alumno.pk promedio_obj.asignatura.pk %}"
+                                       class="text-primary hover:underline text-xs font-bold">Ver notas</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                                    <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">grade</span>
+                                    No hay notas registradas aún.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ===== SIDEBAR DERECHO ===== #}
+    <aside class="md:col-span-3 lg:col-span-3 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 overflow-y-auto">
+        <div class="space-y-6">
+
+            {# Panel de notificaciones #}
+            {% include 'dashboard/includes/panel_notif_alumno.html' %}
+
+            {# Anotaciones recientes #}
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-lg font-bold text-navy-deep dark:text-white">Mis Anotaciones</h3>
+                    <span class="material-symbols-outlined text-slate-400">notes</span>
+                </div>
+                <div class="space-y-3">
+                    {% for anotacion in anotaciones %}
+                    <div class="p-4 rounded-xl border transition-all
+                        {% if anotacion.tipo == 'positiva' %}bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/20
+                        {% elif anotacion.tipo == 'negativa' %}bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/20
+                        {% else %}bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800{% endif %}">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase text-white
+                                {% if anotacion.tipo == 'positiva' %}bg-emerald-500
+                                {% elif anotacion.tipo == 'negativa' %}bg-red-500
+                                {% else %}bg-slate-400{% endif %}">
+                                {{ anotacion.get_tipo_display }}
+                            </span>
+                            <span class="text-xs text-slate-500">{{ anotacion.fecha }}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                            {{ anotacion.descripcion|truncatechars:80 }}
+                        </p>
+                        <p class="text-xs text-slate-400 mt-2">
+                            Por: {{ anotacion.creado_por.get_full_name|default:"Sistema" }}
+                        </p>
+                    </div>
+                    {% empty %}
+                    <div class="p-6 text-center text-slate-400">
+                        <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">notes</span>
+                        <p class="text-sm">Sin anotaciones registradas.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if anotaciones.count > 0 %}
+                <a href="{% url 'anotaciones:alumno' alumno.pk %}"
+                   class="mt-4 w-full flex items-center justify-center py-3 text-sm font-bold text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl hover:text-primary hover:border-primary transition-all">
+                    Ver todas las anotaciones
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </aside>
+
+</div>
+{% endif %}
+{% endblock %}

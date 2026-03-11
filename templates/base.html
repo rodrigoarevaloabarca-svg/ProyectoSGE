@@ -1,0 +1,328 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block titulo %}Sistema de Gestión Escolar (SGE){% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#197fe6",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                    "navy-deep": "#0d1b2a",
+                    "muted-blue": "#6b7fa3",
+                    "soft-grey": "#e2e8f0",
+                },
+                fontFamily: { "display": ["Lexend", "sans-serif"] }
+            },
+        },
+    }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <script src="{% static 'js/config.js' %}" defer></script>
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen flex-col">
+
+    {# ===== HEADER / NAVBAR ===== #}
+    <header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-soft-grey dark:border-slate-800 px-4 md:px-10 lg:px-20 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+            {# Logo #}
+            <div class="flex items-center gap-8">
+                <a href="{% url 'dashboard:inicio' %}" class="flex items-center gap-3 text-primary">
+                    <div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <h1 class="text-navy-deep dark:text-white text-lg font-bold tracking-tight hidden lg:block">SGE</h1>
+                </a>
+
+                {% if user.is_authenticated %}
+                <nav class="hidden md:flex items-center gap-1">
+
+                    <a class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-navy-deep dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all"
+                       href="{% url 'dashboard:inicio' %}">
+                        <span class="material-symbols-outlined text-sm">dashboard</span>
+                        Inicio
+                    </a>
+
+                    {% if user.es_admin or user.es_profesor %}
+                    <a class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all"
+                       href="{% url 'alumnos:lista' %}">
+                        <span class="material-symbols-outlined text-sm">group</span>
+                        Alumnos
+                    </a>
+                    <a class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all"
+                       href="{% url 'cursos:lista' %}">
+                        <span class="material-symbols-outlined text-sm">calendar_month</span>
+                        Cursos
+                    </a>
+                    <a class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all"
+                       href="{% url 'asignaturas:lista' %}">
+                        <span class="material-symbols-outlined text-sm">menu_book</span>
+                        Asignaturas
+                    </a>
+
+                    {# ── MENÚ DESPLEGABLE INFORMES (admin y profesor) ── #}
+                    <div class="relative group">
+                        <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                            <span class="material-symbols-outlined text-sm">description</span>
+                            Informes
+                            <span class="material-symbols-outlined text-xs">expand_more</span>
+                        </button>
+                        <div class="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-xl py-2
+                                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                            <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Períodos</p>
+                            <a href="{% url 'informes:lista_periodos' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">calendar_month</span>
+                                Ver Períodos
+                            </a>
+                            {% if user.es_admin %}
+                            <a href="{% url 'informes:crear_periodo' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">add_circle</span>
+                                Crear Período
+                            </a>
+                            {% endif %}
+                            <div class="border-t border-soft-grey dark:border-slate-800 my-1"></div>
+                            <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informes</p>
+                            {% if user.es_admin %}
+                            <a href="{% url 'informes:dashboard' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">summarize</span>
+                                Centro de Informes
+                            </a>
+                            <a href="{% url 'informes:impresion_masiva' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">print</span>
+                                Impresión Masiva
+                            </a>
+                            <div class="border-t border-soft-grey dark:border-slate-800 my-1"></div>
+                            {% endif %}
+                            <a href="{% url 'informes:seleccionar' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">person</span>
+                                Informe Individual
+                            </a>
+                            <a href="{% url 'informes:ranking_curso' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">leaderboard</span>
+                                Ranking por Curso
+                            </a>
+                            <a href="{% url 'informes:fin_anio' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                <span class="material-symbols-outlined text-sm">event_available</span>
+                                Fin de Año
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if user.es_admin %}
+                    <a class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all"
+                       href="{% url 'profesores:lista' %}">
+                        <span class="material-symbols-outlined text-sm">badge</span>
+                        Profesores
+                    </a>
+
+                    {# ── MENÚ DESPLEGABLE ADMIN ── #}
+                    <div class="relative group">
+                        <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all">
+                            <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
+                            Admin
+                            <span class="material-symbols-outlined text-xs">expand_more</span>
+                        </button>
+                        <div class="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-xl py-2
+                                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                            <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Usuarios</p>
+                            <a href="{% url 'usuarios:lista' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                <span class="material-symbols-outlined text-sm">manage_accounts</span>
+                                Lista de Usuarios
+                            </a>
+                            <a href="{% url 'usuarios:crear' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                <span class="material-symbols-outlined text-sm">person_add</span>
+                                Crear Usuario
+                            </a>
+                            <div class="border-t border-soft-grey dark:border-slate-800 my-1"></div>
+                            <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Otros</p>
+                            <a href="{% url 'apoderados:lista' %}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                <span class="material-symbols-outlined text-sm">supervisor_account</span>
+                                Apoderados
+                            </a>
+                            <a href="/admin/"
+                               class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                <span class="material-symbols-outlined text-sm">settings</span>
+                                Panel Django Admin
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </nav>
+                {% endif %}
+            </div>
+
+            {# Botones derecha #}
+            <div class="flex items-center gap-3">
+                {% if user.is_authenticated %}
+                    <div class="hidden md:flex flex-col items-end">
+                        <span class="text-sm font-semibold text-navy-deep dark:text-slate-300 leading-tight">
+                            {{ user.get_full_name|default:user.username }}
+                        </span>
+                        <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold mt-0.5">
+                            {{ user.get_rol_display|default:"Usuario" }}
+                        </span>
+                    </div>
+                    <a href="{% url 'usuarios:perfil' %}" title="Mi perfil"
+                       class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm hover:bg-primary hover:text-white transition-all">
+                        {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+                    </a>
+                    <form method="post" action="{% url 'usuarios:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all">
+                            <span class="material-symbols-outlined text-sm">logout</span>
+                            <span class="hidden md:inline">Salir</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'usuarios:login' %}"
+                       class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
+                        <span class="material-symbols-outlined text-sm">login</span>
+                        Iniciar Sesión
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {# ===== MENSAJES DJANGO ===== #}
+    {% if messages %}
+    <div class="max-w-7xl mx-auto w-full px-4 md:px-10 lg:px-20 mt-4 space-y-2">
+        {% for message in messages %}
+        <div class="flex items-center gap-3 p-3 rounded-xl text-sm font-medium
+            {% if message.tags == 'success' %}bg-emerald-100 text-emerald-800 border border-emerald-200
+            {% elif message.tags == 'error' or message.tags == 'danger' %}bg-red-100 text-red-800 border border-red-200
+            {% elif message.tags == 'warning' %}bg-amber-100 text-amber-800 border border-amber-200
+            {% else %}bg-blue-100 text-blue-800 border border-blue-200{% endif %}">
+            <span class="material-symbols-outlined text-sm">
+                {% if message.tags == 'success' %}check_circle
+                {% elif message.tags == 'error' or message.tags == 'danger' %}error
+                {% elif message.tags == 'warning' %}warning
+                {% else %}info{% endif %}
+            </span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# ===== BREADCRUMB ===== #}
+    {% block breadcrumb %}
+    {% if breadcrumbs %}
+    <div class="max-w-7xl mx-auto w-full px-4 md:px-10 lg:px-20 pt-4">
+        <nav class="flex items-center gap-1.5 text-xs text-muted-blue flex-wrap">
+            <a href="{% url 'dashboard:inicio' %}"
+               class="flex items-center gap-1 hover:text-primary transition-colors font-medium">
+                <span class="material-symbols-outlined text-sm">home</span>
+                Inicio
+            </a>
+            {% for crumb in breadcrumbs %}
+            <span class="material-symbols-outlined text-xs text-slate-300">chevron_right</span>
+            {% if crumb.url and not forloop.last %}
+                <a href="{{ crumb.url }}" class="hover:text-primary transition-colors font-medium">{{ crumb.label }}</a>
+            {% else %}
+                <span class="text-navy-deep dark:text-white font-semibold">{{ crumb.label }}</span>
+            {% endif %}
+            {% endfor %}
+        </nav>
+    </div>
+    {% endif %}
+    {% endblock %}
+
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 md:px-10 lg:px-20 py-8">
+        {% block main %}{% endblock %}
+    </main>
+
+    {# ===== FOOTER ===== #}
+    <footer class="bg-navy-deep text-slate-400 py-12 px-4 md:px-10 lg:px-20 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
+                <div>
+                    <div class="flex items-center gap-3 text-white mb-6">
+                        <span class="material-symbols-outlined text-primary">school</span>
+                        <span class="text-xl font-bold">SGE</span>
+                    </div>
+                    <p class="text-sm leading-relaxed max-w-xs">
+                        Comprometidos con la excelencia académica y la innovación digital en la gestión educativa.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-6">Accesos Rápidos</h4>
+                    <ul class="space-y-4 text-sm">
+                        {% if user.is_authenticated %}
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'dashboard:inicio' %}">Dashboard</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'usuarios:perfil' %}">Mi Perfil</a></li>
+                        {% if user.es_admin or user.es_profesor %}
+                        {% if user.es_admin %}<li><a class="hover:text-primary transition-colors" href="{% url 'informes:dashboard' %}">Centro de Informes</a></li>{% endif %}
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'informes:seleccionar' %}">Informe Individual</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'informes:lista_periodos' %}">Períodos Académicos</a></li>
+                        {% endif %}
+                        {% if user.es_admin %}
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'usuarios:lista' %}">Gestión Usuarios</a></li>
+                        {% endif %}
+                        {% else %}
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'usuarios:login' %}">Iniciar Sesión</a></li>
+                        {% endif %}
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'reglamento' %}">Reglamento</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{% url 'terminos' %}">Privacidad</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-6">Contacto</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary text-lg">location_on</span>
+                            <span>Rancagua, Chile</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary text-lg">call</span>
+                            <span>+56 9 9999999</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary text-lg">mail</span>
+                            <a href="mailto:Rodrigoarevaloabarca@gmail.com" class="hover:text-primary transition-colors">
+                                Rodrigoarevaloabarca@gmail.com
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+                <p>© 2026 Sistema de Gestión Escolar (SGE). Todos los derechos reservados.</p>
+                <div class="flex items-center gap-6">
+                    <a class="hover:text-white transition-colors" href="#">Facebook</a>
+                    <a class="hover:text-white transition-colors" href="#">Instagram</a>
+                    <a class="hover:text-white transition-colors" href="#">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>

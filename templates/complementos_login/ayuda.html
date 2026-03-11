@@ -1,0 +1,162 @@
+{% extends 'loginbase.html' %}
+{% block titulo %}Ayuda{% endblock %}
+
+{% block main %}
+<main class="flex flex-1 flex-col items-center">
+    <!-- Hero Search Section -->
+    <section class="w-full bg-slate-100 dark:bg-slate-900 py-16 px-6">
+        <div class="max-w-[960px] mx-auto flex flex-col items-center gap-8">
+            <div class="flex flex-col gap-3 text-center">
+                <h1 class="text-slate-900 dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-tight">
+                                            ¿Cómo podemos ayudarte hoy?
+                                        </h1>
+                <p class="text-slate-600 dark:text-slate-400 text-base md:text-lg max-w-2xl">
+                                            Busca en nuestra base de conocimientos soluciones, guías paso a paso y tutoriales detallados.
+                                        </p>
+            </div>
+            <div class="w-full max-w-[640px]">
+                <label class="relative flex items-center">
+                <span class="material-symbols-outlined absolute left-4 text-slate-400">search</span>
+                <input class="w-full h-14 md:h-16 pl-12 pr-32 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm" placeholder="Buscar soluciones, problemas técnicos..." type="text"/>
+                <button class="absolute right-2 h-10 md:h-12 px-6 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all">
+                                                    Buscar
+                                                </button>
+                </label>
+            </div>
+        </div>
+    </section>
+    <!-- Category Grid -->
+    <section class="max-w-[1200px] w-full px-6 py-16">
+    <h2 class="text-slate-900 dark:text-white text-2xl font-bold mb-8 px-2">Explorar por Categoría</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+            <div class="group flex flex-col p-6 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
+                <div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white">rocket_launch</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Primeros Pasos</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                                ¿Nuevo en SGE? Comienza aquí con nuestra guía básica de configuración y recorrido inicial.
+                                            </p>
+            </div>
+            <!-- Card 2 -->
+            <div class="group flex flex-col p-6 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
+                <div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white">group</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Gestión de Alumnos</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                                Administra matriculaciones, calificaciones, asistencias y expedientes académicos de los estudiantes.
+                                        </p>
+            </div>
+            <!-- Card 3 -->
+            <div class="group flex flex-col p-6 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
+                <div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                     <span class="material-symbols-outlined text-primary group-hover:text-white">edit_calendar</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Herramientas Docentes</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                                Planificación de lecciones, evaluación continua y herramientas de productividad para profesores.
+                                        </p>
+            </div>
+            <!-- Card 4 -->
+            <div class="group flex flex-col p-6 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
+                <div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white">family_restroom</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Portal para Familias</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                                Recursos para que las familias realicen el seguimiento del progreso académico y comunicación.
+                                        </p>
+            </div>
+            <!-- Card 5 -->
+            <div class="group flex flex-col p-6 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
+                <div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white">construction</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Soporte Técnico</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                            Solución a problemas comunes de acceso, plataforma y compatibilidad de dispositivos.
+                                        </p>
+            </div>
+            <!-- Card 6 -->
+            <div class="group flex flex-col p-6 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
+                <div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white">account_balance</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Facturación y Admin</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                            Gestión de facturas, planes de suscripción y ajustes administrativos globales del centro.
+                                        </p>
+            </div>
+        </div>
+    </section>
+    <!-- FAQ Section -->
+    <section class="max-w-[960px] w-full px-6 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-slate-900 dark:text-white text-3xl font-bold mb-4">Preguntas Frecuentes</h2>
+            <p class="text-slate-600 dark:text-slate-400">Encuentra respuestas rápidas a las dudas más habituales de nuestra comunidad.</p>
+        </div>
+        <div class="space-y-4">
+            <!-- FAQ Item 1 -->
+            <details class="group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden" open="">
+            <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+            <h4 class="text-slate-900 dark:text-white font-semibold">¿Cómo recupero mi contraseña de acceso?</h4>
+            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-100 dark:border-slate-700 pt-4">
+                                            Para recuperar tu contraseña, haz clic en "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión. Recibirás un correo electrónico con un enlace seguro para establecer una nueva clave. Asegúrate de revisar tu carpeta de spam.
+                                        </div>
+            </details>
+            <!-- FAQ Item 2 -->
+            <details class="group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+            <h4 class="text-slate-900 dark:text-white font-semibold">¿Dónde puedo ver las notas finales del trimestre?</h4>
+            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-100 dark:border-slate-700 pt-4">
+                                            Las notas finales se encuentran en la sección "Expediente" dentro del menú principal. Una vez que el docente publique las calificaciones, aparecerán automáticamente en tu panel y recibirás una notificación.
+                                        </div>
+            </details>
+            <!-- FAQ Item 3 -->
+            <details class="group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+            <h4 class="text-slate-900 dark:text-white font-semibold">¿Es posible integrar SGE con Google Classroom?</h4>
+            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-100 dark:border-slate-700 pt-4">
+                                            Sí, SGE cuenta con integración directa. Los administradores pueden habilitarla desde el panel de Configuración &gt; Integraciones. Esto permite sincronizar tareas, calendarios y calificaciones de forma bidireccional.
+                                        </div>
+            </details>
+            <!-- FAQ Item 4 -->
+            <details class="group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+            <h4 class="text-slate-900 dark:text-white font-semibold">¿Cómo contacto con soporte si mi duda no está aquí?</h4>
+            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-100 dark:border-slate-700 pt-4">
+                                            Puedes abrir un ticket de soporte directamente desde el botón "Contacto" en el menú superior o escribirnos a soporte@sge-plataforma.edu. Nuestro tiempo de respuesta habitual es inferior a 24 horas laborables.
+                                        </div>
+            </details>
+        </div>
+    </section>
+    <!-- Contact CTA -->
+    <section class="w-full max-w-[1200px] px-6 pb-20">
+        <div class="bg-primary rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-white relative overflow-hidden">
+            <div class="relative z-10 flex flex-col gap-4 max-w-xl text-center md:text-left">
+                <h3 class="text-2xl md:text-3xl font-bold">¿Aún necesitas ayuda personalizada?</h3>
+                <p class="text-primary-foreground/90 opacity-90">Nuestro equipo de expertos está disponible para ayudarte a resolver cualquier duda técnica o administrativa.</p>
+            </div>
+            <div class="relative z-10 flex gap-4">
+             <a href="{% url 'contacto' %}" class="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md inline-block text-center">
+                Contactar Soporte
+            </a>
+            </div>
+            <!-- Background Pattern Decor -->
+            <div class="absolute -right-10 -bottom-10 opacity-10">
+             <span class="material-symbols-outlined text-[200px]">help</span>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

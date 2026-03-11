@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block titulo %}Historial Asistencia - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="javascript:history.back()" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Historial de Asistencia</h2>
+        <p class="text-muted-blue mt-1">{{ alumno.nombre_completo }} · {{ alumno.curso }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 text-center">
+        <span class="material-symbols-outlined text-3xl text-emerald-500 mb-2 block">event_available</span>
+        <p class="text-4xl font-black text-emerald-600">{{ total_presentes }}</p>
+        <p class="text-muted-blue text-sm mt-1">Clases presentes</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 text-center">
+        <span class="material-symbols-outlined text-3xl text-red-400 mb-2 block">event_busy</span>
+        <p class="text-4xl font-black text-red-500">{{ total_ausentes }}</p>
+        <p class="text-muted-blue text-sm mt-1">Clases ausentes</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 text-center">
+        <span class="material-symbols-outlined text-3xl text-primary mb-2 block">percent</span>
+        <p class="text-4xl font-black {% if porcentaje >= 85 %}text-emerald-600{% elif porcentaje %}text-amber-500{% else %}text-slate-400{% endif %}">
+            {% if porcentaje %}{{ porcentaje }}%{% else %}—{% endif %}
+        </p>
+        <p class="text-muted-blue text-sm mt-1">Porcentaje asistencia</p>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+    <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800">
+        <h4 class="font-bold text-navy-deep dark:text-white">Registros por Asignatura</h4>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase">
+                <tr>
+                    <th class="px-6 py-3 text-left">Fecha</th>
+                    <th class="px-6 py-3 text-left">Asignatura</th>
+                    <th class="px-6 py-3 text-center">Estado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for registro in registros %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-3 text-muted-blue">{{ registro.fecha }}</td>
+                    <td class="px-6 py-3 font-medium text-navy-deep dark:text-white">{{ registro.asignatura.nombre }}</td>
+                    <td class="px-6 py-3 text-center">
+                        {% if registro.estado == 'presente' %}
+                        <span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">Presente</span>
+                        {% elif registro.estado == 'ausente' %}
+                        <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold">Ausente</span>
+                        {% elif registro.estado == 'atrasado' %}
+                        <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold">Atrasado</span>
+                        {% elif registro.estado == 'justificado' %}
+                        <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">Justificado</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-10 text-center text-muted-blue">Sin registros de asistencia.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ apoderado.nombre_completo }} - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'apoderados:lista' %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Ficha del Apoderado</h2>
+    {% if user.es_admin %}
+    <a href="{% url 'apoderados:editar' apoderado.pk %}" class="ml-auto flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-amber-600 transition-all text-sm">
+        <span class="material-symbols-outlined text-sm">edit</span> Editar
+    </a>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 text-center">
+            <div class="size-20 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-3xl mx-auto mb-4">
+                {{ apoderado.usuario.first_name|slice:":1" }}{{ apoderado.usuario.last_name|slice:":1" }}
+            </div>
+            <h3 class="text-xl font-bold text-navy-deep dark:text-white">{{ apoderado.nombre_completo }}</h3>
+            <span class="mt-2 inline-block px-3 py-1 rounded-full bg-teal-100 text-teal-700 text-sm font-bold">{{ apoderado.parentesco|default:"Apoderado" }}</span>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+            <h4 class="font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">contact_phone</span> Contacto
+            </h4>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between"><span class="text-muted-blue">RUT</span><span class="font-semibold">{{ apoderado.usuario.rut|default:"—" }}</span></div>
+                <div class="flex justify-between"><span class="text-muted-blue">Email</span><span class="font-semibold text-xs">{{ apoderado.usuario.email|default:"—" }}</span></div>
+                <div class="flex justify-between"><span class="text-muted-blue">Teléfono</span><span class="font-semibold">{{ apoderado.usuario.telefono|default:"—" }}</span></div>
+                <div class="flex justify-between"><span class="text-muted-blue">Dirección</span><span class="font-semibold text-xs text-right max-w-[150px]">{{ apoderado.direccion|default:"—" }}</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800">
+                <h4 class="font-bold text-navy-deep dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">family_restroom</span>
+                    Pupilos ({{ apoderado.alumnos.count }})
+                </h4>
+            </div>
+            <div class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for alumno in apoderado.alumnos.all %}
+                <div class="px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                            {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</p>
+                            <p class="text-xs text-muted-blue">{{ alumno.curso }} · Matrícula {{ alumno.numero_matricula }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-right">
+                            <p class="text-sm font-bold {% with p=alumno.get_promedio_general %}{% if p >= 4.0 %}text-emerald-600{% elif p %}text-red-500{% else %}text-slate-400{% endif %}{% endwith %}">
+                                Prom: {{ alumno.get_promedio_general|default:"—" }}
+                            </p>
+                        </div>
+                        <a href="{% url 'alumnos:detalle' alumno.pk %}" class="text-primary hover:underline text-sm font-bold">Ver ficha</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="px-6 py-8 text-center text-muted-blue">Sin pupilos asignados.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

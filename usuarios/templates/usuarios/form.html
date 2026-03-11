@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ titulo }} - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'usuarios:lista' %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">{{ titulo }}</h2>
+        <p class="text-muted-blue text-sm mt-0.5">Completa los campos para registrar el usuario en el sistema.</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl">
+
+    {# ── Panel izquierdo: guía de roles ── #}
+    <div class="space-y-4">
+        <h3 class="text-sm font-bold text-navy-deep dark:text-white">Roles disponibles</h3>
+
+        <div class="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="size-2 rounded-full bg-red-500 inline-block"></span>
+                <span class="text-red-600 font-bold text-sm">Administrador</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                Acceso total al sistema. Gestiona usuarios, cursos, profesores y toda la información del colegio.
+            </p>
+        </div>
+
+        <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800 p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="size-2 rounded-full bg-indigo-500 inline-block"></span>
+                <span class="text-indigo-600 font-bold text-sm">Profesor</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                Toma asistencia, ingresa notas y crea anotaciones en sus asignaturas asignadas.
+            </p>
+        </div>
+
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="size-2 rounded-full bg-primary inline-block"></span>
+                <span class="text-primary font-bold text-sm">Alumno</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                Visualiza sus notas, asistencia y anotaciones. Acceso de solo lectura a sus datos.
+            </p>
+        </div>
+
+        <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800 p-4">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="size-2 rounded-full bg-emerald-500 inline-block"></span>
+                <span class="text-emerald-600 font-bold text-sm">Apoderado</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                Ve el rendimiento y asistencia de sus pupilos vinculados. Solo lectura.
+            </p>
+        </div>
+
+        {# Aviso importante #}
+        <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-4">
+            <p class="text-xs text-amber-700 dark:text-amber-400 font-semibold flex items-start gap-2">
+                <span class="material-symbols-outlined text-sm mt-0.5 shrink-0">info</span>
+                Después de crear el usuario, ve a la sección correspondiente para crear su perfil (Profesor / Alumno / Apoderado).
+            </p>
+        </div>
+    </div>
+
+    {# ── Panel derecho: formulario ── #}
+    <div class="lg:col-span-2">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="space-y-5">
+                    {% for field in form %}
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                               for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                            <span class="text-red-500 ml-1">*</span>
+                            {% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">error</span>
+                            {{ field.errors|join:", " }}
+                        </p>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <p class="text-slate-400 text-xs mt-1">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="flex gap-3 mt-8 pt-6 border-t border-soft-grey dark:border-slate-800">
+                    <button type="submit"
+                            class="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">save</span>
+                        Guardar Usuario
+                    </button>
+                    <a href="{% url 'usuarios:lista' %}"
+                       class="flex-1 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-3 rounded-xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

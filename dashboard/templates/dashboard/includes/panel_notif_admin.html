@@ -1,0 +1,96 @@
+{% comment %}
+  PANEL NOTIFICACIONES — DASHBOARD ADMIN
+  Incluir en templates/dashboard/admin.html con:
+  {% include 'dashboard/includes/panel_notif_admin.html' %}
+{% endcomment %}
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+
+    {# Header #}
+    <div class="flex items-center justify-between px-5 py-4 border-b border-soft-grey dark:border-slate-800">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">notifications</span>
+            <h3 class="font-extrabold text-navy-deep dark:text-white">Notificaciones</h3>
+            {% if notif_no_leidas %}
+            <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-black rounded-full">{{ notif_no_leidas }}</span>
+            {% endif %}
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url 'notificaciones:masivo' %}"
+               class="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-all">
+                <span class="material-symbols-outlined text-xs">campaign</span> Envío masivo
+            </a>
+            <a href="{% url 'notificaciones:redactar' %}"
+               class="flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all">
+                <span class="material-symbols-outlined text-xs">edit</span> Redactar
+            </a>
+        </div>
+    </div>
+
+    {# Estadísticas rápidas #}
+    <div class="grid grid-cols-2 gap-px bg-soft-grey dark:bg-slate-700 border-b border-soft-grey dark:border-slate-800">
+        <div class="bg-white dark:bg-slate-900 px-5 py-3 text-center">
+            <p class="text-2xl font-black text-indigo-600">{{ sin_leer_sistema }}</p>
+            <p class="text-xs text-muted-blue mt-0.5">Sin leer en el sistema</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 px-5 py-3 text-center">
+            <p class="text-2xl font-black text-primary">{{ total_enviadas }}</p>
+            <p class="text-xs text-muted-blue mt-0.5">Total enviadas por ti</p>
+        </div>
+    </div>
+
+    {# Últimos envíos masivos #}
+    {% if ultimos_masivos %}
+    <div class="px-5 py-3 border-b border-soft-grey dark:border-slate-800">
+        <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-2">Últimos envíos masivos</p>
+        <div class="space-y-2">
+            {% for e in ultimos_masivos %}
+            <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-navy-deep dark:text-white truncate">{{ e.titulo }}</p>
+                    <p class="text-xs text-muted-blue">{{ e.get_destino_display }} · {{ e.total_enviados }} dest. · {{ e.fecha_envio|date:"d/m/Y" }}</p>
+                </div>
+                {% if e.enviado_email %}
+                <span class="material-symbols-outlined text-sm text-emerald-500 shrink-0" title="Enviado por email">mail</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Notificaciones recibidas #}
+    <div class="divide-y divide-soft-grey dark:divide-slate-800">
+        {% if notifs_recibidas %}
+            {% for n in notifs_recibidas %}
+            <a href="{% url 'notificaciones:ver' n.pk %}"
+               class="flex items-start gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all
+                      {% if not n.leida %}bg-primary/5{% endif %}">
+                <span class="material-symbols-outlined text-sm mt-0.5 {% if not n.leida %}text-primary{% else %}text-muted-blue{% endif %}">
+                    {% if n.leida %}drafts{% else %}mail{% endif %}
+                </span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm {% if not n.leida %}font-bold text-navy-deep dark:text-white{% else %}font-medium text-slate-600 dark:text-slate-400{% endif %} truncate">
+                        {{ n.titulo }}
+                    </p>
+                    <p class="text-xs text-muted-blue">{{ n.remitente.get_full_name }} · {{ n.fecha_envio|date:"d/m H:i" }}</p>
+                </div>
+                {% if not n.leida %}
+                <span class="size-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        {% else %}
+        <div class="px-5 py-6 text-center">
+            <span class="material-symbols-outlined text-3xl text-slate-300">notifications_off</span>
+            <p class="text-xs text-muted-blue mt-1">Sin notificaciones recibidas</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Footer #}
+    <div class="px-5 py-3 border-t border-soft-grey dark:border-slate-800 flex justify-between">
+        <a href="{% url 'notificaciones:bandeja' %}" class="text-xs text-primary font-bold hover:underline">Ver bandeja</a>
+        <a href="{% url 'notificaciones:enviadas' %}" class="text-xs text-muted-blue hover:text-primary transition-colors">Ver enviadas →</a>
+    </div>
+</div>

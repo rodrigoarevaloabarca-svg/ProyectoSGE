@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block titulo %}Alumnos - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Gestión de Alumnos</h2>
+        <p class="text-muted-blue mt-1">Total registrados: <span class="font-bold text-primary">{{ alumnos.count }}</span></p>
+    </div>
+    <a href="{% url 'alumnos:crear' %}"
+       class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined">person_add</span>
+        Nuevo Alumno
+    </a>
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="p-4 border-b border-soft-grey dark:border-slate-800 flex gap-3">
+        <input type="text" id="buscador" placeholder="Buscar alumno por nombre o RUT..."
+               class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+               onkeyup="filtrarTabla()"/>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="tablaAlumnos">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-3 text-left">Alumno</th>
+                    <th class="px-6 py-3 text-left">RUT</th>
+                    <th class="px-6 py-3 text-left">Curso</th>
+                    <th class="px-6 py-3 text-left">Matrícula</th>
+                    <th class="px-6 py-3 text-center">Promedio</th>
+                    <th class="px-6 py-3 text-center">Estado</th>
+                    <th class="px-6 py-3 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for alumno in alumnos %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                                {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</p>
+                                <p class="text-xs text-muted-blue">{{ alumno.usuario.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-muted-blue">{{ alumno.rut|default:"—" }}</td>
+                    <td class="px-6 py-4">
+                        {% if alumno.curso %}
+                        <span class="px-2 py-1 rounded-full text-xs font-bold
+                            {% if alumno.curso.nivel.tipo == 'basica' %}bg-blue-100 text-blue-700{% else %}bg-green-100 text-green-700{% endif %}">
+                            {{ alumno.curso }}
+                        </span>
+                        {% else %}
+                        <span class="text-red-400 text-xs italic">Sin curso</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-muted-blue font-mono text-xs">{{ alumno.numero_matricula }}</td>
+                    <td class="px-6 py-4 text-center">
+                        {% with promedio=alumno.get_promedio_general %}
+                        <span class="font-bold text-lg
+                            {% if promedio >= 4.0 %}text-emerald-600
+                            {% elif promedio %}text-red-500
+                            {% else %}text-slate-300{% endif %}">
+                            {{ promedio|default:"—" }}
+                        </span>
+                        {% endwith %}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        {% if alumno.activo %}
+                        <span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">Activo</span>
+                        {% else %}
+                        <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="{% url 'alumnos:detalle' alumno.pk %}"
+                               class="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
+                                <span class="material-symbols-outlined text-sm">visibility</span>
+                            </a>
+                            <a href="{% url 'alumnos:editar' alumno.pk %}"
+                               class="p-1.5 rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition-all" title="Editar">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </a>
+                            <a href="{% url 'anotaciones:alumno' alumno.pk %}"
+                               class="p-1.5 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-500 hover:text-white transition-all" title="Anotaciones">
+                                <span class="material-symbols-outlined text-sm">notes</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">group</span>
+                        No hay alumnos registrados.
+                        <a href="{% url 'alumnos:crear' %}" class="text-primary font-bold hover:underline block mt-1">Registrar el primero</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function filtrarTabla() {
+    const input = document.getElementById('buscador').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaAlumnos tbody tr');
+    filas.forEach(fila => {
+        fila.style.display = fila.textContent.toLowerCase().includes(input) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}400 - Solicitud incorrecta{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="display-1 fw-bold text-warning">400</h1>
+            <h2 class="mb-3">Solicitud incorrecta</h2>
+            <p class="text-muted mb-4">
+                La solicitud no pudo ser procesada debido a un error en los datos enviados.
+            </p>
+            <a href="{% url 'dashboard:inicio' %}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>Volver al inicio
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

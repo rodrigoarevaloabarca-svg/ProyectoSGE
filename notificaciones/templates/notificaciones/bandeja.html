@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block titulo %}Notificaciones — SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white flex items-center gap-3">
+            Notificaciones
+            {% if no_leidas %}
+            <span class="px-2.5 py-0.5 bg-red-500 text-white text-sm font-black rounded-full">{{ no_leidas }}</span>
+            {% endif %}
+        </h2>
+        <p class="text-muted-blue mt-1">Tus mensajes internos del sistema</p>
+    </div>
+    <div class="flex gap-2">
+        {% if no_leidas %}
+        <a href="{% url 'notificaciones:marcar_leidas' %}"
+           class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+                  text-slate-600 dark:text-slate-400 px-4 py-2 rounded-xl font-bold text-sm hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">done_all</span>
+            Marcar todas leídas
+        </a>
+        {% endif %}
+        {% if user.es_admin or user.es_profesor %}
+        <a href="{% url 'notificaciones:redactar' %}"
+           class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">edit</span>
+            Redactar
+        </a>
+        {% if user.es_admin %}
+        <a href="{% url 'notificaciones:masivo' %}"
+           class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all">
+            <span class="material-symbols-outlined text-sm">campaign</span>
+            Envío masivo
+        </a>
+        {% endif %}
+        {% else %}
+        {# Alumnos y apoderados pueden escribir al colegio #}
+        <a href="{% url 'notificaciones:redactar' %}"
+           class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">support_agent</span>
+            Escribir al colegio
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{# Tabs enviadas / recibidas #}
+{% if user.es_admin or user.es_profesor %}
+<div class="flex gap-1 mb-6 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+    <a href="{% url 'notificaciones:bandeja' %}"
+       class="px-4 py-2 rounded-lg text-sm font-bold bg-white dark:bg-slate-900 text-navy-deep dark:text-white shadow-sm">
+        Recibidas
+    </a>
+    <a href="{% url 'notificaciones:enviadas' %}"
+       class="px-4 py-2 rounded-lg text-sm font-bold text-muted-blue hover:text-navy-deep dark:hover:text-white transition-all">
+        Enviadas
+    </a>
+</div>
+{% endif %}
+
+{# Sin notificaciones #}
+{% if not notifs %}
+<div class="flex flex-col items-center justify-center py-20 text-center">
+    <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">notifications_off</span>
+    <p class="font-bold text-navy-deep dark:text-white">No tienes notificaciones</p>
+    <p class="text-muted-blue text-sm mt-1">Cuando recibas un mensaje aparecerá aquí</p>
+</div>
+
+{% else %}
+
+{# No leídas #}
+{% if sin_leer %}
+<div class="mb-6">
+    <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">Sin leer</p>
+    <div class="space-y-2">
+        {% for n in sin_leer %}
+        <a href="{% url 'notificaciones:ver' n.pk %}"
+           class="flex items-start gap-4 p-4 bg-primary/5 border border-primary/20 rounded-xl hover:bg-primary/10 transition-all group">
+            <div class="size-10 rounded-xl bg-primary flex items-center justify-center text-white shrink-0">
+                <span class="material-symbols-outlined text-sm">mail</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="font-bold text-navy-deep dark:text-white truncate">{{ n.titulo }}</p>
+                    <span class="text-xs text-muted-blue shrink-0">{{ n.fecha_envio|date:"d/m/Y H:i" }}</span>
+                </div>
+                <p class="text-sm text-slate-600 dark:text-slate-400 truncate mt-0.5">{{ n.mensaje|truncatechars:80 }}</p>
+                <p class="text-xs text-primary font-medium mt-1">De: {{ n.remitente.get_full_name }}</p>
+            </div>
+            <span class="size-2.5 rounded-full bg-primary shrink-0 mt-2"></span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{# Leídas #}
+{% if leidas %}
+<div>
+    <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">Anteriores</p>
+    <div class="space-y-2">
+        {% for n in leidas %}
+        <a href="{% url 'notificaciones:ver' n.pk %}"
+           class="flex items-start gap-4 p-4 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-800 rounded-xl hover:border-primary/30 transition-all">
+            <div class="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-muted-blue shrink-0">
+                <span class="material-symbols-outlined text-sm">drafts</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="font-semibold text-slate-600 dark:text-slate-300 truncate">{{ n.titulo }}</p>
+                    <span class="text-xs text-muted-blue shrink-0">{{ n.fecha_envio|date:"d/m/Y H:i" }}</span>
+                </div>
+                <p class="text-sm text-muted-blue truncate mt-0.5">{{ n.mensaje|truncatechars:80 }}</p>
+                <p class="text-xs text-muted-blue mt-1">De: {{ n.remitente.get_full_name }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

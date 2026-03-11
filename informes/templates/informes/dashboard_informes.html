@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block titulo %}Centro de Informes - SGE{% endblock %}
+{% block main %}
+
+<div class="mb-8">
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Centro de Informes</h2>
+    <p class="text-muted-blue mt-1">Genera, imprime y descarga todos los informes del sistema</p>
+</div>
+
+{# ── Estadísticas rápidas ── #}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-4 flex items-center gap-4">
+        <div class="size-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined">school</span>
+        </div>
+        <div>
+            <p class="text-2xl font-black text-navy-deep dark:text-white">{{ total_alumnos }}</p>
+            <p class="text-xs text-muted-blue font-medium">Alumnos activos</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-4 flex items-center gap-4">
+        <div class="size-11 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">class</span>
+        </div>
+        <div>
+            <p class="text-2xl font-black text-navy-deep dark:text-white">{{ total_cursos }}</p>
+            <p class="text-xs text-muted-blue font-medium">Cursos</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-4 flex items-center gap-4">
+        <div class="size-11 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <div>
+            <p class="text-2xl font-black text-navy-deep dark:text-white">{{ periodos_anio }}</p>
+            <p class="text-xs text-muted-blue font-medium">Períodos {{ anio_actual }}</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-4 flex items-center gap-4">
+        <div class="size-11 rounded-xl bg-yellow-500/10 text-yellow-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">date_range</span>
+        </div>
+        <div>
+            <p class="text-2xl font-black text-navy-deep dark:text-white">{{ total_periodos }}</p>
+            <p class="text-xs text-muted-blue font-medium">Total períodos</p>
+        </div>
+    </div>
+</div>
+
+{# ── Períodos activos ── #}
+{% if periodos_activos %}
+<div class="mb-8 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center gap-3 flex-wrap">
+    <span class="material-symbols-outlined text-emerald-600">radio_button_checked</span>
+    <span class="text-sm font-bold text-emerald-700 dark:text-emerald-400">Períodos activos:</span>
+    {% for p in periodos_activos %}
+    <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-full">{{ p }}</span>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ── Tarjetas de informes ── #}
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-5">
+
+    {# Informe Individual #}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="size-12 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 shrink-0">
+                <span class="material-symbols-outlined">person</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-navy-deep dark:text-white text-lg">Informe Individual</h3>
+                <p class="text-muted-blue text-sm mt-0.5">Por alumno y período específico</p>
+            </div>
+        </div>
+        <ul class="space-y-1.5 mb-5 text-sm text-slate-600 dark:text-slate-400">
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span>Notas por asignatura con tipo de evaluación</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span>Asistencia del período</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span>Anotaciones positivas y negativas</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">check</span>Comentario del profesor y firmas</li>
+        </ul>
+        <a href="{% url 'informes:seleccionar' %}"
+           class="flex items-center justify-center gap-2 w-full bg-primary text-white py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            Generar informe
+        </a>
+    </div>
+
+    {# Impresión Masiva — solo admin #}
+    {% if user.es_admin %}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="size-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 shrink-0">
+                <span class="material-symbols-outlined">print</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-navy-deep dark:text-white text-lg">Impresión Masiva</h3>
+                <p class="text-muted-blue text-sm mt-0.5">Todos los alumnos de un curso en un PDF</p>
+            </div>
+        </div>
+        <ul class="space-y-1.5 mb-5 text-sm text-slate-600 dark:text-slate-400">
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-indigo-500">check</span>Selecciona curso + período o año completo</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-indigo-500">check</span>Un informe por alumno en un solo PDF</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-indigo-500">check</span>Listo para imprimir directamente</li>
+        </ul>
+        <a href="{% url 'informes:impresion_masiva' %}"
+           class="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            Impresión masiva
+        </a>
+    </div>
+    {% endif %}
+
+    {# Ranking por Curso #}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="size-12 rounded-xl bg-yellow-500 flex items-center justify-center text-white shadow-lg shadow-yellow-500/20 shrink-0">
+                <span class="material-symbols-outlined">leaderboard</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-navy-deep dark:text-white text-lg">Ranking por Curso</h3>
+                <p class="text-muted-blue text-sm mt-0.5">Mejores alumnos del año por curso</p>
+            </div>
+        </div>
+        <ul class="space-y-1.5 mb-5 text-sm text-slate-600 dark:text-slate-400">
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-yellow-500">check</span>Ranking de promedios con 🥇🥈🥉</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-yellow-500">check</span>Asistencia en color por alumno</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-yellow-500">check</span>Anotaciones positivas y negativas</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-yellow-500">check</span>Resumen estadístico por curso</li>
+        </ul>
+        <a href="{% url 'informes:ranking_curso' %}"
+           class="flex items-center justify-center gap-2 w-full bg-yellow-500 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-yellow-600 transition-all">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            Ver ranking
+        </a>
+    </div>
+
+    {# Informe Fin de Año #}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="size-12 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 shrink-0">
+                <span class="material-symbols-outlined">event_available</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-navy-deep dark:text-white text-lg">Informe Fin de Año</h3>
+                <p class="text-muted-blue text-sm mt-0.5">Resumen anual individual con situación final</p>
+            </div>
+        </div>
+        <ul class="space-y-1.5 mb-5 text-sm text-slate-600 dark:text-slate-400">
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-purple-500">check</span>Promedio por asignatura en cada período</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-purple-500">check</span>Asistencia anual por período</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-purple-500">check</span>Aprobado / Promovido de curso</li>
+            <li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-purple-500">check</span>Firmas de Director, Profesor y Apoderado</li>
+        </ul>
+        <a href="{% url 'informes:fin_anio' %}"
+           class="flex items-center justify-center gap-2 w-full bg-purple-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-purple-700 transition-all">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            Generar informe anual
+        </a>
+    </div>
+
+</div>
+
+{# ── Gestión de períodos ── #}
+<div class="mt-6 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-muted-blue">settings</span>
+        <div>
+            <p class="font-bold text-navy-deep dark:text-white text-sm">Gestión de períodos</p>
+            <p class="text-xs text-muted-blue">Crea y edita trimestres y semestres del año escolar</p>
+        </div>
+    </div>
+    <a href="{% url 'informes:lista_periodos' %}"
+       class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400
+              px-4 py-2 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
+        <span class="material-symbols-outlined text-sm">open_in_new</span>
+        Administrar períodos
+    </a>
+</div>
+
+{% endblock %}

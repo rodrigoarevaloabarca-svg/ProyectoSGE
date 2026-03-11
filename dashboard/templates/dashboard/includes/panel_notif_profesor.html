@@ -1,0 +1,112 @@
+{% comment %}
+  PANEL NOTIFICACIONES — DASHBOARD PROFESOR
+  Incluir en templates/dashboard/profesor.html con:
+  {% include 'dashboard/includes/panel_notif_profesor.html' %}
+{% endcomment %}
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+
+    {# Header #}
+    <div class="flex items-center justify-between px-5 py-4 border-b border-soft-grey dark:border-slate-800">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">notifications</span>
+            <h3 class="font-extrabold text-navy-deep dark:text-white">Notificaciones</h3>
+            {% if notif_no_leidas %}
+            <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-black rounded-full">{{ notif_no_leidas }}</span>
+            {% endif %}
+        </div>
+        <a href="{% url 'notificaciones:redactar' %}"
+           class="flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all">
+            <span class="material-symbols-outlined text-xs">edit</span> Redactar
+        </a>
+    </div>
+
+    {# Envío rápido a apoderado #}
+    <div class="px-5 py-4 border-b border-soft-grey dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <p class="text-xs font-bold text-muted-blue uppercase tracking-wider mb-3">
+            <span class="material-symbols-outlined text-xs align-middle">bolt</span>
+            Aviso rápido a apoderado
+        </p>
+        <form method="post" action="{% url 'notificaciones:redactar' %}" id="form-aviso-rapido">
+            {% csrf_token %}
+            <div class="space-y-2">
+                <select name="destinatario" required
+                        class="w-full px-3 py-2 rounded-lg border border-soft-grey dark:border-slate-700
+                               bg-white dark:bg-slate-800 text-xs text-navy-deep dark:text-white
+                               focus:outline-none focus:border-primary transition-all">
+                    <option value="">— Seleccionar apoderado —</option>
+                    {% regroup alumnos_con_apoderado by curso as alumnos_por_curso %}
+                    {% for grupo in alumnos_por_curso %}
+                    <optgroup label="{{ grupo.grouper }}">
+                        {% for alumno in grupo.list %}
+                        {% if alumno.apoderado %}
+                        <option value="{{ alumno.apoderado.usuario.pk }}">
+                            Apod. de {{ alumno.usuario.get_full_name }}
+                        </option>
+                        {% endif %}
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+                <input type="text" name="titulo" required maxlength="200"
+                       placeholder="Asunto del aviso..."
+                       class="w-full px-3 py-2 rounded-lg border border-soft-grey dark:border-slate-700
+                              bg-white dark:bg-slate-800 text-xs text-navy-deep dark:text-white
+                              focus:outline-none focus:border-primary transition-all">
+                <textarea name="mensaje" required rows="3"
+                          placeholder="Escribe el mensaje..."
+                          class="w-full px-3 py-2 rounded-lg border border-soft-grey dark:border-slate-700
+                                 bg-white dark:bg-slate-800 text-xs text-navy-deep dark:text-white
+                                 focus:outline-none focus:border-primary transition-all resize-none"></textarea>
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-1.5 text-xs text-muted-blue cursor-pointer">
+                        <input type="checkbox" name="enviar_email" class="accent-primary w-3 h-3">
+                        Enviar también por email
+                    </label>
+                    <button type="submit"
+                            class="flex items-center gap-1 px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all">
+                        <span class="material-symbols-outlined text-xs">send</span> Enviar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {# Notificaciones recibidas #}
+    <div class="divide-y divide-soft-grey dark:divide-slate-800">
+        {% if notifs_recibidas %}
+            <div class="px-5 pt-3 pb-1">
+                <p class="text-xs font-bold text-muted-blue uppercase tracking-wider">Recibidas</p>
+            </div>
+            {% for n in notifs_recibidas %}
+            <a href="{% url 'notificaciones:ver' n.pk %}"
+               class="flex items-start gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all
+                      {% if not n.leida %}bg-primary/5{% endif %}">
+                <span class="material-symbols-outlined text-sm mt-0.5 {% if not n.leida %}text-primary{% else %}text-muted-blue{% endif %}">
+                    {% if n.leida %}drafts{% else %}mail{% endif %}
+                </span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm {% if not n.leida %}font-bold text-navy-deep dark:text-white{% else %}font-medium text-slate-600 dark:text-slate-400{% endif %} truncate">
+                        {{ n.titulo }}
+                    </p>
+                    <p class="text-xs text-muted-blue">{{ n.remitente.get_full_name }} · {{ n.fecha_envio|date:"d/m H:i" }}</p>
+                </div>
+                {% if not n.leida %}
+                <span class="size-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        {% else %}
+        <div class="px-5 py-6 text-center">
+            <span class="material-symbols-outlined text-3xl text-slate-300">notifications_off</span>
+            <p class="text-xs text-muted-blue mt-1">Sin notificaciones recibidas</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Footer #}
+    <div class="px-5 py-3 border-t border-soft-grey dark:border-slate-800 flex justify-between">
+        <a href="{% url 'notificaciones:bandeja' %}" class="text-xs text-primary font-bold hover:underline">Ver bandeja completa</a>
+        <a href="{% url 'notificaciones:enviadas' %}" class="text-xs text-muted-blue hover:text-primary transition-colors">Enviadas →</a>
+    </div>
+</div>

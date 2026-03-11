@@ -1,0 +1,146 @@
+{% extends 'loginbase.html' %}
+
+{% block titulo %}Términos, Privacidad y Accesibilidad {% endblock %}
+
+{% block main %}
+
+<main class="flex-1">
+<div class="max-w-5xl mx-auto px-6 py-12">
+<!-- Title Section -->
+<div class="flex flex-wrap justify-between items-end gap-6 mb-10">
+<div class="flex flex-col gap-2">
+<h1 class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Términos, Privacidad y Accesibilidad</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg font-normal leading-normal">Información legal y cumplimiento del Sistema de Gestión Escolar (SGE)</p>
+</div>
+<div class="flex items-center gap-4">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal">Última actualización: 01 de marzo de 2026</p>
+<button class="p-2 text-slate-600 dark:text-slate-300 hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" title="Imprimir documento">
+<span class="material-symbols-outlined">print</span>
+<span class="text-sm font-medium">Imprimir</span>
+</button>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<div class="sticky top-[73px] bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-40 pb-6">
+<div class="flex border-b border-slate-200 dark:border-slate-700 gap-8 overflow-x-auto no-scrollbar">
+<a class="flex flex-col items-center justify-center border-b-2 border-primary text-slate-900 dark:text-white pb-3 pt-2 whitespace-nowrap" href="#terminos">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Términos de Servicio</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary pb-3 pt-2 whitespace-nowrap transition-colors" href="#privacidad">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Política de Privacidad</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary pb-3 pt-2 whitespace-nowrap transition-colors" href="#accesibilidad">
+<p class="text-sm font-bold leading-normal tracking-[0.015em]">Declaración de Accesibilidad</p>
+</a>
+</div>
+</div>
+<!-- Content Sections -->
+<div class="space-y-16 mt-8">
+<!-- Terms of Service Section -->
+<section class="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 scroll-mt-32" id="terminos">
+<div class="flex items-center gap-3 mb-6 text-primary">
+<span class="material-symbols-outlined text-3xl">gavel</span>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white">1. Términos de Servicio</h2>
+</div>
+<div class="prose prose-slate dark:prose-invert max-w-none space-y-4">
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                                    Bienvenido al Sistema de Gestión Escolar (SGE). Al acceder y utilizar nuestra plataforma, usted acepta estar sujeto a los siguientes términos y condiciones de uso.
+                                </p>
+<h3 class="text-lg font-semibold text-slate-900 dark:text-white mt-6">1.1 Uso de la Plataforma</h3>
+<p class="text-slate-600 dark:text-slate-400">
+                                    El SGE está diseñado exclusivamente para fines educativos y administrativos. El acceso está restringido a usuarios autorizados por las instituciones educativas afiliadas.
+                                </p>
+<ul class="list-disc pl-5 space-y-2 text-slate-600 dark:text-slate-400">
+<li>Es responsabilidad del usuario mantener la confidencialidad de sus credenciales.</li>
+<li>Se prohíbe el uso de la plataforma para fines ilícitos o no autorizados.</li>
+<li>Cualquier intento de vulnerar la seguridad del sistema será reportado a las autoridades.</li>
+</ul>
+<h3 class="text-lg font-semibold text-slate-900 dark:text-white mt-6">1.2 Responsabilidades</h3>
+<p class="text-slate-600 dark:text-slate-400">
+                                    La institución educativa es responsable de la veracidad de la información cargada en el sistema. El SGE se compromete a mantener la disponibilidad del servicio en un 99.9% del tiempo.
+                                </p>
+</div>
+</section>
+<!-- Privacy Policy Section -->
+<section class="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 scroll-mt-32" id="privacidad">
+<div class="flex items-center gap-3 mb-6 text-primary">
+<span class="material-symbols-outlined text-3xl">shield_lock</span>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white">2. Política de Privacidad</h2>
+</div>
+<div class="prose prose-slate dark:prose-invert max-w-none space-y-4">
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                                    Su privacidad es fundamental para nosotros. Esta política describe cómo recopilamos, usamos y protegemos la información personal de estudiantes, padres y personal docente.
+                                </p>
+<div class="grid md:grid-cols-2 gap-6 mt-6">
+<div class="p-4 bg-background-light dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+<h4 class="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">visibility</span>
+                                            Datos Recopilados
+                                        </h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">Nombres, correos electrónicos, registros académicos y datos de contacto necesarios para la gestión escolar.</p>
+</div>
+<div class="p-4 bg-background-light dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+<h4 class="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">security</span>
+                                            Protección de Datos
+                                        </h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">Implementamos cifrado de extremo a extremo y protocolos de seguridad industriales para proteger su información.</p>
+</div>
+</div>
+<h3 class="text-lg font-semibold text-slate-900 dark:text-white mt-6">2.1 Derechos ARCO</h3>
+<p class="text-slate-600 dark:text-slate-400">
+                                    Los usuarios pueden ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición a través del módulo de configuración de perfil o contactando al delegado de protección de datos de su institución.
+                                </p>
+</div>
+</section>
+<!-- Accessibility Statement Section -->
+<section class="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 scroll-mt-32" id="accesibilidad">
+<div class="flex items-center gap-3 mb-6 text-primary">
+<span class="material-symbols-outlined text-3xl">accessibility_new</span>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white">3. Declaración de Accesibilidad</h2>
+</div>
+<div class="prose prose-slate dark:prose-invert max-w-none space-y-4">
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                                    El SGE se compromete a proporcionar una plataforma accesible para el mayor número posible de usuarios, independientemente de su capacidad o tecnología.
+                                </p>
+<div class="space-y-4 mt-4">
+<div class="flex items-start gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-lg group">
+<span class="material-symbols-outlined text-primary mt-1">done_all</span>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Estándares WCAG 2.1</p>
+<p class="text-sm text-slate-600 dark:text-slate-400">Nuestras interfaces están diseñadas siguiendo las pautas de accesibilidad para el contenido web Nivel AA.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-lg group">
+<span class="material-symbols-outlined text-primary mt-1">keyboard</span>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Navegación por Teclado</p>
+<p class="text-sm text-slate-600 dark:text-slate-400">Todo el sistema es navegable íntegramente mediante el uso del teclado y lectores de pantalla.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-lg group">
+<span class="material-symbols-outlined text-primary mt-1">contrast</span>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white">Contraste y Adaptabilidad</p>
+<p class="text-sm text-slate-600 dark:text-slate-400">Ofrecemos altos contrastes y tipografías legibles para usuarios con discapacidad visual.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Help Callout -->
+<div class="mt-16 bg-primary/10 border border-primary/20 p-8 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="text-center md:text-left">
+<h4 class="text-xl font-bold text-primary mb-2">¿Necesitas más información?</h4>
+<p class="text-slate-600 dark:text-slate-400">Nuestro equipo legal y técnico está disponible para resolver tus dudas.</p>
+</div>
+<a href="{% url 'contacto' %}" class="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md inline-block text-center">
+    Contactar Soporte
+</a>
+</div>
+</div>
+</main>
+
+
+{% endblock %}

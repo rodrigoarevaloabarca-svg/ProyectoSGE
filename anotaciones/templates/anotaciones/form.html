@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block titulo %}Anotación - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="javascript:history.back()" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Registrar Anotación</h2>
+</div>
+<div class="max-w-2xl mx-auto">
+    <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/30 rounded-xl p-4 mb-6 flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-xl">person</span>
+        <div>
+            <p class="font-bold text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</p>
+            <p class="text-sm text-muted-blue">{{ alumno.curso }} · Matrícula {{ alumno.numero_matricula }}</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-8">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="space-y-5">
+                {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        {{ field.label }}{% if field.field.required %}<span class="text-red-500 ml-1">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}<p class="text-red-500 text-xs mt-1">{{ field.errors|join:", " }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex gap-3 mt-8 pt-6 border-t border-soft-grey dark:border-slate-800">
+                <button type="submit" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary/90 transition-all">Guardar Anotación</button>
+                <a href="javascript:history.back()" class="flex-1 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-3 rounded-xl font-bold hover:bg-slate-200 transition-all">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% block titulo %}Informe {{ alumno.nombre_completo }} - {{ periodo }} - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+        <a href="{% url 'informes:seleccionar' %}" class="text-muted-blue hover:text-primary transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <div>
+            <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Informe Académico</h2>
+            <p class="text-muted-blue mt-1">{{ alumno.nombre_completo }} · {{ periodo }}</p>
+        </div>
+    </div>
+    <a href="{% url 'informes:descargar_pdf' alumno.pk periodo.pk %}"
+       class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-sm">download</span>
+        Descargar PDF
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    {# ── Columna central (informe) ── #}
+    <div class="lg:col-span-2 space-y-6">
+
+        {# Datos del alumno #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-6">
+            <h3 class="font-bold text-navy-deep dark:text-white text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-sm">person</span>
+                Datos del Alumno
+            </h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="text-muted-blue text-xs font-medium">Nombre completo</p>
+                    <p class="font-bold text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</p>
+                </div>
+                <div>
+                    <p class="text-muted-blue text-xs font-medium">Curso</p>
+                    <p class="font-bold text-navy-deep dark:text-white">{{ alumno.curso }}</p>
+                </div>
+                <div>
+                    <p class="text-muted-blue text-xs font-medium">Período</p>
+                    <p class="font-bold text-navy-deep dark:text-white">{{ periodo }}</p>
+                </div>
+                <div>
+                    <p class="text-muted-blue text-xs font-medium">N° Matrícula</p>
+                    <p class="font-bold text-navy-deep dark:text-white">{{ alumno.numero_matricula }}</p>
+                </div>
+            </div>
+        </div>
+
+        {# Notas #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 bg-primary text-white flex items-center justify-between">
+                <h3 class="font-bold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">grade</span>
+                    Rendimiento Académico
+                </h3>
+                {% if datos.promedio_general %}
+                <span class="px-3 py-1 rounded-full text-sm font-black
+                    {% if datos.promedio_general >= 4.0 %}bg-emerald-400/30 text-white
+                    {% else %}bg-red-400/30 text-white{% endif %}">
+                    Promedio: {{ datos.promedio_general }}
+                </span>
+                {% endif %}
+            </div>
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-800 text-xs text-muted-blue uppercase font-bold">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Asignatura</th>
+                        <th class="px-4 py-3 text-center">Notas</th>
+                        <th class="px-4 py-3 text-center">Promedio</th>
+                        <th class="px-4 py-3 text-center">Estado</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                    {% for nombre, data in datos.notas_por_asignatura.items %}
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                        <td class="px-6 py-3 font-medium text-navy-deep dark:text-white">{{ nombre }}</td>
+                        <td class="px-4 py-3 text-center text-xs text-muted-blue">
+                            {% for n in data.notas %}
+                            <span class="inline-block px-1.5 py-0.5 rounded m-0.5
+                                {% if n.valor >= 4.0 %}bg-emerald-100 text-emerald-700{% else %}bg-red-100 text-red-600{% endif %}">
+                                {{ n.valor }}
+                            </span>
+                            {% endfor %}
+                        </td>
+                        <td class="px-4 py-3 text-center font-black text-lg
+                            {% if data.promedio >= 4.0 %}text-emerald-600{% elif data.promedio %}text-red-500{% else %}text-slate-300{% endif %}">
+                            {{ data.promedio|default:"—" }}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            {% if data.promedio %}
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold
+                                {% if data.promedio >= 4.0 %}bg-emerald-100 text-emerald-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                {% if data.promedio >= 4.0 %}Aprobado{% else %}En riesgo{% endif %}
+                            </span>
+                            {% else %}
+                            <span class="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-400">Sin notas</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="px-6 py-8 text-center text-muted-blue">Sin notas en este período</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Asistencia #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 bg-amber-500 text-white flex items-center justify-between">
+                <h3 class="font-bold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">event_available</span>
+                    Asistencia del Período
+                </h3>
+                <span class="px-3 py-1 rounded-full bg-white/20 font-black text-lg">
+                    {{ datos.asistencia.porcentaje }}%
+                </span>
+            </div>
+            <div class="p-6 grid grid-cols-4 gap-4 text-center">
+                <div>
+                    <p class="text-2xl font-black text-navy-deep dark:text-white">{{ datos.asistencia.total }}</p>
+                    <p class="text-xs text-muted-blue mt-1">Total clases</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-black text-emerald-600">{{ datos.asistencia.presentes }}</p>
+                    <p class="text-xs text-muted-blue mt-1">Presentes</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-black text-red-500">{{ datos.asistencia.ausentes }}</p>
+                    <p class="text-xs text-muted-blue mt-1">Ausentes</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-black text-amber-500">{{ datos.asistencia.atrasados }}</p>
+                    <p class="text-xs text-muted-blue mt-1">Atrasos</p>
+                </div>
+            </div>
+        </div>
+
+        {# Anotaciones #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 bg-purple-600 text-white">
+                <h3 class="font-bold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">notes</span>
+                    Anotaciones del Período
+                    <span class="ml-auto text-sm font-normal opacity-80">
+                        {{ datos.positivas.count }} positivas · {{ datos.negativas.count }} negativas
+                    </span>
+                </h3>
+            </div>
+            <div class="p-6 space-y-3">
+                {% for anotacion in datos.anotaciones %}
+                <div class="flex gap-3 p-3 rounded-lg border
+                    {% if anotacion.tipo == 'positiva' %}bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100{% elif anotacion.tipo == 'negativa' %}bg-red-50 dark:bg-red-900/10 border-red-100{% else %}bg-slate-50 dark:bg-slate-800 border-slate-100{% endif %}">
+                    <span class="px-2 py-0.5 h-fit rounded text-xs font-bold text-white
+                        {% if anotacion.tipo == 'positiva' %}bg-emerald-500{% elif anotacion.tipo == 'negativa' %}bg-red-500{% else %}bg-slate-400{% endif %}">
+                        {{ anotacion.get_tipo_display }}
+                    </span>
+                    <div class="flex-1">
+                        <p class="text-sm text-slate-700 dark:text-slate-300">{{ anotacion.descripcion }}</p>
+                        <p class="text-xs text-muted-blue mt-1">
+                            {{ anotacion.fecha|date:"d/m/Y" }} · {{ anotacion.creado_por.get_full_name|default:"Sistema" }}
+                        </p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted-blue text-sm py-4">Sin anotaciones en este período</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# ── Columna derecha: comentario ── #}
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-6">
+            <h3 class="font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-sm">rate_review</span>
+                Comentario del Profesor
+            </h3>
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                {{ form.comentario }}
+                {% if form.comentario.errors %}
+                <p class="text-red-500 text-xs">{{ form.comentario.errors|join:", " }}</p>
+                {% endif %}
+                <button type="submit"
+                        class="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                    Guardar comentario
+                </button>
+            </form>
+            {% if comentario.comentario %}
+            <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/30">
+                <p class="text-xs font-bold text-blue-700 dark:text-blue-400 mb-1">Guardado:</p>
+                <p class="text-sm text-slate-700 dark:text-slate-300 italic">{{ comentario.comentario }}</p>
+                <p class="text-xs text-muted-blue mt-2">Por: {{ comentario.profesor.get_full_name|default:"—" }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Botón PDF grande #}
+        <a href="{% url 'informes:descargar_pdf' alumno.pk periodo.pk %}"
+           class="flex flex-col items-center gap-3 p-8 bg-primary text-white rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 text-center">
+            <span class="material-symbols-outlined text-5xl">picture_as_pdf</span>
+            <span class="font-bold text-lg">Descargar PDF</span>
+            <span class="text-sm opacity-80">Informe completo listo para imprimir</span>
+        </a>
+
+        {# Info período #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6 text-sm space-y-3">
+            <h3 class="font-bold text-navy-deep dark:text-white">Detalle del período</h3>
+            <div class="flex justify-between">
+                <span class="text-muted-blue">Tipo</span>
+                <span class="font-semibold">{{ periodo.tipo|capfirst }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-muted-blue">Inicio</span>
+                <span class="font-semibold">{{ periodo.fecha_inicio|date:"d/m/Y" }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-muted-blue">Término</span>
+                <span class="font-semibold">{{ periodo.fecha_fin|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block titulo %}Asignaturas - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Asignaturas</h2>
+        <p class="text-muted-blue mt-1">Total registradas: <span class="font-bold text-primary">{{ asignaturas.count }}</span></p>
+    </div>
+    {% if user.es_admin %}
+    <a href="{% url 'asignaturas:crear' %}" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined">add_circle</span> Nueva Asignatura
+    </a>
+    {% endif %}
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="p-4 border-b border-soft-grey dark:border-slate-800 flex gap-3">
+        <input type="text" id="buscador" placeholder="Buscar asignatura o profesor..."
+               class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+               onkeyup="filtrar()"/>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="tabla">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-3 text-left">Asignatura</th>
+                    <th class="px-6 py-3 text-left">Curso</th>
+                    <th class="px-6 py-3 text-left">Profesor</th>
+                    <th class="px-6 py-3 text-center">Hrs/Sem</th>
+                    <th class="px-6 py-3 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for asig in asignaturas %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="size-9 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center font-bold text-xs">
+                                {{ asig.nombre|slice:":2"|upper }}
+                            </div>
+                            <span class="font-semibold text-navy-deep dark:text-white">{{ asig.nombre }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{% url 'cursos:detalle' asig.curso.pk %}" class="text-primary hover:underline font-semibold">{{ asig.curso }}</a>
+                    </td>
+                    <td class="px-6 py-4 text-muted-blue">
+                        {% if asig.profesor %}
+                        <a href="{% url 'profesores:detalle' asig.profesor.pk %}" class="hover:text-primary transition-colors">{{ asig.profesor.nombre_completo }}</a>
+                        {% else %}<span class="italic text-red-400 text-xs">Sin asignar</span>{% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center text-muted-blue font-semibold">{{ asig.horas_semanales }}h</td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="{% url 'notas:libro' asig.curso.pk %}" class="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all" title="Libro de notas">
+                                <span class="material-symbols-outlined text-sm">grade</span>
+                            </a>
+                            <a href="{% url 'asistencia:tomar' asig.pk %}" class="p-1.5 rounded-lg bg-emerald-100 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all" title="Tomar asistencia">
+                                <span class="material-symbols-outlined text-sm">event_available</span>
+                            </a>
+                            {% if user.es_admin %}
+                            <a href="{% url 'asignaturas:editar' asig.pk %}" class="p-1.5 rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition-all" title="Editar">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">menu_book</span>
+                        No hay asignaturas registradas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+function filtrar() {
+    const v = document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('#tabla tbody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(v) ? '' : 'none');
+}
+</script>
+{% endblock %}

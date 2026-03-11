@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block titulo %}Libro de Notas - {{ curso }} - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'cursos:detalle' curso.pk %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Libro de Notas</h2>
+        <p class="text-muted-blue mt-1">{{ curso }} · Escala 1.0 — 7.0 · Aprobación: 4.0</p>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800">
+                    <th class="px-6 py-4 text-left text-xs font-bold text-muted-blue uppercase sticky left-0 bg-slate-50 dark:bg-slate-800 min-w-[200px]">
+                        Alumno
+                    </th>
+                    {% for asig in asignaturas %}
+                    <th class="px-4 py-4 text-center text-xs font-bold text-muted-blue uppercase min-w-[120px]">
+                        <div>{{ asig.nombre }}</div>
+                        <div class="text-[10px] font-normal text-slate-400 mt-0.5">
+                            {{ asig.profesor.nombre_completo|default:"Sin prof."|truncatechars:15 }}
+                        </div>
+                        {% if user.es_admin or user.es_profesor %}
+                        <a href="{% url 'asistencia:tomar' asig.pk %}"
+                           class="text-[10px] text-emerald-600 hover:underline block mt-1">Asistencia</a>
+                        {% endif %}
+                    </th>
+                    {% endfor %}
+                    <th class="px-4 py-4 text-center text-xs font-bold text-muted-blue uppercase min-w-[100px]">
+                        Promedio General
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for alumno, promedios_asig in libro.items %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    {# Nombre del alumno #}
+                    <td class="px-6 py-3 sticky left-0 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+                                {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
+                            </div>
+                            <a href="{% url 'alumnos:detalle' alumno.pk %}"
+                               class="font-medium text-navy-deep dark:text-white hover:text-primary transition-colors">
+                                {{ alumno.nombre_completo }}
+                            </a>
+                        </div>
+                    </td>
+
+                    {# Promedio por asignatura #}
+                    {% for asig in asignaturas %}
+                    <td class="px-4 py-3 text-center">
+                        {% with promedio=promedios_asig|default_if_none:"—" %}
+                        {% for a, p in promedios_asig.items %}
+                            {% if a == asig %}
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-lg font-bold
+                                    {% if p >= 4.0 %}text-emerald-600
+                                    {% elif p %}text-red-500
+                                    {% else %}text-slate-300{% endif %}">
+                                    {{ p|default:"—" }}
+                                </span>
+                                {% if user.es_admin or user.es_profesor %}
+                                <a href="{% url 'notas:detalle' alumno.pk asig.pk %}"
+                                   class="text-[10px] text-primary hover:underline">ver notas</a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% endwith %}
+                    </td>
+                    {% endfor %}
+
+                    {# Promedio general del alumno #}
+                    <td class="px-4 py-3 text-center">
+                        {% with pg=alumno.get_promedio_general %}
+                        <span class="text-xl font-black
+                            {% if pg >= 4.0 %}text-emerald-600
+                            {% elif pg %}text-red-500
+                            {% else %}text-slate-300{% endif %}">
+                            {{ pg|default:"—" }}
+                        </span>
+                        {% endwith %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="99" class="px-6 py-12 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">group</span>
+                        No hay alumnos en este curso.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

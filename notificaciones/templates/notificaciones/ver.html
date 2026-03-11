@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ notif.titulo }} — SGE{% endblock %}
+{% block main %}
+
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+
+        {# Header #}
+        <div class="bg-primary/5 border-b border-soft-grey dark:border-slate-800 px-6 py-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-navy-deep dark:text-white">{{ notif.titulo }}</h2>
+                    <div class="flex items-center gap-3 mt-2 text-sm text-muted-blue">
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">person</span>
+                            {{ notif.remitente.get_full_name }}
+                        </span>
+                        <span>·</span>
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">schedule</span>
+                            {{ notif.fecha_envio|date:"d/m/Y \a \l\a\s H:i" }}
+                        </span>
+                        {% if notif.enviada_por_email %}
+                        <span class="flex items-center gap-1 text-emerald-600">
+                            <span class="material-symbols-outlined text-sm">mail</span>
+                            También por email
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 text-xs font-bold rounded-full flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">done</span> Leída
+                </span>
+            </div>
+        </div>
+
+        {# Cuerpo del mensaje #}
+        <div class="px-6 py-6">
+            <div class="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{{ notif.mensaje }}</div>
+        </div>
+
+        {# Footer #}
+        <div class="px-6 py-4 border-t border-soft-grey dark:border-slate-800 flex justify-between items-center">
+            <a href="{% url 'notificaciones:bandeja' %}"
+               class="flex items-center gap-2 text-sm text-muted-blue hover:text-primary transition-colors font-medium">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Volver a bandeja
+            </a>
+            {% if user.es_admin or user.es_profesor %}
+            <a href="{% url 'notificaciones:redactar' %}"
+               class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all">
+                <span class="material-symbols-outlined text-sm">reply</span>
+                Nuevo mensaje
+            </a>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

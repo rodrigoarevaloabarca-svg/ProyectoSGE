@@ -1,0 +1,79 @@
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+
+    {# Header #}
+    <div class="flex items-center justify-between px-5 py-4 border-b border-soft-grey dark:border-slate-800">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">notifications</span>
+            <h3 class="font-extrabold text-navy-deep dark:text-white">Avisos del colegio</h3>
+            {% if notif_no_leidas %}
+            <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-black rounded-full">{{ notif_no_leidas }}</span>
+            {% endif %}
+        </div>
+        {% if notif_no_leidas %}
+        <a href="{% url 'notificaciones:marcar_leidas' %}"
+           class="text-xs text-muted-blue hover:text-primary transition-colors font-medium">
+            Marcar leídas
+        </a>
+        {% endif %}
+    </div>
+
+    {# Resumen si hay no leídas #}
+    {% if notif_no_leidas %}
+    <div class="px-5 py-3 bg-primary/5 border-b border-primary/20 flex items-center gap-3">
+        <span class="size-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">
+            <span class="material-symbols-outlined text-sm">mail</span>
+        </span>
+        <div>
+            <p class="text-sm font-bold text-navy-deep dark:text-white">
+                Tienes {{ notif_no_leidas }} aviso{% if notif_no_leidas != 1 %}s{% endif %} sin leer
+            </p>
+            <p class="text-xs text-muted-blue">Mensajes de profesores o dirección del colegio</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Lista de notificaciones #}
+    <div class="divide-y divide-soft-grey dark:divide-slate-800">
+        {% if notifs_recibidas %}
+            {% for n in notifs_recibidas %}
+            <a href="{% url 'notificaciones:ver' n.pk %}"
+               class="flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all
+                      {% if not n.leida %}bg-primary/5{% endif %}">
+                <div class="size-9 rounded-xl {% if not n.leida %}bg-primary{% else %}bg-slate-100 dark:bg-slate-800{% endif %} flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-sm {% if not n.leida %}text-white{% else %}text-muted-blue{% endif %}">
+                        {% if n.leida %}drafts{% else %}mail{% endif %}
+                    </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm {% if not n.leida %}font-bold text-navy-deep dark:text-white{% else %}font-medium text-slate-500 dark:text-slate-400{% endif %} truncate">
+                        {{ n.titulo }}
+                    </p>
+                    <p class="text-xs text-muted-blue mt-0.5 truncate">{{ n.mensaje|truncatechars:60 }}</p>
+                    <p class="text-xs text-muted-blue mt-1">
+                        <span class="font-medium">{{ n.remitente.get_full_name }}</span>
+                        · {{ n.fecha_envio|date:"d/m/Y H:i" }}
+                    </p>
+                </div>
+                {% if not n.leida %}
+                <span class="size-2.5 rounded-full bg-primary shrink-0 mt-2"></span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        {% else %}
+        <div class="flex flex-col items-center justify-center py-10 text-center">
+            <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">mark_email_read</span>
+            <p class="text-sm font-semibold text-navy-deep dark:text-white">Sin avisos pendientes</p>
+            <p class="text-xs text-muted-blue mt-1">Aquí verás los mensajes del colegio</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if notifs_recibidas %}
+    <div class="px-5 py-3 border-t border-soft-grey dark:border-slate-800">
+        <a href="{% url 'notificaciones:bandeja' %}" class="text-xs text-primary font-bold hover:underline">
+            Ver todos los avisos →
+        </a>
+    </div>
+    {% endif %}
+
+</div>

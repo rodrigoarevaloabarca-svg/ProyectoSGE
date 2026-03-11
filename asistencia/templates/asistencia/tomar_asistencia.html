@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block titulo %}Tomar Asistencia - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="javascript:history.back()" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Tomar Asistencia</h2>
+        <p class="text-muted-blue mt-1">{{ asignatura }} · {{ fecha_hoy }}</p>
+    </div>
+</div>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800 flex justify-between items-center">
+            <h4 class="font-bold text-navy-deep dark:text-white">Lista de Alumnos ({{ alumnos_con_estado|length }})</h4>
+            <div class="flex gap-2">
+                <button type="button" onclick="marcarTodos('presente')"
+                        class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg font-bold hover:bg-emerald-500 hover:text-white transition-all">
+                    ✓ Todos Presentes
+                </button>
+                <button type="button" onclick="marcarTodos('ausente')"
+                        class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold hover:bg-red-500 hover:text-white transition-all">
+                    ✗ Todos Ausentes
+                </button>
+            </div>
+        </div>
+
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase">
+                <tr>
+                    <th class="px-6 py-3 text-left">Alumno</th>
+                    {% for estado_val, estado_label in estados %}
+                    <th class="px-6 py-3 text-center">{{ estado_label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {# ← alumnos_con_estado es una lista de dicts: {alumno, estado_actual} #}
+                {% for item in alumnos_con_estado %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-3">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                                {{ item.alumno.usuario.first_name|slice:":1" }}{{ item.alumno.usuario.last_name|slice:":1" }}
+                            </div>
+                            <span class="font-medium text-navy-deep dark:text-white">
+                                {{ item.alumno.nombre_completo }}
+                            </span>
+                        </div>
+                    </td>
+                    {% for estado_val, estado_label in estados %}
+                    <td class="px-6 py-3 text-center">
+                        <input type="radio"
+                               name="estado_{{ item.alumno.pk }}"
+                               value="{{ estado_val }}"
+                               class="asistencia-radio w-4 h-4 cursor-pointer accent-primary"
+                               {% if item.estado_actual == estado_val %}checked{% endif %}>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-10 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">group_off</span>
+                        No hay alumnos activos en este curso.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex gap-3">
+        <button type="submit"
+                class="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            Guardar Asistencia del {{ fecha_hoy }}
+        </button>
+        <a href="javascript:history.back()"
+           class="px-6 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-3 rounded-xl font-bold hover:bg-slate-200 transition-all">
+            Cancelar
+        </a>
+    </div>
+</form>
+
+<script>
+function marcarTodos(estado) {
+    document.querySelectorAll(`input[value="${estado}"]`).forEach(r => r.checked = true);
+}
+</script>
+{% endblock %}

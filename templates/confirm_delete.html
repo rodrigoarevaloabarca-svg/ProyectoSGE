@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block titulo %}Confirmar Eliminación - SGE{% endblock %}
+{% block main %}
+<div class="max-w-lg mx-auto mt-12">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-red-200 dark:border-red-900/40 shadow-lg overflow-hidden">
+        <div class="p-6 bg-red-50 dark:bg-red-900/10 border-b border-red-200 dark:border-red-900/30 flex items-center gap-4">
+            <div class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-red-500 text-2xl">warning</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-red-700 dark:text-red-400">Confirmar Eliminación</h3>
+                <p class="text-sm text-red-500">Esta acción no se puede deshacer</p>
+            </div>
+        </div>
+        <div class="p-8">
+            <p class="text-slate-600 dark:text-slate-400 text-center mb-8">
+                ¿Estás seguro de que deseas eliminar <strong class="text-navy-deep dark:text-white">{{ object }}</strong>?
+            </p>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="flex gap-3">
+                    <button type="submit"
+                            class="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition-all">
+                        Sí, eliminar
+                    </button>
+                    <a href="javascript:history.back()"
+                       class="flex-1 text-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-3 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block titulo %}Error del servidor — SGE{% endblock %}
+{% block main %}
+
+<div class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+
+    {# Número de error #}
+    <div class="relative mb-6">
+        <span class="text-[10rem] font-black text-soft-grey dark:text-slate-800 leading-none select-none">500</span>
+        <div class="absolute inset-0 flex items-center justify-center">
+            <span class="material-symbols-outlined text-6xl text-red-400 opacity-80">error</span>
+        </div>
+    </div>
+
+    <h1 class="text-2xl font-extrabold text-navy-deep dark:text-white mb-3">
+        Error interno del servidor
+    </h1>
+    <p class="text-muted-blue text-sm max-w-md mb-8">
+        Algo salió mal en el servidor. El equipo técnico ha sido notificado.
+        Intenta nuevamente en unos minutos.
+    </p>
+
+    {# Acciones #}
+    <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="{% url 'dashboard:inicio' %}"
+           class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">home</span>
+            Ir al inicio
+        </a>
+        <button onclick="location.reload()"
+                class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+                       text-slate-600 dark:text-slate-400 px-5 py-2.5 rounded-xl font-bold text-sm
+                       hover:border-primary hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+            Reintentar
+        </button>
+    </div>
+
+    <div class="mt-10 p-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl max-w-sm w-full">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-sm text-red-500">info</span>
+            <p class="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">¿Qué pasó?</p>
+        </div>
+        <p class="text-sm text-red-600 dark:text-red-400">
+            El servidor encontró un error inesperado. Si el problema persiste,
+            contacta al administrador del sistema.
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

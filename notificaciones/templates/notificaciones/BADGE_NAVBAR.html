@@ -1,0 +1,45 @@
+<!--
+  BADGE DE NOTIFICACIONES PARA base.html
+  =======================================
+  Busca en tu navbar el bloque donde están los iconos de usuario/perfil
+  y agrega este bloque ANTES del botón de perfil/avatar.
+
+  El `notif_count` viene automáticamente del context_processor.
+-->
+
+<!-- Botón notificaciones con badge -->
+<a href="{% url 'notificaciones:bandeja' %}"
+   class="relative flex items-center justify-center size-9 rounded-xl
+          bg-white dark:bg-slate-900 border border-soft-grey dark:border-slate-700
+          text-muted-blue hover:text-primary hover:border-primary transition-all"
+   title="Notificaciones">
+    <span class="material-symbols-outlined text-xl">notifications</span>
+    {% if notif_count %}
+    <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center
+                 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white
+                 text-[10px] font-black leading-none">
+        {% if notif_count > 99 %}99+{% else %}{{ notif_count }}{% endif %}
+    </span>
+    {% endif %}
+</a>
+
+<!--
+  También agrega en el menú desplegable de usuario (dentro del dropdown de perfil):
+
+  <a href="{% url 'notificaciones:bandeja' %}" class="flex items-center gap-2 px-4 py-2 text-sm ...">
+      <span class="material-symbols-outlined text-sm">notifications</span>
+      Notificaciones
+      {% if notif_count %}
+      <span class="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-xs font-black rounded-full">{{ notif_count }}</span>
+      {% endif %}
+  </a>
+
+  Y en el menú de admin agrega acceso a envío masivo:
+
+  {% if user.es_admin %}
+  <a href="{% url 'notificaciones:masivo' %}" class="flex items-center gap-2 px-4 py-2 text-sm ...">
+      <span class="material-symbols-outlined text-sm">campaign</span>
+      Envío masivo
+  </a>
+  {% endif %}
+-->

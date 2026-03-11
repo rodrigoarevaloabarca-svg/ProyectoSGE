@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block titulo %}Asistencia - {{ asignatura }} - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center gap-3 mb-8">
+    <a href="javascript:history.back()" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Asistencia</h2>
+        <p class="text-muted-blue mt-1">{{ asignatura }} · {{ asignatura.curso }}</p>
+    </div>
+    <div class="ml-auto">
+        <a href="{% url 'asistencia:tomar' asignatura.pk %}"
+           class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">edit_calendar</span>
+            Tomar Asistencia Hoy
+        </a>
+    </div>
+</div>
+
+{% if registros %}
+{# Agrupar por fecha — mostramos tabla de registros recientes #}
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800 flex items-center justify-between">
+        <h4 class="font-bold text-navy-deep dark:text-white">Registros de Asistencia</h4>
+        <span class="text-xs text-muted-blue">{{ registros.count }} registro{{ registros.count|pluralize }}</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-3 text-left">Fecha</th>
+                    <th class="px-6 py-3 text-left">Alumno</th>
+                    <th class="px-6 py-3 text-center">Estado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for registro in registros %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-3 font-mono text-xs text-muted-blue">{{ registro.fecha }}</td>
+                    <td class="px-6 py-3">
+                        <div class="flex items-center gap-3">
+                            <div class="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                                {{ registro.alumno.usuario.first_name|slice:":1" }}{{ registro.alumno.usuario.last_name|slice:":1" }}
+                            </div>
+                            <span class="font-medium text-navy-deep dark:text-white">
+                                {{ registro.alumno.nombre_completo }}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-3 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold
+                            {% if registro.estado == 'presente' %}bg-emerald-100 text-emerald-700
+                            {% elif registro.estado == 'ausente' %}bg-red-100 text-red-600
+                            {% elif registro.estado == 'atrasado' %}bg-amber-100 text-amber-700
+                            {% else %}bg-blue-100 text-blue-600{% endif %}">
+                            {{ registro.get_estado_display|default:registro.estado }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+<div class="text-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800">
+    <span class="material-symbols-outlined text-6xl text-slate-300 block mb-4">event_busy</span>
+    <h3 class="text-xl font-bold text-navy-deep dark:text-white mb-2">Sin registros aún</h3>
+    <p class="text-muted-blue text-sm mb-6">No se ha tomado asistencia para esta asignatura todavía.</p>
+    <a href="{% url 'asistencia:tomar' asignatura.pk %}"
+       class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all">
+        <span class="material-symbols-outlined text-sm">edit_calendar</span>
+        Tomar Asistencia Ahora
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

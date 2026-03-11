@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block titulo %}Mi Perfil - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'dashboard:inicio' %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Mi Perfil</h2>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    {# ── Columna izquierda ── #}
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="h-24 relative
+                {% if user.rol == 'admin' %}bg-gradient-to-br from-red-500 to-red-700
+                {% elif user.rol == 'profesor' %}bg-gradient-to-br from-indigo-500 to-indigo-700
+                {% elif user.rol == 'alumno' %}bg-gradient-to-br from-primary to-blue-700
+                {% else %}bg-gradient-to-br from-emerald-500 to-emerald-700{% endif %}">
+                <div class="absolute inset-0 opacity-20"
+                     style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 20px 20px;"></div>
+            </div>
+            <div class="relative px-6 pb-6">
+                <div class="absolute -top-10 left-6 size-20 rounded-2xl border-4 border-white dark:border-slate-900
+                            flex items-center justify-center font-extrabold text-2xl text-white shadow-lg
+                    {% if user.rol == 'admin' %}bg-red-500
+                    {% elif user.rol == 'profesor' %}bg-indigo-500
+                    {% elif user.rol == 'alumno' %}bg-primary
+                    {% else %}bg-emerald-500{% endif %}">
+                    {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+                </div>
+                <div class="pt-12">
+                    <h3 class="text-xl font-extrabold text-navy-deep dark:text-white">
+                        {{ user.get_full_name|default:user.username }}
+                    </h3>
+                    <p class="text-muted-blue text-sm">@{{ user.username }}</p>
+                    <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold
+                        {% if user.rol == 'admin' %}bg-red-100 text-red-600
+                        {% elif user.rol == 'profesor' %}bg-indigo-100 text-indigo-600
+                        {% elif user.rol == 'alumno' %}bg-blue-100 text-blue-600
+                        {% else %}bg-emerald-100 text-emerald-600{% endif %}">
+                        {{ user.get_rol_display|default:"Usuario" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {# Info #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-6 space-y-4">
+            <h4 class="font-bold text-navy-deep dark:text-white text-sm border-l-4 border-primary pl-3">Información</h4>
+            <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-muted-blue text-sm">mail</span>
+                <span class="text-slate-600 dark:text-slate-400">{{ user.email|default:"Sin email" }}</span>
+            </div>
+            {% if user.rut %}
+            <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-muted-blue text-sm">badge</span>
+                <span class="text-slate-600 dark:text-slate-400">{{ user.rut }}</span>
+            </div>
+            {% endif %}
+            {% if user.telefono %}
+            <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-muted-blue text-sm">call</span>
+                <span class="text-slate-600 dark:text-slate-400">{{ user.telefono }}</span>
+            </div>
+            {% endif %}
+            <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-muted-blue text-sm">calendar_today</span>
+                <span class="text-slate-600 dark:text-slate-400">Desde {{ user.date_joined|date:"d M Y" }}</span>
+            </div>
+        </div>
+
+        {# Accesos rápidos #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-6 space-y-3">
+            <h4 class="font-bold text-navy-deep dark:text-white text-sm border-l-4 border-primary pl-3">Accesos Rápidos</h4>
+            <a href="{% url 'dashboard:inicio' %}"
+               class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary transition-all text-sm text-slate-700 dark:text-slate-300">
+                <span class="material-symbols-outlined text-sm">dashboard</span>
+                Mi Dashboard
+            </a>
+            {% if user.es_admin %}
+            <a href="{% url 'usuarios:lista' %}"
+               class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary transition-all text-sm text-slate-700 dark:text-slate-300">
+                <span class="material-symbols-outlined text-sm">manage_accounts</span>
+                Gestión de Usuarios
+            </a>
+            {% endif %}
+            {% if user.es_profesor %}
+            <a href="{% url 'profesores:lista' %}"
+               class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary transition-all text-sm text-slate-700 dark:text-slate-300">
+                <span class="material-symbols-outlined text-sm">badge</span>
+                Mis Asignaturas
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {# ── Columna derecha ── #}
+    <div class="lg:col-span-2 space-y-6">
+
+        {# ── SOLO admin y profesor pueden editar datos ── #}
+        {% if user.es_admin or user.es_profesor %}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
+            <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">edit</span>
+                Editar Datos Personales
+            </h3>
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                           for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="text-red-500 ml-1">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ field.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="pt-4 flex gap-3">
+                    <button type="submit"
+                            class="bg-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">save</span>
+                        Guardar Cambios
+                    </button>
+                    <a href="{% url 'dashboard:inicio' %}"
+                       class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        {% else %}
+        {# ── Alumnos y apoderados: solo ven sus datos, no pueden editarlos ── #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
+            <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-muted-blue">info</span>
+                Datos Personales
+            </h3>
+            <p class="text-muted-blue text-sm mb-6">
+                Para modificar tus datos personales, contacta al administrador del sistema.
+            </p>
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
+                    <span class="text-muted-blue font-medium">Nombre completo</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.get_full_name|default:"—" }}</span>
+                </div>
+                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
+                    <span class="text-muted-blue font-medium">Usuario</span>
+                    <span class="font-mono text-sm text-slate-500">{{ user.username }}</span>
+                </div>
+                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
+                    <span class="text-muted-blue font-medium">Email</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.email|default:"—" }}</span>
+                </div>
+                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
+                    <span class="text-muted-blue font-medium">RUT</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.rut|default:"—" }}</span>
+                </div>
+                <div class="flex justify-between py-3">
+                    <span class="text-muted-blue font-medium">Teléfono</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.telefono|default:"—" }}</span>
+                </div>
+            </div>
+            <div class="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+                <p class="text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">info</span>
+                    ¿Necesitas actualizar tu información? Contacta a secretaría o al administrador del sistema.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Cambiar contraseña — todos pueden cambiarla #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
+            <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-500">lock_reset</span>
+                Cambiar Contraseña
+            </h3>
+            <p class="text-muted-blue text-sm mb-5">Por seguridad, usa una contraseña con al menos 8 caracteres.</p>
+            <a href="{% url 'password_change' %}"
+               class="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-amber-100 transition-all border border-amber-200 dark:border-amber-800">
+                <span class="material-symbols-outlined text-sm">lock</span>
+                Ir a Cambiar Contraseña
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

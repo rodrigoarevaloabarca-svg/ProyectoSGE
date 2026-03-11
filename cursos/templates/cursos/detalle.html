@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ curso }} - SGE{% endblock %}
+{% block main %}
+<div class="flex items-center gap-3 mb-8">
+    <a href="{% url 'cursos:lista' %}" class="text-muted-blue hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">{{ curso }}</h2>
+    {% if user.es_admin %}
+    <a href="{% url 'cursos:editar' curso.pk %}"
+       class="ml-auto flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-amber-600 transition-all text-sm">
+        <span class="material-symbols-outlined text-sm">edit</span> Editar Curso
+    </a>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    {# Info del curso #}
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+            <h4 class="font-bold text-navy-deep dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">info</span> Información del Curso
+            </h4>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-muted-blue">Nivel</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ curso.nivel.nombre }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-muted-blue">Grado</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ curso.grado }}°</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-muted-blue">Letra</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ curso.letra }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-muted-blue">Año</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">{{ curso.anio_academico }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-muted-blue">Prof. Jefe</span>
+                    <span class="font-semibold text-navy-deep dark:text-white">
+                        {% if curso.profesor_jefe %}{{ curso.profesor_jefe.nombre_completo }}
+                        {% else %}<span class="text-red-400 italic">Sin asignar</span>{% endif %}
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-muted-blue">Total alumnos</span>
+                    <span class="font-bold text-primary text-lg">{{ alumnos.count }}</span>
+                </div>
+            </div>
+        </div>
+
+        {# Asignaturas del curso #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="font-bold text-navy-deep dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">menu_book</span> Asignaturas
+                </h4>
+                {% if user.es_admin %}
+                <a href="{% url 'asignaturas:crear' %}" class="text-primary text-xs font-bold hover:underline">+ Agregar</a>
+                {% endif %}
+            </div>
+            <div class="space-y-2">
+                {% for asig in asignaturas %}
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+                    <div>
+                        <p class="text-sm font-semibold text-navy-deep dark:text-white">{{ asig.nombre }}</p>
+                        <p class="text-xs text-muted-blue">{{ asig.profesor.nombre_completo|default:"Sin profesor" }}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{% url 'notas:libro' curso.pk %}"
+                           class="text-xs text-primary font-bold hover:underline">Notas</a>
+                        <a href="{% url 'asistencia:tomar' asig.pk %}"
+                           class="text-xs text-emerald-600 font-bold hover:underline">Asist.</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted-blue text-sm text-center py-4">Sin asignaturas asignadas.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# Lista de alumnos del curso #}
+    <div class="lg:col-span-2">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-soft-grey dark:border-slate-800 flex justify-between items-center">
+                <h4 class="font-bold text-navy-deep dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">group</span>
+                    Lista de Alumnos ({{ alumnos.count }})
+                </h4>
+                <a href="{% url 'notas:libro' curso.pk %}"
+                   class="flex items-center gap-1 text-sm font-bold text-primary hover:underline">
+                    <span class="material-symbols-outlined text-sm">grade</span> Libro de notas
+                </a>
+            </div>
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Alumno</th>
+                        <th class="px-6 py-3 text-left">RUT</th>
+                        <th class="px-6 py-3 text-center">Promedio</th>
+                        <th class="px-6 py-3 text-center">Asistencia</th>
+                        <th class="px-6 py-3 text-center">Ver</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                    {% for alumno in alumnos %}
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                        <td class="px-6 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                                    {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
+                                </div>
+                                <span class="font-medium text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-3 text-muted-blue font-mono text-xs">{{ alumno.rut|default:"—" }}</td>
+                        <td class="px-6 py-3 text-center font-bold
+                            {% with p=alumno.get_promedio_general %}
+                            {% if p >= 4.0 %}text-emerald-600{% elif p %}text-red-500{% else %}text-slate-300{% endif %}">
+                            {{ alumno.get_promedio_general|default:"—" }}
+                            {% endwith %}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            {% with a=alumno.get_porcentaje_asistencia %}
+                            <span class="font-semibold {% if a >= 85 %}text-emerald-600{% elif a %}text-amber-500{% else %}text-slate-300{% endif %}">
+                                {% if a %}{{ a }}%{% else %}—{% endif %}
+                            </span>
+                            {% endwith %}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            <a href="{% url 'alumnos:detalle' alumno.pk %}" class="text-primary hover:underline text-xs font-bold">Ver</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="px-6 py-8 text-center text-muted-blue">Sin alumnos en este curso.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
