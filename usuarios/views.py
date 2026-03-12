@@ -12,8 +12,6 @@ from .forms import UsuarioCreacionForm, UsuarioEdicionForm, LoginForm
 
 def solo_admin(user):
     return user.is_authenticated and user.es_admin
-
-
 class LoginPersonalizado(LoginView):
     template_name        = 'usuarios/login.html'
     authentication_form  = LoginForm

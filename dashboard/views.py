@@ -47,7 +47,7 @@ def inicio(request):
             'cursos':             Curso.objects.select_related().all(),
             'ultimas_anotaciones': Anotacion.objects.select_related(
                 'alumno__usuario', 'creado_por'
-            ).order_by('-fecha')[:10],
+            ).order_by('-fecha')[:5],
             # Notificaciones
             'notifs_recibidas':   notifs_recibidas,
             'ultimos_masivos':    ultimos_masivos,
