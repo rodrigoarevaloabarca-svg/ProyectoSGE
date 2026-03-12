@@ -27,8 +27,8 @@
                 {{ nota.valor }}
             </div>
             <div>
-                <p class="font-bold text-navy-deep dark:text-white text-sm">{{ nota.get_tipo_display|default:nota.tipo }}</p>
-                <p class="text-xs text-muted-blue">{{ nota.fecha|date:"d/m/Y" }}</p>
+                <p class="font-bold text-navy-deep dark:text-white text-sm">{{ nota.tipo_evaluacion.nombre }}</p>
+                <p class="text-xs text-muted-blue">{{ nota.descripcion|default:"Sin descripción" }}</p>
             </div>
         </div>
 

@@ -1,5 +1,5 @@
 """APP: anotaciones - views.py"""
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.urls import reverse
@@ -11,6 +11,8 @@ INPUT    = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-sl
 SELECT   = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
 TEXTAREA = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
 DATE     = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+
+
 
 class AnotacionForm(forms.ModelForm):
     class Meta:
@@ -31,7 +33,8 @@ class AnotacionForm(forms.ModelForm):
             'asignatura':  'Asignatura relacionada',
         }
 
-
+def solo_staff(user):
+    return user.is_authenticated and (user.es_admin or user.es_profesor)
 @login_required
 def anotaciones_alumno(request, alumno_id):
     alumno      = get_object_or_404(Alumno, pk=alumno_id)
@@ -46,8 +49,8 @@ def anotaciones_alumno(request, alumno_id):
         ],
     })
 
-
 @login_required
+@user_passes_test(solo_staff, login_url='dashboard:inicio')
 def crear_anotacion(request, alumno_id):
     alumno = get_object_or_404(Alumno, pk=alumno_id)
     if request.method == 'POST':
@@ -74,6 +77,7 @@ def crear_anotacion(request, alumno_id):
 
 
 @login_required
+@user_passes_test(solo_staff, login_url='dashboard:inicio')
 def editar_anotacion(request, pk):
     anotacion = get_object_or_404(Anotacion, pk=pk)
     alumno    = anotacion.alumno

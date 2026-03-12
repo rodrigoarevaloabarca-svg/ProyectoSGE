@@ -77,18 +77,19 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="{% url 'alumnos:detalle' alumno.pk %}"
-                               class="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
+                            <a href="{% url 'alumnos:detalle' alumno.pk %}" ...>
                                 <span class="material-symbols-outlined text-sm">visibility</span>
                             </a>
-                            <a href="{% url 'alumnos:editar' alumno.pk %}"
-                               class="p-1.5 rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition-all" title="Editar">
+                            {% if request.user.es_admin %}
+                            <a href="{% url 'alumnos:editar' alumno.pk %}" ...>
                                 <span class="material-symbols-outlined text-sm">edit</span>
                             </a>
-                            <a href="{% url 'anotaciones:alumno' alumno.pk %}"
-                               class="p-1.5 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-500 hover:text-white transition-all" title="Anotaciones">
+                            {% endif %}
+                            {% if request.user.es_admin or request.user.es_profesor %}
+                            <a href="{% url 'anotaciones:alumno' alumno.pk %}" ...>
                                 <span class="material-symbols-outlined text-sm">notes</span>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

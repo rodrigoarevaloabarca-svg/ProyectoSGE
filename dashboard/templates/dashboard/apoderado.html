@@ -18,6 +18,17 @@
                         <span class="material-symbols-outlined">dashboard</span>
                         <span class="text-sm">Vista General</span>
                     </a>
+                    {# ← Avisos con badge de notificaciones no leídas #}
+                     <a class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
+                       href="{% url 'notificaciones:bandeja' %}">
+                        <span class="material-symbols-outlined group-hover:text-primary">notifications</span>
+                        <span class="text-sm flex-1">Avisos</span>
+                        {% if notif_no_leidas %}
+                        <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                            {% if notif_no_leidas > 99 %}99+{% else %}{{ notif_no_leidas }}{% endif %}
+                        </span>
+                        {% endif %}
+                     </a>
 
                     {# Links por cada pupilo #}
                     {% for datos in datos_pupilos %}

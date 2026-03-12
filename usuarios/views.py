@@ -26,7 +26,6 @@ class LoginPersonalizado(LoginView):
 class LogoutPersonalizado(LogoutView):
     next_page = reverse_lazy('usuarios:login')
 
-
 @login_required
 def perfil(request):
     if request.method == 'POST':
@@ -44,7 +43,6 @@ def perfil(request):
             {'label': 'Mi Perfil', 'url': ''},
         ],
     })
-
 
 @login_required
 @user_passes_test(solo_admin)

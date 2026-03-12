@@ -101,7 +101,7 @@
     <div class="lg:col-span-2 space-y-6">
 
         {# ── SOLO admin y profesor pueden editar datos ── #}
-        {% if user.es_admin or user.es_profesor %}
+        {% if user.es_admin  %} <!-- or user.es_profesor /agregar dependiendo de si quieres o no q lo edite el profesor-->
         <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
             <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-6 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary">edit</span>
