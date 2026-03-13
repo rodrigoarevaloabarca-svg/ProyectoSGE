@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block titulo %}Historial de Cambios - SGE{% endblock %}
+{% block main %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Historial de Cambios</h2>
+        <p class="text-muted-blue mt-1">Registro de ediciones y eliminaciones en notas y anotaciones.</p>
+    </div>
+</div>
+
+{# Filtros #}
+<form method="GET" class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 p-4 mb-6 flex flex-wrap gap-3 items-end">
+    <div class="flex-1 min-w-[150px]">
+        <label class="block text-xs font-bold text-muted-blue mb-1">Módulo</label>
+        <select name="modelo" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+            <option value="">Todos</option>
+            <option value="nota"      {% if filtros.modelo == 'nota' %}selected{% endif %}>Notas</option>
+            <option value="anotacion" {% if filtros.modelo == 'anotacion' %}selected{% endif %}>Anotaciones</option>
+        </select>
+    </div>
+    <div class="flex-1 min-w-[180px]">
+        <label class="block text-xs font-bold text-muted-blue mb-1">Modificado por</label>
+        <select name="usuario" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+            <option value="">Todos</option>
+            {% for u in usuarios_staff %}
+            <option value="{{ u.pk }}" {% if filtros.usuario == u.pk|stringformat:"s" %}selected{% endif %}>
+                {{ u.get_full_name }} ({{ u.get_rol_display }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="flex-1 min-w-[140px]">
+        <label class="block text-xs font-bold text-muted-blue mb-1">Desde</label>
+        <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}"
+               class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+    </div>
+    <div class="flex-1 min-w-[140px]">
+        <label class="block text-xs font-bold text-muted-blue mb-1">Hasta</label>
+        <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}"
+               class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+    </div>
+    <div class="flex gap-2">
+        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 transition-all">
+            Filtrar
+        </button>
+        <a href="{% url 'historial:lista' %}" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-bold hover:bg-slate-200 transition-all">
+            Limpiar
+        </a>
+    </div>
+</form>
+
+{# Tabla #}
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-4 py-3 text-left">Fecha y Hora</th>
+                    <th class="px-4 py-3 text-left">Módulo</th>
+                    <th class="px-4 py-3 text-left">Acción</th>
+                    <th class="px-4 py-3 text-left">Objeto afectado</th>
+                    <th class="px-4 py-3 text-left">Modificado por</th>
+                    <th class="px-4 py-3 text-center">Detalle</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
+                {% for cambio in historial %}
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="px-4 py-3 text-muted-blue font-mono text-xs whitespace-nowrap">
+                        {{ cambio.fecha|date:"d/m/Y H:i" }}
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-bold
+                            {% if cambio.modelo == 'nota' %}bg-blue-100 text-blue-700
+                            {% else %}bg-purple-100 text-purple-700{% endif %}">
+                            {{ cambio.get_modelo_display }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-bold
+                            {% if cambio.accion == 'edicion' %}bg-amber-100 text-amber-700
+                            {% else %}bg-red-100 text-red-700{% endif %}">
+                            {{ cambio.get_accion_display }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-navy-deep dark:text-white text-xs">
+                        {{ cambio.descripcion_objeto|default:"—" }}
+                    </td>
+                    <td class="px-4 py-3">
+                        <div>
+                            <p class="font-semibold text-navy-deep dark:text-white text-xs">
+                                {{ cambio.modificado_por.get_full_name|default:"Sistema" }}
+                            </p>
+                            <p class="text-xs text-muted-blue">
+                                {{ cambio.modificado_por.get_rol_display|default:"—" }}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="toggleDetalle('detalle-{{ cambio.pk }}')"
+                                class="text-primary hover:underline text-xs font-bold">
+                            Ver cambios
+                        </button>
+                    </td>
+                </tr>
+                {# Fila expandible con el diff #}
+                <tr id="detalle-{{ cambio.pk }}" class="hidden bg-slate-50 dark:bg-slate-800/30">
+                    <td colspan="6" class="px-6 py-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs font-bold text-red-500 mb-2 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">undo</span> Estado anterior
+                                </p>
+                                <div class="bg-red-50 dark:bg-red-900/10 rounded-lg p-3 text-xs space-y-1 border border-red-100 dark:border-red-800">
+                                    {% for key, val in cambio.datos_antes.items %}
+                                    <div class="flex justify-between gap-4">
+                                        <span class="text-muted-blue font-medium capitalize">{{ key }}</span>
+                                        <span class="text-slate-700 dark:text-slate-300 text-right">{{ val|default:"—" }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if cambio.datos_despues %}
+                            <div>
+                                <p class="text-xs font-bold text-emerald-600 mb-2 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">redo</span> Estado posterior
+                                </p>
+                                <div class="bg-emerald-50 dark:bg-emerald-900/10 rounded-lg p-3 text-xs space-y-1 border border-emerald-100 dark:border-emerald-800">
+                                    {% for key, val in cambio.datos_despues.items %}
+                                    <div class="flex justify-between gap-4">
+                                        <span class="text-muted-blue font-medium capitalize">{{ key }}</span>
+                                        {# Se marca en verde — la comparación campo a campo se hace visualmente ya que Django no tiene filtro get_item nativo #}
+                                        <span class="text-emerald-700 dark:text-emerald-400 font-bold text-right">
+                                            {{ val|default:"—" }}
+                                        </span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="flex items-center justify-center text-red-400 text-sm font-bold">
+                                <span class="material-symbols-outlined mr-2">delete</span> Registro eliminado
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-muted-blue">
+                        <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">history</span>
+                        No hay cambios registrados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleDetalle(id) {
+    const row = document.getElementById(id);
+    row.classList.toggle('hidden');
+}
+</script>
+{% endblock %}

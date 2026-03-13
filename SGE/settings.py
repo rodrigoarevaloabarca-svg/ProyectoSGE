@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'dashboard',
     'informes',
     'notificaciones',
+    'historial'
 ]
 
 

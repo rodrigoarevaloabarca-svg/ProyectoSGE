@@ -35,6 +35,7 @@ urlpatterns = [
     path('asistencia/',  include('asistencia.urls',  namespace='asistencia')),
     path('anotaciones/', include('anotaciones.urls', namespace='anotaciones')),
     path('informes/',    include('informes.urls',    namespace='informes')),
+    path('historial/', include('historial.urls', namespace='historial')),
 
     # Páginas complementarias
     path('sobre_nosotros/',     views.sobre_nosotros,     name='sobre_nosotros'),

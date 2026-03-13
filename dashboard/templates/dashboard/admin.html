@@ -2,6 +2,11 @@
 {% block titulo %}Panel de Control - SGE{% endblock %}
 {% block main %}
 
+{% comment %}
+   ENCABEZADO DEL DASHBOARD
+   - Muestra nombre del usuario autenticado
+   - 'usuario' viene del context en dashboard/views.py → inicio()
+{% endcomment %}
 <div class="mb-10">
     <h2 class="text-navy-deep dark:text-white text-3xl font-extrabold tracking-tight">Panel de Control</h2>
     <p class="text-muted-blue dark:text-slate-400 mt-2 text-lg">
@@ -10,9 +15,16 @@
     </p>
 </div>
 
-{# ===== TARJETAS DE ESTADÍSTICAS ===== #}
+{% comment %}
+   TARJETAS DE ESTADÍSTICAS GLOBALES
+   - Cada tarjeta es un enlace a su módulo correspondiente
+   - Variables del context: total_alumnos, total_profesores,
+     total_cursos, total_asignaturas
+   - Se calculan en dashboard/views.py → bloque if user.rol == 'admin'
+{% endcomment %}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 
+    {# Tarjeta: Total Alumnos #}
     <a href="{% url 'alumnos:lista' %}"
        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm hover:border-primary/50 hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-4">
@@ -25,6 +37,7 @@
         <p class="text-navy-deep dark:text-white text-3xl font-bold mt-1">{{ total_alumnos|default:"0" }}</p>
     </a>
 
+    {# Tarjeta: Docentes Activos #}
     <a href="{% url 'profesores:lista' %}"
        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm hover:border-indigo-500/50 hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-4">
@@ -37,6 +50,7 @@
         <p class="text-navy-deep dark:text-white text-3xl font-bold mt-1">{{ total_profesores|default:"0" }}</p>
     </a>
 
+    {# Tarjeta: Cursos Activos #}
     <a href="{% url 'cursos:lista' %}"
        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm hover:border-orange-500/50 hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-4">
@@ -49,6 +63,7 @@
         <p class="text-navy-deep dark:text-white text-3xl font-bold mt-1">{{ total_cursos|default:"0" }}</p>
     </a>
 
+    {# Tarjeta: Asignaturas #}
     <a href="{% url 'asignaturas:lista' %}"
        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm hover:border-purple-500/50 hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-4">
@@ -63,9 +78,17 @@
 
 </div>
 
-{# ===== GRID: CURSOS + ANOTACIONES ===== #}
+{% comment %}
+   GRID PRINCIPAL: CURSOS + ANOTACIONES
+   - Layout: 2 columnas para cursos, 1 para anotaciones
+{% endcomment %}
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
 
+    {% comment %}
+       TABLA DE CURSOS
+       - Variable: 'cursos' → Curso.objects.select_related(...)
+       - Para agregar columnas, también actualizar views.py
+    {% endcomment %}
     <div class="lg:col-span-2">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-navy-deep dark:text-white text-xl font-bold border-l-4 border-primary pl-4">
@@ -92,6 +115,7 @@
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                         <td class="px-4 py-3 font-bold text-navy-deep dark:text-white">{{ curso }}</td>
                         <td class="px-4 py-3">
+                            {# Color según tipo de nivel: basica=azul, media=verde #}
                             <span class="px-2 py-1 rounded-full text-xs font-bold
                                 {% if curso.nivel.tipo == 'basica' %}bg-blue-100 text-blue-700
                                 {% else %}bg-green-100 text-green-700{% endif %}">
@@ -123,6 +147,12 @@
         </div>
     </div>
 
+    {% comment %}
+       PANEL LATERAL: ÚLTIMAS ANOTACIONES
+       - Variable: 'ultimas_anotaciones' → últimas 5
+       - Definido en dashboard/views.py → Anotacion.objects...[:5]
+       - Cada anotación redirige a la ficha del alumno via onclick
+    {% endcomment %}
     <div>
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-navy-deep dark:text-white text-xl font-bold border-l-4 border-primary pl-4">Últimas Anotaciones</h3>
@@ -130,7 +160,9 @@
         <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 overflow-hidden">
             <div class="divide-y divide-soft-grey dark:divide-slate-800">
                 {% for anotacion in ultimas_anotaciones %}
-                <div class="p-4 flex gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <div onclick="window.location='{% url 'alumnos:detalle' anotacion.alumno.pk %}'"
+                     class="p-4 flex gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+                    {# Ícono con color según tipo de anotación #}
                     <div class="size-9 rounded-full flex items-center justify-center shrink-0
                         {% if anotacion.tipo == 'positiva' %}bg-green-100 text-green-600
                         {% elif anotacion.tipo == 'negativa' %}bg-red-100 text-red-500
@@ -142,8 +174,12 @@
                         </span>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-sm font-semibold text-navy-deep dark:text-white truncate">{{ anotacion.alumno.nombre_completo }}</p>
-                        <p class="text-xs text-muted-blue dark:text-slate-400 mt-0.5 line-clamp-2">{{ anotacion.descripcion|truncatechars:60 }}</p>
+                        <p class="text-sm font-semibold text-navy-deep dark:text-white truncate">
+                            {{ anotacion.alumno.nombre_completo }}
+                        </p>
+                        <p class="text-xs text-muted-blue dark:text-slate-400 mt-0.5 line-clamp-2">
+                            {{ anotacion.descripcion|truncatechars:60 }}
+                        </p>
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-[10px] text-slate-400">{{ anotacion.fecha }}</span>
                             <span class="text-[10px] font-bold
@@ -164,15 +200,84 @@
             </div>
         </div>
     </div>
+
 </div>
 
-{# ===== ACCESOS RÁPIDOS ===== #}
+{% comment %}
+   TARJETA RESUMEN DEL HISTORIAL DE CAMBIOS
+   - Muestra los últimos 5 cambios registrados en notas/anotaciones
+   - Variable: 'ultimos_cambios' → agregada en dashboard/views.py
+   - El enlace lleva a historial/lista.html con filtros
+{% endcomment %}
+<div class="mb-12">
+    <div class="flex items-center justify-between mb-6">
+        <h3 class="text-navy-deep dark:text-white text-xl font-bold border-l-4 border-amber-500 pl-4">
+            Historial de Cambios Recientes
+        </h3>
+        <a href="{% url 'historial:lista' %}" class="text-xs font-bold text-amber-600 hover:underline flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            Ver historial completo
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="divide-y divide-soft-grey dark:divide-slate-800">
+            {% for cambio in ultimos_cambios %}
+            <div class="px-5 py-3 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                {# Ícono según módulo afectado: nota=azul, anotación=morado #}
+                <div class="size-9 rounded-full flex items-center justify-center shrink-0
+                    {% if cambio.modelo == 'nota' %}bg-blue-100 text-blue-600
+                    {% else %}bg-purple-100 text-purple-600{% endif %}">
+                    <span class="material-symbols-outlined text-sm">
+                        {% if cambio.modelo == 'nota' %}grade{% else %}notes{% endif %}
+                    </span>
+                </div>
+                {# Descripción del cambio #}
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-navy-deep dark:text-white truncate">
+                        {{ cambio.descripcion_objeto|default:"Registro modificado" }}
+                    </p>
+                    <p class="text-xs text-muted-blue mt-0.5">
+                        {{ cambio.modificado_por.get_full_name|default:"Sistema" }}
+                        <span class="mx-1">·</span>
+                        {{ cambio.get_modelo_display }}
+                    </p>
+                </div>
+                {# Badge de acción: edición=amarillo, eliminación=rojo #}
+                <span class="px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap
+                    {% if cambio.accion == 'edicion' %}bg-amber-100 text-amber-700
+                    {% else %}bg-red-100 text-red-700{% endif %}">
+                    {{ cambio.get_accion_display }}
+                </span>
+                {# Fecha y hora del cambio #}
+                <span class="text-xs text-muted-blue font-mono whitespace-nowrap">
+                    {{ cambio.fecha|date:"d/m/Y H:i" }}
+                </span>
+            </div>
+            {% empty %}
+            <div class="px-5 py-10 text-center text-muted-blue dark:text-slate-400">
+                <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">history</span>
+                <p class="text-sm">No hay cambios registrados aún.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% comment %}
+   ACCESOS RÁPIDOS
+   - Botones de creación rápida para el administrador
+   - Solo visible para rol admin (este template es exclusivo del admin)
+   - Para agregar un acceso: copiar un bloque div y ajustar
+     url, color (border-*, bg-*, shadow-*, group-hover:text-*) e ícono
+{% endcomment %}
 <div class="mb-6">
     <h3 class="text-navy-deep dark:text-white text-xl font-bold border-l-4 border-primary pl-4 mb-6">Accesos Rápidos</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 
-        <a href="{% url 'alumnos:crear' %}"
-           class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-primary/50 hover:shadow-md transition-all flex items-center gap-4">
+        {# Acceso: Nuevo Alumno #}
+        <div onclick="window.location='{% url 'alumnos:crear' %}'"
+             class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-primary/50 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer">
             <div class="size-12 rounded-xl bg-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined">person_add</span>
             </div>
@@ -180,10 +285,11 @@
                 <p class="text-navy-deep dark:text-white font-bold group-hover:text-primary transition-colors">Nuevo Alumno</p>
                 <p class="text-muted-blue text-xs mt-0.5">Registrar matrícula</p>
             </div>
-        </a>
+        </div>
 
-        <a href="{% url 'profesores:crear' %}"
-           class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-indigo-500/50 hover:shadow-md transition-all flex items-center gap-4">
+        {# Acceso: Nuevo Profesor #}
+        <div onclick="window.location='{% url 'profesores:crear' %}'"
+             class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-indigo-500/50 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer">
             <div class="size-12 rounded-xl bg-indigo-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined">school</span>
             </div>
@@ -191,10 +297,11 @@
                 <p class="text-navy-deep dark:text-white font-bold group-hover:text-indigo-500 transition-colors">Nuevo Profesor</p>
                 <p class="text-muted-blue text-xs mt-0.5">Agregar docente</p>
             </div>
-        </a>
+        </div>
 
-        <a href="{% url 'cursos:crear' %}"
-           class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-orange-500/50 hover:shadow-md transition-all flex items-center gap-4">
+        {# Acceso: Nuevo Curso #}
+        <div onclick="window.location='{% url 'cursos:crear' %}'"
+             class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-orange-500/50 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer">
             <div class="size-12 rounded-xl bg-orange-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined">add_circle</span>
             </div>
@@ -202,21 +309,42 @@
                 <p class="text-navy-deep dark:text-white font-bold group-hover:text-orange-500 transition-colors">Nuevo Curso</p>
                 <p class="text-muted-blue text-xs mt-0.5">Crear curso</p>
             </div>
-        </a>
+        </div>
 
-        {# ── Informes ── #}
-        <a href="{% url 'informes:dashboard' %}"
-           class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-indigo-500/50 hover:shadow-md transition-all flex items-center gap-4">
+        {# Acceso: Centro de Informes #}
+        <div onclick="window.location='{% url 'informes:dashboard' %}'"
+             class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-indigo-500/50 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer">
             <div class="size-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined">summarize</span>
             </div>
             <div>
                 <p class="text-navy-deep dark:text-white font-bold group-hover:text-indigo-600 transition-colors">Centro de Informes</p>
-                <p class="text-muted-blue text-xs mt-0.5">Todos los informes en un lugar</p>
+                <p class="text-muted-blue text-xs mt-0.5">Todos los informes</p>
             </div>
-        </a>
+        </div>
+
+        {# Acceso: Historial — vista protegida solo admin (historial/views.py) #}
+        <div onclick="window.location='{% url 'historial:lista' %}'"
+             class="group bg-white dark:bg-slate-900 p-5 rounded-xl border border-soft-grey dark:border-slate-800 hover:border-amber-500/50 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer">
+            <div class="size-12 rounded-xl bg-amber-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined">history</span>
+            </div>
+            <div>
+                <p class="text-navy-deep dark:text-white font-bold group-hover:text-amber-500 transition-colors">Historial</p>
+                <p class="text-muted-blue text-xs mt-0.5">Auditoría de cambios</p>
+            </div>
+        </div>
 
     </div>
 </div>
+
+{% comment %}
+   PANEL DE NOTIFICACIONES DEL ADMIN
+   - Include separado para mantener este template limpio
+   - Archivo: templates/dashboard/includes/panel_notif_admin.html
+   - Variables necesarias: notifs_recibidas, notif_no_leidas,
+     ultimos_masivos, total_enviadas, sin_leer_sistema
+{% endcomment %}
 {% include 'dashboard/includes/panel_notif_admin.html' %}
+
 {% endblock %}

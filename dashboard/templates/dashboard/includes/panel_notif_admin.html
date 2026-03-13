@@ -59,13 +59,13 @@
     </div>
     {% endif %}
 
-    {# Notificaciones recibidas #}
+    {# Notificaciones recibidas Se usa div+onclick en lugar de <a> para evitar div anidado dentro de <a> (HTML inválido) #}
     <div class="divide-y divide-soft-grey dark:divide-slate-800">
         {% if notifs_recibidas %}
             {% for n in notifs_recibidas %}
-            <a href="{% url 'notificaciones:ver' n.pk %}"
-               class="flex items-start gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all
-                      {% if not n.leida %}bg-primary/5{% endif %}">
+            <div onclick="window.location='{% url 'notificaciones:ver' n.pk %}'"
+                 class="flex items-start gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all cursor-pointer
+                        {% if not n.leida %}bg-primary/5{% endif %}">
                 <span class="material-symbols-outlined text-sm mt-0.5 {% if not n.leida %}text-primary{% else %}text-muted-blue{% endif %}">
                     {% if n.leida %}drafts{% else %}mail{% endif %}
                 </span>
@@ -78,7 +78,7 @@
                 {% if not n.leida %}
                 <span class="size-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
                 {% endif %}
-            </a>
+            </div>
             {% endfor %}
         {% else %}
         <div class="px-5 py-6 text-center">

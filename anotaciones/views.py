@@ -5,13 +5,13 @@ from django.contrib import messages
 from django.urls import reverse
 from .models import Anotacion
 from alumnos.models import Alumno
+from historial.utils import snapshot_anotacion, registrar_cambio_anotacion
 from django import forms
 
 INPUT    = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
 SELECT   = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
 TEXTAREA = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
 DATE     = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-
 
 
 class AnotacionForm(forms.ModelForm):
@@ -33,8 +33,11 @@ class AnotacionForm(forms.ModelForm):
             'asignatura':  'Asignatura relacionada',
         }
 
+
 def solo_staff(user):
     return user.is_authenticated and (user.es_admin or user.es_profesor)
+
+
 @login_required
 def anotaciones_alumno(request, alumno_id):
     alumno      = get_object_or_404(Alumno, pk=alumno_id)
@@ -48,6 +51,7 @@ def anotaciones_alumno(request, alumno_id):
             {'label': 'Anotaciones',          'url': ''},
         ],
     })
+
 
 @login_required
 @user_passes_test(solo_staff, login_url='dashboard:inicio')
@@ -81,14 +85,31 @@ def crear_anotacion(request, alumno_id):
 def editar_anotacion(request, pk):
     anotacion = get_object_or_404(Anotacion, pk=pk)
     alumno    = anotacion.alumno
+
+    # Profesor solo puede editar sus propias anotaciones
+    if request.user.es_profesor and anotacion.creado_por != request.user:
+        messages.error(request, 'Solo puedes editar anotaciones que tú hayas creado.')
+        return redirect('anotaciones:alumno', alumno_id=alumno.pk)
+
     if request.method == 'POST':
+        # Snapshot ANTES de guardar
+        antes = snapshot_anotacion(anotacion)
+        antes['_id']          = anotacion.pk
+        antes['_descripcion'] = str(anotacion)
+
         form = AnotacionForm(request.POST, instance=anotacion)
         if form.is_valid():
             form.save()
+            # Snapshot DESPUÉS de guardar
+            anotacion.refresh_from_db()
+            despues = snapshot_anotacion(anotacion)
+            registrar_cambio_anotacion(antes, despues, request.user)
+
             messages.success(request, 'Anotación actualizada.')
             return redirect('anotaciones:alumno', alumno_id=alumno.pk)
     else:
         form = AnotacionForm(instance=anotacion)
+
     return render(request, 'anotaciones/form.html', {
         'form':   form,
         'alumno': alumno,

@@ -2,7 +2,7 @@
 APP: notas
 ARCHIVO: views.py
 """
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
@@ -12,6 +12,7 @@ from .forms import NotaForm
 from alumnos.models import Alumno
 from asignaturas.models import Asignatura
 from cursos.models import Curso
+from historial.utils import snapshot_nota, registrar_cambio_nota
 
 
 def solo_profesor_o_admin(user):
@@ -64,16 +65,22 @@ def notas_alumno_asignatura(request, alumno_id, asignatura_id):
         'notas':       notas,
         'promedio':    promedio,
         'breadcrumbs': [
-            {'label': 'Libro de Notas',        'url': reverse('notas:libro', kwargs={'curso_id': alumno.curso.pk})},
-            {'label': alumno.nombre_completo,  'url': ''},
+            {'label': 'Libro de Notas',       'url': reverse('notas:libro', kwargs={'curso_id': alumno.curso.pk})},
+            {'label': alumno.nombre_completo, 'url': ''},
         ],
     })
 
 
 @login_required
+@user_passes_test(solo_profesor_o_admin, login_url='dashboard:inicio')
 def agregar_nota(request, alumno_id, asignatura_id):
     alumno     = get_object_or_404(Alumno,     pk=alumno_id)
     asignatura = get_object_or_404(Asignatura, pk=asignatura_id)
+
+    # Profesor solo puede agregar notas en sus propias asignaturas
+    if request.user.es_profesor and asignatura.profesor != request.user.perfil_profesor:
+        messages.error(request, 'Solo puedes agregar notas en tus propias asignaturas.')
+        return redirect('dashboard:inicio')
 
     if request.method == 'POST':
         form = NotaForm(request.POST)
@@ -93,21 +100,37 @@ def agregar_nota(request, alumno_id, asignatura_id):
         'alumno':      alumno,
         'asignatura':  asignatura,
         'breadcrumbs': [
-            {'label': 'Libro de Notas',   'url': reverse('notas:libro', kwargs={'curso_id': alumno.curso.pk})},
+            {'label': 'Libro de Notas',       'url': reverse('notas:libro', kwargs={'curso_id': alumno.curso.pk})},
             {'label': alumno.nombre_completo, 'url': reverse('notas:detalle', kwargs={'alumno_id': alumno_id, 'asignatura_id': asignatura_id})},
-            {'label': 'Agregar Nota',     'url': ''},
+            {'label': 'Agregar Nota',         'url': ''},
         ],
     })
 
 
 @login_required
+@user_passes_test(solo_profesor_o_admin, login_url='dashboard:inicio')
 def editar_nota(request, nota_id):
     nota = get_object_or_404(Nota, pk=nota_id)
 
+    # Profesor solo puede editar notas de sus propias asignaturas
+    if request.user.es_profesor and nota.asignatura.profesor != request.user.perfil_profesor:
+        messages.error(request, 'Solo puedes editar notas de tus propias asignaturas.')
+        return redirect('dashboard:inicio')
+
     if request.method == 'POST':
+        # Snapshot ANTES de guardar
+        antes = snapshot_nota(nota)
+        antes['_id']          = nota.pk
+        antes['_descripcion'] = str(nota)
+
         form = NotaForm(request.POST, instance=nota)
         if form.is_valid():
             form.save()
+            # Snapshot DESPUÉS de guardar
+            nota.refresh_from_db()
+            despues = snapshot_nota(nota)
+            registrar_cambio_nota(antes, despues, request.user)
+
             messages.success(request, 'Nota actualizada.')
             return redirect('notas:detalle',
                             alumno_id=nota.alumno.pk,
@@ -119,20 +142,32 @@ def editar_nota(request, nota_id):
         'form':  form,
         'nota':  nota,
         'breadcrumbs': [
-            {'label': 'Libro de Notas',        'url': reverse('notas:libro', kwargs={'curso_id': nota.alumno.curso.pk})},
+            {'label': 'Libro de Notas',           'url': reverse('notas:libro', kwargs={'curso_id': nota.alumno.curso.pk})},
             {'label': nota.alumno.nombre_completo, 'url': reverse('notas:detalle', kwargs={'alumno_id': nota.alumno.pk, 'asignatura_id': nota.asignatura.pk})},
-            {'label': 'Editar Nota',           'url': ''},
+            {'label': 'Editar Nota',              'url': ''},
         ],
     })
 
 
 @login_required
+@user_passes_test(solo_profesor_o_admin, login_url='dashboard:inicio')
 def eliminar_nota(request, nota_id):
     nota          = get_object_or_404(Nota, pk=nota_id)
     alumno_id     = nota.alumno.pk
     asignatura_id = nota.asignatura.pk
 
+    # Profesor solo puede eliminar notas de sus propias asignaturas
+    if request.user.es_profesor and nota.asignatura.profesor != request.user.perfil_profesor:
+        messages.error(request, 'Solo puedes eliminar notas de tus propias asignaturas.')
+        return redirect('dashboard:inicio')
+
     if request.method == 'POST':
+        # Snapshot ANTES de eliminar
+        antes = snapshot_nota(nota)
+        antes['_id']          = nota.pk
+        antes['_descripcion'] = str(nota)
+        registrar_cambio_nota(antes, None, request.user, accion='eliminacion')
+
         nota.delete()
         messages.warning(request, 'Nota eliminada.')
         return redirect('notas:detalle', alumno_id=alumno_id, asignatura_id=asignatura_id)
@@ -140,8 +175,8 @@ def eliminar_nota(request, nota_id):
     return render(request, 'notas/confirmar_eliminar.html', {
         'nota': nota,
         'breadcrumbs': [
-            {'label': 'Libro de Notas',        'url': reverse('notas:libro', kwargs={'curso_id': nota.alumno.curso.pk})},
+            {'label': 'Libro de Notas',           'url': reverse('notas:libro', kwargs={'curso_id': nota.alumno.curso.pk})},
             {'label': nota.alumno.nombre_completo, 'url': reverse('notas:detalle', kwargs={'alumno_id': nota.alumno.pk, 'asignatura_id': nota.asignatura.pk})},
-            {'label': 'Eliminar Nota',         'url': ''},
+            {'label': 'Eliminar Nota',            'url': ''},
         ],
     })

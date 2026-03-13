@@ -1,6 +1,7 @@
 """dashboard/views.py — con notificaciones integradas en todos los roles"""
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from historial.models import HistorialCambio
 
 
 @login_required
@@ -54,6 +55,8 @@ def inicio(request):
             'total_enviadas':     total_enviadas_hoy,
             'sin_leer_sistema':   sin_leer_sistema,
             'notif_no_leidas':    notif_no_leidas, # Variable ya calculada correctamente
+            'ultimos_cambios': HistorialCambio.objects.select_related('modificado_por').order_by('-fecha')[:5],
+
         }
         return render(request, 'dashboard/admin.html', context)
 
@@ -160,7 +163,7 @@ def inicio(request):
         except Exception:
             return render(request, 'dashboard/alumno.html', {'alumno': None})
 
-        from notas.models import Nota, PromedioAsignatura
+        from notas.models import  PromedioAsignatura
         from asistencia.models import RegistroAsistencia
         from anotaciones.models import Anotacion
         from asignaturas.models import Asignatura
@@ -175,7 +178,7 @@ def inicio(request):
         # Promedio general: media de los promedios por asignatura
         promedios_vals = [p.promedio for p in promedios if p.promedio is not None]
         if promedios_vals:
-            from decimal import Decimal
+
             promedio_general = round(sum(promedios_vals) / len(promedios_vals), 1)
         else:
             promedio_general = None
