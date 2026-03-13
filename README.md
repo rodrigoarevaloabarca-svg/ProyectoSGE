@@ -38,8 +38,8 @@ Permite administrar alumnos, profesores, cursos, notas, asistencia, anotaciones 
 ### 1. Clonar el repositorio y crear entorno virtual
 
 ```bash
-git clone https://github.com/rodrigoarevaloabarca-svg/SistemadeGestionEscolar.git
-cd SistemadeGestionEscolar
+git clone https://github.com/rodrigoarevaloabarca-svg/ProyectoSGE.git
+cd ProyectoSGE
 python -m venv .venv
 
 # Windows
