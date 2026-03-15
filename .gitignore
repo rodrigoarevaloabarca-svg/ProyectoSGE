@@ -28,7 +28,6 @@ Thumbs.db
 # ── Logs ─────────────────────────────────────────────────
 *.log
 logs/
-privado/
 
 # ── Coverage / Tests ─────────────────────────────────────
 .coverage
@@ -39,3 +38,6 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+# ── Carpetas ─────────────────────────────────
+staticfiles/
+privado/
