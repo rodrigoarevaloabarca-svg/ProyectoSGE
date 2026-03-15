@@ -1,0 +1,116 @@
+/* ============================================================
+   navbar.css — SGE · Estilos del header, menú móvil y dark mode
+   Colocar en: static/css/navbar.css
+   ============================================================ */
+
+/* ──────────────────────────────────────────
+   1. MENÚ MÓVIL — Transición apertura/cierre
+   ────────────────────────────────────────── */
+#mobile-menu {
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity     0.25s ease;
+    max-height: 0;
+    opacity:    0;
+    overflow:   hidden;
+}
+
+#mobile-menu.open {
+    max-height: 100vh;
+    opacity:    1;
+}
+
+/* ──────────────────────────────────────────
+   2. HAMBURGUESA → X
+   ────────────────────────────────────────── */
+#hamburger-icon .bar {
+    transition:      transform 0.3s ease, opacity 0.2s ease;
+    transform-origin: center;
+    display:         block;
+    width:           20px;
+    height:          2px;
+    border-radius:   9999px;
+}
+
+#hamburger-icon.open .bar-top { transform: translateY(7px) rotate(45deg);  }
+#hamburger-icon.open .bar-mid { opacity: 0; transform: scaleX(0);           }
+#hamburger-icon.open .bar-bot { transform: translateY(-7px) rotate(-45deg); }
+
+/* ──────────────────────────────────────────
+   3. SUBMENÚS MÓVIL — Colapsables
+   ────────────────────────────────────────── */
+.mobile-submenu {
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    max-height: 0;
+    opacity:    0;
+    overflow:   hidden;
+}
+
+.mobile-submenu.open {
+    max-height: 600px;
+    opacity:    1;
+}
+
+/* ──────────────────────────────────────────
+   4. DROPDOWN ESCRITORIO — flecha animada
+   ────────────────────────────────────────── */
+.group:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-arrow {
+    transition: transform 0.25s ease;
+}
+
+/* ──────────────────────────────────────────
+   5. BOTÓN DARK MODE — animación sol/luna
+   ────────────────────────────────────────── */
+#dark-mode-btn {
+    position:   relative;
+    overflow:   hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#dark-mode-btn .icon-sun,
+#dark-mode-btn .icon-moon {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity   0.3s ease;
+    position:   absolute;
+    inset:      0;
+    display:    flex;
+    align-items:     center;
+    justify-content: center;
+}
+
+/* Estado CLARO: muestra sol, oculta luna */
+#dark-mode-btn .icon-sun  { transform: rotate(0deg)   translateY(0);    opacity: 1; }
+#dark-mode-btn .icon-moon { transform: rotate(-90deg) translateY(-100%); opacity: 0; }
+
+/* Estado OSCURO: muestra luna, oculta sol */
+.dark #dark-mode-btn .icon-sun  { transform: rotate(90deg) translateY(100%); opacity: 0; }
+.dark #dark-mode-btn .icon-moon { transform: rotate(0deg)  translateY(0);    opacity: 1; }
+
+/* ──────────────────────────────────────────
+   6. SCROLLBAR SUTIL (global)
+   ────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background:    #6b7fa3;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover { background: #197fe6; }
+
+/* ──────────────────────────────────────────
+   7. FOCO ACCESIBLE (global)
+   ────────────────────────────────────────── */
+:focus-visible {
+    outline:        2px solid #197fe6;
+    outline-offset: 2px;
+    border-radius:  6px;
+}
+
+/* ──────────────────────────────────────────
+   8. PREVENCIÓN DE FLASH de tema (FOUC)
+      Se inyecta inline en <head>, ver base.html
+   ────────────────────────────────────────── */
+/* No poner estilos aquí para esto — se maneja con el script inline del <head> */

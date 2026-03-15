@@ -1,0 +1,153 @@
+/* ============================================================
+   forms-dark.css — SGE · Inputs visibles en modo oscuro
+   Colocar en: static/css/forms-dark.css
+   Y agregar en base.html:
+     <link rel="stylesheet" href="{% static 'css/forms-dark.css' %}">
+
+   O bien copiar estas reglas al final de tu estilos.css
+   ============================================================ */
+
+/* ──────────────────────────────────────────────────────────
+   1. INPUTS, TEXTAREAS Y SELECTS — Modo oscuro
+      El plugin @tailwindcss/forms resetea los estilos nativos,
+      pero no tiene variantes dark por defecto. Esto lo corrige.
+   ────────────────────────────────────────────────────────── */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
+.dark textarea,
+.dark select {
+    background-color: #1e293b;   /* slate-800 */
+    color:            #f1f5f9;   /* slate-100 */
+    border-color:     #334155;   /* slate-700 */
+}
+
+/* Placeholder visible en oscuro */
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: #64748b;   /* slate-500 */
+}
+
+/* Focus en oscuro */
+.dark input:not([type="checkbox"]):not([type="radio"]):focus,
+.dark textarea:focus,
+.dark select:focus {
+    background-color: #1e293b;
+    border-color:     #197fe6;   /* primary */
+    outline:          none;
+    box-shadow:       0 0 0 3px rgba(25, 127, 230, 0.25);
+}
+
+/* Select — flecha visible en oscuro */
+.dark select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat:   no-repeat;
+    background-position: right 0.75rem center;
+    background-size:     1.25em 1.25em;
+    padding-right:       2.5rem;
+    -webkit-appearance:  none;
+    appearance:          none;
+}
+
+/* ──────────────────────────────────────────────────────────
+   2. CHECKBOX Y RADIO — Modo oscuro
+   ────────────────────────────────────────────────────────── */
+.dark input[type="checkbox"],
+.dark input[type="radio"] {
+    background-color: #1e293b;
+    border-color:     #475569;   /* slate-600 */
+    color:            #197fe6;
+}
+
+.dark input[type="checkbox"]:checked,
+.dark input[type="radio"]:checked {
+    background-color: #197fe6;
+    border-color:     #197fe6;
+}
+
+.dark input[type="checkbox"]:focus,
+.dark input[type="radio"]:focus {
+    box-shadow: 0 0 0 3px rgba(25, 127, 230, 0.3);
+}
+
+/* ──────────────────────────────────────────────────────────
+   3. INPUT FILE — Modo oscuro
+   ────────────────────────────────────────────────────────── */
+.dark input[type="file"] {
+    color:        #cbd5e1;   /* slate-300 */
+    border-color: #334155;
+}
+
+.dark input[type="file"]::file-selector-button {
+    background-color: #334155;
+    color:            #e2e8f0;
+    border:           none;
+    padding:          0.375rem 0.875rem;
+    border-radius:    0.5rem;
+    cursor:           pointer;
+    font-weight:      600;
+    font-size:        0.875rem;
+    transition:       background-color 0.2s ease;
+}
+
+.dark input[type="file"]::file-selector-button:hover {
+    background-color: #197fe6;
+    color:            #ffffff;
+}
+
+/* ──────────────────────────────────────────────────────────
+   4. LABELS y TEXTOS DE AYUDA — Modo oscuro
+   ────────────────────────────────────────────────────────── */
+.dark label {
+    color: #cbd5e1;   /* slate-300 */
+}
+
+.dark .helptext,
+.dark .help-text,
+.dark small {
+    color: #64748b;   /* slate-500 */
+}
+
+/* ──────────────────────────────────────────────────────────
+   5. ERRORES de validación Django — Modo oscuro
+   ────────────────────────────────────────────────────────── */
+.dark .errorlist,
+.dark ul.errorlist li {
+    color:            #fca5a5;   /* red-300 */
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color:     rgba(239, 68, 68, 0.3);
+    border-radius:    0.5rem;
+    padding:          0.375rem 0.75rem;
+    font-size:        0.8125rem;
+    list-style:       none;
+    margin-top:       0.25rem;
+}
+
+.dark input.is-invalid,
+.dark select.is-invalid,
+.dark textarea.is-invalid,
+.dark input[aria-invalid="true"],
+.dark select[aria-invalid="true"] {
+    border-color: #ef4444;
+    box-shadow:   0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* ──────────────────────────────────────────────────────────
+   6. MODO CLARO — Refuerzo para consistencia
+      (por si el plugin forms resetea algo inesperado)
+   ────────────────────────────────────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
+textarea,
+select {
+    background-color: #ffffff;
+    color:            #0f172a;   /* slate-900 */
+    border-color:     #cbd5e1;   /* slate-300 */
+    border-radius:    0.5rem;
+    transition:       border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+    border-color: #197fe6;
+    outline:      none;
+    box-shadow:   0 0 0 3px rgba(25, 127, 230, 0.2);
+}
