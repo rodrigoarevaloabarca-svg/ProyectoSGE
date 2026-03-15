@@ -1,72 +1,193 @@
 {% load static %}
 <!DOCTYPE html>
-<html class="light" lang="es">
+<html lang="es">
+{# ANTI-FOUC — Síncrono, antes del <head>, igual que en base.html, Aplica el tema guardado antes de que el navegador pinte nada. #}
+<script>
+(function () {
+    var saved  = localStorage.getItem("sge-theme");
+    var system = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (saved === "dark" || (!saved && system)) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+})();
+</script>
+
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>{% block titulo %}{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#197fe6",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#111921",
-                        "navy-deep": "#0d1b2a",
-                        "muted-blue": "#6b7fa3",
-                        "soft-grey": "#e2e8f0",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-</head>
-<body class="font-display bg-background-light dark:bg-background-dark min-h-screen flex flex-col">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Sistema de Gestión Escolar — SGE"/>
+    <title>{% block titulo %}Sistema de Gestión Escolar (SGE){% endblock %}</title>
 
-    {# ===== HEADER ===== #}
-    <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-10 py-3 sticky top-0 z-50">
-        <div class="flex items-center gap-4 text-slate-900 dark:text-slate-100">
-            <div class="size-8 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined text-3xl">school</span>
+    {# ── Tailwind ── #}
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary":          "#197fe6",
+                    "background-light": "#f6f7f8",
+                    "background-dark":  "#111921",
+                    "navy-deep":        "#0d1b2a",
+                    "muted-blue":       "#6b7fa3",
+                    "soft-grey":        "#e2e8f0",
+                },
+                fontFamily: { display: ["Lexend", "sans-serif"] },
+            },
+        },
+    };
+    </script>
+
+    {# ── Fuentes ── #}
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+
+    {# ── Estilos propios ── #}
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login-navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms-dark.css' %}">
+
+    {% block head_extra %}{% endblock %}
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col">
+
+    {# HEADER PÚBLICO #}
+    <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 md:px-10 py-3 flex items-center justify-between gap-4">
+
+            {# Logo #}
+            <a href="{% url 'inicio' %}" class="flex items-center gap-3 text-primary shrink-0" aria-label="Inicio — SGE">
+                <div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-sm shadow-primary/30">
+                    <span class="material-symbols-outlined text-[18px]">school</span>
+                </div>
+                <span class="text-navy-deep dark:text-white font-bold text-base tracking-tight hidden sm:block">SGE</span>
+            </a>
+
+            {# Nav escritorio (md+) #}
+            <nav class="hidden md:flex items-center gap-1" aria-label="Navegación principal">
+                <a href="{% url 'inicio' %}"
+                   class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    Inicio
+                </a>
+                <a href="{% url 'sobre_nosotros' %}"
+                   class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    Sobre Nosotros
+                </a>
+                <a href="{% url 'ayuda' %}"
+                   class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    Ayuda
+                </a>
+                <a href="mailto:Rodrigoarevaloabarca@gmail.com"
+                   class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    Contacto
+                </a>
+            </nav>
+
+            {# Zona derecha #}
+            <div class="flex items-center gap-2 shrink-0">
+
+                {# Botón Iniciar sesión — escritorio #}
+                <a href="{% url 'usuarios:login' %}"
+                   class="hidden md:flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-sm shadow-primary/30">
+                    <span class="material-symbols-outlined text-[16px]">login</span>
+                    Iniciar Sesión
+                </a>
+
+                {# Hamburguesa — solo móvil #}
+                <button id="hamburger-btn"
+                        class="md:hidden flex flex-col justify-center items-center size-9 rounded-lg hover:bg-primary/10 transition-all"
+                        aria-controls="mobile-menu"
+                        aria-expanded="false"
+                        aria-label="Abrir menú de navegación">
+                    <div id="hamburger-icon" class="flex flex-col gap-[5px]">
+                        <span class="bar bar-top bg-slate-700 dark:bg-slate-300"></span>
+                        <span class="bar bar-mid bg-slate-700 dark:bg-slate-300"></span>
+                        <span class="bar bar-bot bg-slate-700 dark:bg-slate-300"></span>
+                    </div>
+                </button>
+
+                {# Botón Dark Mode #}
+                <button id="dark-mode-btn"
+                        class="size-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all"
+                        aria-label="Cambiar a modo oscuro"
+                        title="Modo oscuro">
+                    <span class="icon-sun  material-symbols-outlined text-[18px]">light_mode</span>
+                    <span class="icon-moon material-symbols-outlined text-[18px]">dark_mode</span>
+                </button>
             </div>
-            <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em]">
-                Sistema de Gestión Escolar (SGE)
-            </h2>
         </div>
-        <div class="flex flex-1 justify-end gap-8">
-            <div class="hidden md:flex items-center gap-9">
-                {# Links del header - apuntan a # hasta crear esas páginas #}
-                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                   href="{% url 'inicio' %}">Inicio</a>
-                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                   href="{% url 'sobre_nosotros' %}">Sobre Nosotros</a>
-                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                   href={% url 'ayuda' %}>Ayuda</a>
-                <a class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                   href="mailto:Rodrigoarevaloabarca@gmail.com">Contacto</a>
+
+        {# MENÚ MÓVIL (< md) #}
+        <div id="mobile-menu"
+             class="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark"
+             aria-label="Menú de navegación móvil">
+            <div class="max-w-6xl mx-auto px-4 py-3 space-y-1">
+                <a href="{% url 'inicio' %}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    <span class="material-symbols-outlined text-[18px]">home</span>Inicio
+                </a>
+                <a href="{% url 'sobre_nosotros' %}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    <span class="material-symbols-outlined text-[18px]">info</span>Sobre Nosotros
+                </a>
+                <a href="{% url 'ayuda' %}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    <span class="material-symbols-outlined text-[18px]">help</span>Ayuda
+                </a>
+                <a href="mailto:Rodrigoarevaloabarca@gmail.com"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                    <span class="material-symbols-outlined text-[18px]">mail</span>Contacto
+                </a>
+                {# Botón login en móvil #}
+                <div class="pt-2 border-t border-slate-200 dark:border-slate-700 mt-2">
+                    <a href="{% url 'usuarios:login' %}"
+                       class="flex items-center justify-center gap-2 w-full bg-primary text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">login</span>
+                        Iniciar Sesión
+                    </a>
+                </div>
             </div>
         </div>
     </header>
-{% block main %}
 
-{% endblock %}
-    {# ===== FOOTER ===== #}
-    <footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 py-6 px-10">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+    {# MENSAJES DJANGO (si los hay en páginas públicas) #}
+    {% if messages %}
+    <div class="max-w-6xl mx-auto w-full px-4 md:px-10 mt-4 space-y-2" role="status" aria-live="polite">
+        {% for message in messages %}
+        <div class="flash-message flex items-start gap-3 p-3 rounded-xl text-sm font-medium
+            {% if message.tags == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200
+            {% elif message.tags == 'error' or message.tags == 'danger' %}bg-red-50 text-red-800 border border-red-200
+            {% elif message.tags == 'warning' %}bg-amber-50 text-amber-800 border border-amber-200
+            {% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+            <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">
+                {% if message.tags == 'success' %}check_circle
+                {% elif message.tags == 'error' or message.tags == 'danger' %}error
+                {% elif message.tags == 'warning' %}warning
+                {% else %}info{% endif %}
+            </span>
+            <span class="flex-1">{{ message }}</span>
+            <button class="flash-close ml-auto shrink-0 opacity-50 hover:opacity-100 transition-opacity" aria-label="Cerrar aviso">
+                <span class="material-symbols-outlined text-[16px]">close</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# CONTENIDO PRINCIPAL #}
+    <main class="flex-1" id="main-content">
+        {% block main %}{% endblock %}
+    </main>
+
+    {# FOOTER #}
+    <footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 py-6 px-4 md:px-10">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
             <p>© 2026 Portal Sistema de Gestión Escolar (SGE). Todos los derechos reservados.</p>
             <div class="flex gap-6">
                 <a class="hover:text-primary transition-colors" href="{% url 'terminos' %}">Privacidad</a>
@@ -76,20 +197,9 @@
         </div>
     </footer>
 
-    {# ===== JAVASCRIPT: mostrar/ocultar contraseña ===== #}
-    <script>
-        function togglePassword() {
-            const input = document.getElementById('id_password');
-            const icon = document.getElementById('toggle-icon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.textContent = 'visibility_off';
-            } else {
-                input.type = 'password';
-                icon.textContent = 'visibility';
-            }
-        }
-    </script>
+    {# ── Scripts al final del body ── #}
+    <script src="{% static 'js/navbar.js' %}" defer></script>
+    <script src="{% static 'js/login-forms.js' %}" defer></script>
 
 </body>
 </html>

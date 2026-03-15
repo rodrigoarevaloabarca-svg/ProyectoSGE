@@ -1,0 +1,42 @@
+/* ============================================================
+   login-navbar.css — SGE · Ajustes del header público (login)
+   Colocar en: static/css/login-navbar.css
+
+   Este archivo complementa navbar.css (que ya maneja la
+   hamburguesa y el dark mode). Solo agrega los estilos
+   específicos del header del área pública.
+   ============================================================ */
+
+/* ──────────────────────────────────────────────────────────
+   1. ENLACE ACTIVO — resalta la página actual en el nav
+   ────────────────────────────────────────────────────────── */
+header nav a[aria-current="page"] {
+    color:            #197fe6;
+    background-color: rgba(25, 127, 230, 0.08);
+    font-weight:      600;
+}
+
+/* ──────────────────────────────────────────────────────────
+   2. LOGO — texto completo visible en pantallas medianas+
+   ────────────────────────────────────────────────────────── */
+@media (min-width: 640px) {
+    header .logo-full-name {
+        display: block;
+    }
+}
+
+/* ──────────────────────────────────────────────────────────
+   3. SEPARADOR VISUAL entre nav y botón login (escritorio)
+   ────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    header .login-divider {
+        width:            1px;
+        height:           1.25rem;
+        background-color: #e2e8f0;
+        display:          block;
+    }
+
+    .dark header .login-divider {
+        background-color: #334155;
+    }
+}

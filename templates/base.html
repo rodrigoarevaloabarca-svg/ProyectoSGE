@@ -1,12 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-{% comment %}
-   ANTI-FOUC — Este script DEBE ser síncrono (sin defer/async)
-   y estar antes del <head>. Aplica el tema guardado ANTES de
-   que el navegador pinte nada, evitando el flash de modo claro.
-   Es el ÚNICO JS que queda inline y con razón de ser aquí.
-   ═══════════════════════════════════════════════════════════════ {% endcomment %}
+    {% comment %}
+       ANTI-FOUC — Este script DEBE ser síncrono (sin defer/async) y estar antes del <head>. Aplica el tema guardado ANTES de
+       que el navegador haga nada el flash de modo claro.Es el ÚNICO JS que queda inline
+    {% endcomment %}
 <script>
 (function () {
     var saved  = localStorage.getItem("sge-theme");
@@ -24,8 +22,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="Sistema de Gestión Escolar — SGE"/>
     <title>{% block titulo %}Sistema de Gestión Escolar (SGE){% endblock %}</title>
-
-    {# ── Tailwind (en producción usar CLI con purge/tree-shaking) ── #}
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
     tailwind.config = {
