@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
+
 def sobre_nosotros(request):
     return render(request, 'complementos_login/sobre_nosotros.html')
-def contacto(request):
-    return render(request, 'complementos_login/contacto.html')
 def ayuda(request):
     return render(request, 'complementos_login/ayuda.html')
 def terminos(request):

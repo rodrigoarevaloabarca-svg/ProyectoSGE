@@ -180,6 +180,7 @@ EMAIL_USE_TLS       = env_bool('EMAIL_USE_TLS', default=True)
 EMAIL_HOST_USER     = env('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL  = env('DEFAULT_FROM_EMAIL', 'SGE Colegio <noreply@colegio.cl>')
+CONTACTO_EMAIL_ADMIN = env('CONTACTO_EMAIL_ADMIN', '')
 
 
 # ── Seguridad HTTP (todos los entornos) ───────────────────────────────────────

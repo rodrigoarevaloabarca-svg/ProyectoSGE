@@ -2,7 +2,47 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from historial.models import HistorialCambio
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
+from .forms import ContactoForm
 
+def contacto(request):
+    form = ContactoForm()
+
+    if request.method == 'POST':
+        form = ContactoForm(request.POST)
+        if form.is_valid():
+            nombre  = form.cleaned_data['nombre']
+            email   = form.cleaned_data['email']
+            rol     = form.cleaned_data['rol']
+            asunto  = form.cleaned_data['asunto']
+            mensaje = form.cleaned_data['mensaje']
+
+            cuerpo = f"""
+            Nuevo mensaje desde el formulario de contacto SGE
+            --------------------------------------------------
+            Nombre:  {nombre}
+            Email:   {email}
+            Rol:     {rol}
+            Asunto:  {asunto}
+            
+            Mensaje:
+            {mensaje}
+                        """
+
+            send_mail(
+                subject=f'[SGE Contacto] {asunto}',
+                message=cuerpo,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.CONTACTO_EMAIL_ADMIN],
+                fail_silently=False,
+            )
+
+            messages.success(request, '¡Mensaje enviado correctamente! Te responderemos en menos de 24 horas.')
+            form = ContactoForm()
+
+    return render(request, 'complementos_login/contacto.html', {'form': form})
 
 @login_required
 def inicio(request):

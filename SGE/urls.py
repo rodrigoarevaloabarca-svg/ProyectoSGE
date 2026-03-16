@@ -39,7 +39,6 @@ urlpatterns = [
 
     # Páginas complementarias
     path('sobre_nosotros/',     views.sobre_nosotros,     name='sobre_nosotros'),
-    path('contacto/',           views.contacto,           name='contacto'),
     path('ayuda/',              views.ayuda,              name='ayuda'),
     path('terminos/',           views.terminos,           name='terminos'),
     path('reglamento/',         views.reglamento,         name='reglamento'),
