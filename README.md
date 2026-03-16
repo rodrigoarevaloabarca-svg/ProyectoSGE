@@ -1,199 +1,161 @@
-# SGE — Sistema de Gestión Escolar
+<div align="center">
 
-Sistema web desarrollado en Django para la gestión académica de colegios chilenos. Centraliza el manejo de alumnos, notas, asistencia, anotaciones, informes y comunicaciones entre todos los actores del establecimiento.
+# 🏫 SGE — Sistema de Gestión Escolar
 
----
+**Sistema web completo para la gestión académica de colegios chilenos**
 
-## Índice
+[![Django](https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![License](https://img.shields.io/badge/Licencia-MIT-green?style=for-the-badge)](LICENSE)
 
-- [Características](#características)
-- [Requisitos](#requisitos)
-- [Instalación local](#instalación-local)
-- [Variables de entorno](#variables-de-entorno)
-- [Estructura del proyecto](#estructura-del-proyecto)
-- [Roles y permisos](#roles-y-permisos)
-- [Clonar Respositorio](#despliegue-en-Alwaysdata)
-- [Comandos útiles](#comandos-útiles)
+Centraliza el manejo de **alumnos, notas, asistencia, anotaciones, informes PDF y comunicaciones** entre todos los actores del establecimiento — desde un solo sistema responsive con modo oscuro.
 
----
+[📋 Características](#-características) · [🚀 Instalación](#-instalación-rápida) · [👥 Roles](#-roles-y-permisos) · [🌐 Deploy](#-despliegue-en-alwaysdata)
 
-## Características
-
-- **Multi-rol**: Administrador, Profesor, Alumno y Apoderado con vistas y permisos diferenciados
-- **Libro de notas** con escala chilena (1.0–7.0) y cálculo automático de promedios vía signals
-- **Registro de asistencia** diaria por asignatura con estados: Presente, Ausente, Atrasado, Justificado
-- **Anotaciones** positivas y negativas por alumno
-- **Informes académicos en PDF**: individual por período, ranking por curso, informe de fin de año e impresión masiva
-- **Notificaciones internas** con envío masivo a apoderados y profesores
-- **Historial de cambios** auditado para notas y anotaciones
-- **Soporte dark/light mode** persistente por usuario
-- **Diseño responsive** con Tailwind CSS y menú hamburguesa en móvil
+</div>
 
 ---
 
-## Requisitos
+## 📋 Características
+
+| Módulo | Descripción |
+|--------|-------------|
+| 👤 **Multi-rol** | Administrador, Profesor, Alumno y Apoderado con dashboards diferenciados |
+| 📝 **Libro de notas** | Escala chilena 1.0–7.0, promedios automáticos vía Django signals |
+| 📅 **Asistencia** | Registro diario por asignatura: Presente, Ausente, Atrasado, Justificado |
+| 💬 **Anotaciones** | Positivas y negativas por alumno con historial auditado |
+| 📄 **Informes PDF** | Individual, ranking por curso, fin de año e impresión masiva |
+| 🔔 **Notificaciones** | Mensajería interna y envíos masivos a apoderados y profesores |
+| 🕐 **Historial** | Auditoría completa de cambios en notas y anotaciones |
+| 🌙 **Dark / Light mode** | Persistente por navegador, sin flash de tema al cargar |
+| 📱 **Responsive** | Menú hamburguesa en móvil, diseño adaptable a cualquier pantalla |
+| 🔒 **Seguridad** | Control de acceso granular por rol, CSRF, HSTS en producción |
+
+---
+
+## 🛠️ Stack tecnológico
+
+```
+Backend   →  Django 6.0 + MySQL 8
+Frontend  →  Tailwind CSS + Material Symbols
+PDF       →  ReportLab + pypdf
+Auth      →  Django Auth con modelo de usuario personalizado y roles
+Deploy    →  Alwaysdata + Gunicorn
+```
+
+---
+
+## 🚀 Instalación rápida
+
+### Prerrequisitos
 
 - Python 3.10+
 - MySQL 8.0+ (o MariaDB 10.6+)
-- pip
 
----
-
-## Instalación local
-
-### 1. Clonar el repositorio
+### Pasos
 
 ```bash
+# 1. Clonar
 git clone https://github.com/rodrigoarevaloabarca-svg/ProyectoSGE.git
 cd ProyectoSGE
-```
 
-### 2. Crear entorno virtual
-
-```bash
+# 2. Entorno virtual
 python -m venv .venv
+source .venv/bin/activate        # Linux/macOS
+# .venv\Scripts\activate         # Windows
 
-# Linux / macOS
-source .venv/bin/activate
-
-# Windows
-.venv\Scripts\activate
-```
-
-### 3. Instalar dependencias
-
-```bash
+# 3. Dependencias
 pip install -r requirements.txt
-```
 
-### 4. Configurar variables de entorno
-
-```bash
+# 4. Variables de entorno
 cp .env.example .env
-```
+# → Editar .env con tus credenciales
 
-Editar `.env` con los valores correctos (ver sección [Variables de entorno](#variables-de-entorno)).
+# 5. Base de datos (MySQL)
+# CREATE DATABASE sge_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-### 5. Crear la base de datos
-
-```sql
--- En MySQL / MariaDB:
-CREATE DATABASE sge_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 6. Aplicar migraciones
-
-```bash
+# 6. Migraciones y superusuario
 python manage.py migrate
-```
-
-### 7. Crear superusuario administrador
-
-```bash
 python manage.py createsuperuser
-```
 
-### 8. Recolectar archivos estáticos
-
-```bash
+# 7. Archivos estáticos
 python manage.py collectstatic
-```
 
-### 9. Ejecutar el servidor de desarrollo
-
-```bash
+# 8. Servidor de desarrollo
 python manage.py runserver
 ```
 
-Abrir en el navegador: http://127.0.0.1:8000
+Abrir → http://127.0.0.1:8000
 
 ---
 
-## Variables de entorno
+## ⚙️ Variables de entorno
 
-Crear un archivo `.env` en la raíz del proyecto. Usar `.env.example` como plantilla:
+Copiar `.env.example` a `.env` y completar los valores:
 
 ```env
-# ── Seguridad ─────────────────────────────────────────────
-SECRET_KEY=genera-una-clave-secreta-larga-y-aleatoria
+SECRET_KEY=genera-una-clave-secreta-aleatoria
 DEBUG=True
 
-# ── Hosts permitidos (separados por coma) ─────────────────
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-# ── Base de datos ──────────────────────────────────────────
 DB_NAME=sge_db
 DB_USER=root
-DB_PASSWORD=tu_contraseña_mysql
+DB_PASSWORD=tu_contraseña
 DB_HOST=127.0.0.1
 DB_PORT=3306
 
-# ── Email (opcional en desarrollo) ────────────────────────
+# Email (en desarrollo imprime en consola, no envía correos reales)
 EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-DEFAULT_FROM_EMAIL=SGE Colegio <noreply@colegio.cl>
-
-# ── CSRF (producción) ──────────────────────────────────────
-CSRF_TRUSTED_ORIGINS=https://tu-dominio.pythonanywhere.com
 ```
 
-> **Nunca subas el archivo `.env` al repositorio.** Ya está incluido en `.gitignore`.
-
-Para generar una `SECRET_KEY` segura:
-
-```bash
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
+> 🔑 Generar `SECRET_KEY`:
+> ```bash
+> python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+> ```
 
 ---
 
-## Estructura del proyecto
+## 🗂️ Estructura del proyecto
 
 ```
 ProyectoSGE/
-├── SGE/                    # Configuración principal del proyecto
-│   ├── settings.py         # Configuración con variables de entorno
-│   ├── urls.py             # URLs raíz
-│   └── views.py            # Vistas de páginas públicas y errores
-│
-├── usuarios/               # Modelo de usuario personalizado y autenticación
+├── SGE/                    # Configuración principal (settings, urls, wsgi)
+├── usuarios/               # Modelo de usuario personalizado + autenticación
 ├── alumnos/                # Perfiles y gestión de alumnos
 ├── profesores/             # Perfiles de profesores
-├── apoderados/             # Perfiles de apoderados y relación con pupilos
+├── apoderados/             # Apoderados y relación con pupilos
 ├── cursos/                 # Cursos y niveles educacionales
 ├── asignaturas/            # Asignaturas por curso y profesor
-├── notas/                  # Notas, tipos de evaluación y promedios (caché)
+├── notas/                  # Notas, tipos de evaluación, caché de promedios
 ├── asistencia/             # Registros de asistencia diaria
-├── anotaciones/            # Anotaciones conductuales (positivas/negativas)
+├── anotaciones/            # Anotaciones conductuales
 ├── informes/               # Períodos académicos e informes PDF
-├── notificaciones/         # Sistema de mensajería interna y envíos masivos
-├── historial/              # Auditoría de cambios en notas y anotaciones
+├── notificaciones/         # Mensajería interna y envíos masivos
+├── historial/              # Auditoría de cambios
 ├── dashboard/              # Vistas de inicio diferenciadas por rol
-│
-├── templates/              # Templates HTML compartidos (base.html, loginbase.html)
-├── static/                 # CSS, JS estáticos del proyecto
+├── templates/              # HTML compartidos (base.html, loginbase.html)
+├── static/                 # CSS y JS del proyecto
 │   ├── css/
-│   │   ├── estilos.css
-│   │   ├── navbar.css      # Estilos del navbar y dark mode
+│   │   ├── navbar.css      # Hamburguesa + animación dark mode
+│   │   ├── estilos.css     # configuracion general
+│   │   ├── login-navbar.css# Nav bar login
 │   │   └── forms-dark.css  # Inputs visibles en modo oscuro
+│   │ 
 │   └── js/
-│       ├── config.js
-│       └── navbar.js       # Hamburguesa, dark mode persistente, mensajes flash
-│
-├── media/                  # Archivos subidos (fotos de perfil, logo) — NO versionado
-├── requirements.txt        # Dependencias Python
-├── manage.py
-├── .env                    # Variables de entorno — NO versionado
-└── .env.example            # Plantilla de variables de entorno
+│       ├── Config.js       # configuracion general
+│       ├── Login-forms.js  # Forms darkmode
+│       └── navbar.js       # Dark mode persistente + menú hamburguesa
+├── requirements.txt
+├── .env.example
+└── manage.py
 ```
 
 ---
 
-## Roles y permisos
+## 👥 Roles y permisos
 
 | Acción | Admin | Profesor | Alumno | Apoderado |
 |--------|:-----:|:--------:|:------:|:---------:|
@@ -211,9 +173,11 @@ ProyectoSGE/
 
 ---
 
-## clonar repositorio
+## 🌐 Despliegue en Alwaysdata
 
-En la consola Bash :
+### 1. Subir código
+
+En la consola SSH de Alwaysdata:
 
 ```bash
 git clone https://github.com/rodrigoarevaloabarca-svg/ProyectoSGE.git
@@ -221,14 +185,59 @@ cd ProyectoSGE
 pip install -r requirements.txt --user
 ```
 
-## Comandos útiles
+### 2. Configurar el sitio
+
+En el panel **Web → Sites**, tipo **WSGI**, apuntar a:
+
+```
+/home/TU_CUENTA/ProyectoSGE/SGE/wsgi.py
+```
+
+### 3. Variables de entorno en producción
 
 ```bash
-# Crear y aplicar migraciones tras cambiar modelos
-python manage.py makemigrations
-python manage.py migrate
+nano /home/TU_CUENTA/ProyectoSGE/.env
+```
 
-# Shell interactivo con contexto Django (útil para depurar)
+```env
+DEBUG=False
+ALLOWED_HOSTS=TU_CUENTA.alwaysdata.net
+SECRET_KEY=clave-secreta-real
+DB_NAME=...
+DB_USER=...
+DB_PASSWORD=...
+CSRF_TRUSTED_ORIGINS=https://TU_CUENTA.alwaysdata.net
+```
+
+### 4. Archivos estáticos
+
+```bash
+python manage.py collectstatic --noinput
+```
+
+En el panel **Web → Static files**:
+
+| URL | Directorio |
+|-----|------------|
+| `/static/` | `/home/TU_CUENTA/ProyectoSGE/staticfiles/` |
+| `/media/`  | `/home/TU_CUENTA/ProyectoSGE/media/` |
+
+### 5. Base de datos y superusuario
+
+```bash
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+---
+
+## 🧰 Comandos útiles
+
+```bash
+# Migraciones
+python manage.py makemigrations && python manage.py migrate
+
+# Shell interactivo con contexto Django
 python manage.py shell
 
 # Ejecutar tests
@@ -236,19 +245,20 @@ python manage.py test
 
 # Recolectar archivos estáticos
 python manage.py collectstatic --noinput
-
-# Ver todas las URLs registradas
-python manage.py show_urls  # requiere django-extensions
 ```
 
 ---
 
-## Contacto
+## 📬 Contacto
 
-**Rodrigo Arévalo Abarca**  
-📧 Rodrigoarevaloabarca@gmail.com  
+**Rodrigo Arévalo Abarca**
+📧 [Rodrigoarevaloabarca@gmail.com](mailto:Rodrigoarevaloabarca@gmail.com)
 📍 Rancagua, Chile
 
 ---
 
-© 2026 Sistema de Gestión Escolar (SGE). Todos los derechos reservados.
+<div align="center">
+
+© 2026 Sistema de Gestión Escolar (SGE) · Todos los derechos reservados
+
+</div>
