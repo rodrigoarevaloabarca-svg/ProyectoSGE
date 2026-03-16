@@ -1,9 +1,3 @@
-/* ============================================================
-   IMPORTANTE: El bloque anti-FOUC que va en el <head> del
-   base.html NO va aquí porque debe ejecutarse de forma síncrona
-   antes de que el DOM pinte (ver base.html).
-   ============================================================ */
-
 (function () {
     "use strict";
 
