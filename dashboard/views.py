@@ -6,6 +6,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from .forms import ContactoForm
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from SGE.ia_utils import chatbot_consulta
 
 def contacto(request):
     form = ContactoForm()
@@ -258,3 +262,24 @@ def inicio(request):
         return render(request, 'dashboard/alumno.html', context)
 
     return render(request, 'dashboard/sin_rol.html', {})
+
+
+@login_required
+@require_POST
+def chatbot_ia(request):
+    # Solo admin y profesor pueden usar el chatbot
+    if not (request.user.es_admin or request.user.es_profesor):
+        return JsonResponse({'error': 'Sin permiso'}, status=403)
+
+    datos = json.loads(request.body)
+    pregunta = datos.get('pregunta', '').strip()
+    historial = datos.get('historial', [])
+
+    if not pregunta:
+        return JsonResponse({'error': 'Pregunta vacía'}, status=400)
+
+    try:
+        respuesta = chatbot_consulta(pregunta, historial)
+        return JsonResponse({'respuesta': respuesta})
+    except Exception as e:
+        return JsonResponse({'error': 'Error al conectar con la IA'}, status=500)

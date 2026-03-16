@@ -89,6 +89,32 @@
                 </div>
             </div>
         </div>
+        {% if analisis_ia %}
+        <div class="mt-6 rounded-xl border-l-4 p-5
+                    {% if 'ALTO' in analisis_ia %}
+                        border-red-500 bg-red-50 dark:bg-red-950/30
+                    {% elif 'MEDIO' in analisis_ia %}
+                        border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30
+                    {% else %}
+                        border-green-500 bg-green-50 dark:bg-green-950/30
+                    {% endif %}">
+
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-lg">🤖</span>
+            <span class="font-semibold text-sm
+                         {% if 'ALTO' in analisis_ia %}text-red-700 dark:text-red-300
+                         {% elif 'MEDIO' in analisis_ia %}text-yellow-700 dark:text-yellow-300
+                         {% else %}text-green-700 dark:text-green-300{% endif %}">
+              Análisis de riesgo académico — IA
+            </span>
+          </div>
+
+          <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
+            {{ analisis_ia }}
+          </p>
+
+        </div>
+    {% endif %}
     </div>
 
     {# Columna derecha: notas y anotaciones #}

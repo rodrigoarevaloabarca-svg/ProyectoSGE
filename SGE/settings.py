@@ -16,7 +16,9 @@ try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    pass  # En PythonAnywhere las variables se definen en el panel web
+    pass
+
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
 
 
 def env(key, default=None, required=False):

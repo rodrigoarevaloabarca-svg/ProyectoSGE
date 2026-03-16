@@ -14,9 +14,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.urls import reverse
-
 from .models import Alumno
 from .forms import AlumnoForm
+from SGE.ia_utils import analizar_riesgo_alumno
 
 
 # ── Predicados de rol ─────────────────────────────────────────────────────────
@@ -99,12 +99,20 @@ def detalle_alumno(request, pk):
     else:
         return redirect('dashboard:inicio')
 
+    analisis_ia = None
+    if user.es_admin or user.es_profesor:
+        try:
+            analisis_ia = analizar_riesgo_alumno(alumno)
+        except Exception:
+            analisis_ia = None
+
     return render(request, 'alumnos/detalle.html', {
         'alumno':                alumno,
         'promedios':             alumno.get_promedio_por_asignatura(),
         'promedio_general':      alumno.get_promedio_general(),
         'porcentaje_asistencia': alumno.get_porcentaje_asistencia(),
         'anotaciones':           alumno.anotaciones.order_by('-fecha')[:20],
+        'analisis_ia':           analisis_ia,
         'breadcrumbs': [
             {'label': 'Alumnos',              'url': reverse('alumnos:lista')},
             {'label': alumno.nombre_completo, 'url': ''},
