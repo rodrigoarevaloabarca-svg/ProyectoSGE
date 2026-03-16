@@ -12,7 +12,7 @@ Sistema web desarrollado en Django para la gestión académica de colegios chile
 - [Variables de entorno](#variables-de-entorno)
 - [Estructura del proyecto](#estructura-del-proyecto)
 - [Roles y permisos](#roles-y-permisos)
-- [Despliegue en Alwaysdata](#despliegue-en-Alwaysdata)
+- [Clonar Respositorio](#despliegue-en-Alwaysdata)
 - [Comandos útiles](#comandos-útiles)
 
 ---
@@ -211,7 +211,7 @@ ProyectoSGE/
 
 ---
 
-## Despliegue en Alwaysdata
+## clonar repositorio
 
 En la consola Bash :
 
