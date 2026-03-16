@@ -125,15 +125,15 @@
                             {% endif %}
                             <div class="border-t border-soft-grey dark:border-slate-800 my-1.5"></div>
                             <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informes</p>
-                            {% if user.es_admin %}
-                            <a href="{% url 'informes:dashboard' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-                                <span class="material-symbols-outlined text-[16px]">summarize</span>Centro de Informes
-                            </a>
-                            <a href="{% url 'informes:impresion_masiva' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-                                <span class="material-symbols-outlined text-[16px]">print</span>Impresión Masiva
-                            </a>
-                            <div class="border-t border-soft-grey dark:border-slate-800 my-1.5"></div>
-                            {% endif %}
+                                {% if user.es_admin %}
+                                    <a href="{% url 'informes:dashboard' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">summarize</span>Centro de Informes
+                                    </a>
+                                    <a href="{% url 'informes:impresion_masiva' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">print</span>Impresión Masiva
+                                    </a>
+                                    <div class="border-t border-soft-grey dark:border-slate-800 my-1.5"></div>
+                                {% endif %}
                             <a href="{% url 'informes:seleccionar' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
                                 <span class="material-symbols-outlined text-[16px]">person</span>Informe Individual
                             </a>
@@ -148,34 +148,35 @@
                     {% endif %}
 
 
-
                     {# Dropdown Admin #}
-                    <div class="relative group">
-                        <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all"
-                                aria-haspopup="true">
-                            <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-                            Admin
-                            <span class="material-symbols-outlined text-[14px] dropdown-arrow">expand_more</span>
-                        </button>
-                        <div class="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-xl py-2
-                                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-                            <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Usuarios</p>
-                            <a href="{% url 'usuarios:lista' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
-                                <span class="material-symbols-outlined text-[16px]">manage_accounts</span>Lista de Usuarios
-                            </a>
-                            <a href="{% url 'usuarios:crear' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
-                                <span class="material-symbols-outlined text-[16px]">person_add</span>Crear Usuario
-                            </a>
-                            <div class="border-t border-soft-grey dark:border-slate-800 my-1.5"></div>
-                            <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Otros</p>
-                            <a href="{% url 'apoderados:lista' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
-                                <span class="material-symbols-outlined text-[16px]">supervisor_account</span>Apoderados
-                            </a>
-                            <a href="/admin/" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
-                                <span class="material-symbols-outlined text-[16px]">settings</span>Panel Django Admin
-                            </a>
-                        </div>
-                    </div>
+                        {% if auser.es_admin %}
+                            <div class="relative group">
+                                <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-blue hover:bg-primary/10 hover:text-primary transition-all"
+                                        aria-haspopup="true">
+                                    <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+                                    Admin
+                                    <span class="material-symbols-outlined text-[14px] dropdown-arrow">expand_more</span>
+                                </button>
+                                <div class="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-xl py-2
+                                            opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+                                    <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Usuarios</p>
+                                    <a href="{% url 'usuarios:lista' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">manage_accounts</span>Lista de Usuarios
+                                    </a>
+                                    <a href="{% url 'usuarios:crear' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">person_add</span>Crear Usuario
+                                    </a>
+                                    <div class="border-t border-soft-grey dark:border-slate-800 my-1.5"></div>
+                                    <p class="px-4 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Otros</p>
+                                    <a href="{% url 'apoderados:lista' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">supervisor_account</span>Apoderados
+                                    </a>
+                                    <a href="/admin/" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">settings</span>Panel Django Admin
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </nav>
                 {% endif %}

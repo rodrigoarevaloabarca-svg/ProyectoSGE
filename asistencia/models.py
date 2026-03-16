@@ -88,40 +88,46 @@ class RegistroAsistencia(models.Model):
     @classmethod
     def tomar_asistencia_curso(cls, asignatura, fecha, datos_asistencia, profesor):
         """
-        Toma la asistencia de un curso completo en una sola operación.
-        
+        Toma la asistencia de un curso completo en operaciones bulk.
+
         datos_asistencia: lista de dicts [{'alumno_id': 1, 'estado': 'presente'}, ...]
-        
-        Usa bulk_create para eficiencia (una sola query a la BD).
+
+        Optimización: trae todos los registros existentes en 1 sola query
+        antes del loop, evitando el problema N+1 (una query por alumno).
         """
+        alumno_ids = [d['alumno_id'] for d in datos_asistencia]
+
+        # 1 sola query para todos los registros existentes del día
+        existentes = {
+            r.alumno_id: r
+            for r in cls.objects.filter(
+                alumno_id__in=alumno_ids,
+                asignatura=asignatura,
+                fecha=fecha,
+            )
+        }
+
         registros_a_crear = []
         registros_a_actualizar = []
 
         for dato in datos_asistencia:
             alumno_id = dato['alumno_id']
-            estado = dato['estado']
+            estado    = dato['estado']
 
-            # Verificar si ya existe un registro para hoy
-            registro_existente = cls.objects.filter(
-                alumno_id=alumno_id,
-                asignatura=asignatura,
-                fecha=fecha
-            ).first()
-
-            if registro_existente:
-                registro_existente.estado = estado
-                registro_existente.registrado_por = profesor
-                registros_a_actualizar.append(registro_existente)
+            if alumno_id in existentes:
+                reg = existentes[alumno_id]
+                reg.estado         = estado
+                reg.registrado_por = profesor
+                registros_a_actualizar.append(reg)
             else:
                 registros_a_crear.append(cls(
                     alumno_id=alumno_id,
                     asignatura=asignatura,
                     fecha=fecha,
                     estado=estado,
-                    registrado_por=profesor
+                    registrado_por=profesor,
                 ))
 
-        # Operaciones en bulk para eficiencia
         if registros_a_crear:
             cls.objects.bulk_create(registros_a_crear)
         if registros_a_actualizar:

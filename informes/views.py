@@ -5,6 +5,7 @@ ARCHIVO: views.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.urls import reverse
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -27,7 +28,7 @@ def lista_periodos(request):
         return redirect('dashboard:inicio')
     periodos = Periodo.objects.all()
     return render(request, 'informes/lista_periodos.html', {'periodos': periodos,
-        'breadcrumbs': [{'label': 'Centro de Informes', 'url': '/informes/dashboard/'}, {'label': 'Períodos Académicos', 'url': ''}]})
+        'breadcrumbs': [{'label': 'Centro de Informes', 'url': reverse('informes:dashboard')}, {'label': 'Períodos Académicos', 'url': ''}]})
 
 
 @login_required
@@ -80,7 +81,7 @@ def seleccionar_informe(request):
         alumnos = alumnos.filter(curso_id=curso_id)
 
     return render(request, 'informes/seleccionar.html', {
-        'breadcrumbs': [{'label': 'Centro de Informes', 'url': '/informes/dashboard/'}, {'label': 'Informe Individual', 'url': ''}],
+        'breadcrumbs': [{'label': 'Centro de Informes', 'url': reverse('informes:dashboard')}, {'label': 'Informe Individual', 'url': ''}],
         'periodos': periodos,
         'cursos':   cursos,
         'alumnos':  alumnos,
@@ -117,7 +118,7 @@ def ver_informe(request, alumno_id, periodo_id):
         form = ComentarioInformeForm(instance=comentario_obj)
 
     return render(request, 'informes/ver_informe.html', {
-        'breadcrumbs': [{'label': 'Centro de Informes', 'url': '/informes/dashboard/'}, {'label': 'Informe Individual', 'url': '/informes/'}, {'label': alumno.nombre_completo, 'url': ''}],
+        'breadcrumbs': [{'label': 'Centro de Informes', 'url': reverse('informes:dashboard')}, {'label': 'Informe Individual', 'url': reverse('informes:seleccionar')}, {'label': alumno.nombre_completo, 'url': ''}],
         'alumno':       alumno,
         'periodo':      periodo,
         'datos':        datos,
@@ -250,7 +251,7 @@ def informe_ranking_curso(request):
         return _descargar_ranking(request, anio_sel)
 
     return render(request, 'informes/ranking_curso.html', {
-        'breadcrumbs': [{'label': 'Centro de Informes', 'url': '/informes/dashboard/'}, {'label': 'Ranking por Curso', 'url': ''}],
+        'breadcrumbs': [{'label': 'Centro de Informes', 'url': reverse('informes:dashboard')}, {'label': 'Ranking por Curso', 'url': ''}],
         'anios':        anios,
         'anio_sel':     anio_sel,
         'periodos_anio': periodos_anio,
@@ -357,7 +358,7 @@ def informe_fin_anio(request):
         return _descargar_fin_anio(request, anio_sel, ids_sel)
 
     return render(request, 'informes/fin_anio.html', {
-        'breadcrumbs': [{'label': 'Centro de Informes', 'url': '/informes/dashboard/'}, {'label': 'Informe Fin de Año', 'url': ''}],
+        'breadcrumbs': [{'label': 'Centro de Informes', 'url': reverse('informes:dashboard')}, {'label': 'Informe Fin de Año', 'url': ''}],
         'anios':        anios,
         'anio_sel':     anio_sel,
         'periodos_anio': periodos_anio,
@@ -535,7 +536,7 @@ def impresion_masiva(request):
     periodos_anio = Periodo.objects.filter(anio=anio_sel).order_by('tipo', 'numero')
 
     return render(request, 'informes/impresion_masiva.html', {
-        'breadcrumbs': [{'label': 'Centro de Informes', 'url': '/informes/dashboard/'}, {'label': 'Impresión Masiva', 'url': ''}],
+        'breadcrumbs': [{'label': 'Centro de Informes', 'url': reverse('informes:dashboard')}, {'label': 'Impresión Masiva', 'url': ''}],
         'periodos':      periodos,
         'cursos':        cursos,
         'anios':         anios,

@@ -1,44 +1,34 @@
-"""APP: alumnos - views.py"""
+"""
+APP: alumnos
+ARCHIVO: views.py
+
+Vistas para gestión de alumnos.
+Control de acceso por rol en cada vista:
+  - lista_alumnos : admin y profesor
+  - detalle_alumno: admin, profesor, el propio alumno, apoderado de ese alumno
+  - crear_alumno  : solo admin
+  - editar_alumno : solo admin
+"""
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
-from .models import Alumno
-from django import forms
 
-INPUT  = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-SELECT = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-DATE   = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+from .models import Alumno
+from .forms import AlumnoForm
+
+
+# ── Predicados de rol ─────────────────────────────────────────────────────────
 
 def solo_admin(user):
     return user.is_authenticated and user.es_admin
 
+
 def solo_staff(user):
     return user.is_authenticated and (user.es_admin or user.es_profesor)
 
-class AlumnoForm(forms.ModelForm):
-    class Meta:
-        model  = Alumno
-        fields = ['usuario', 'curso', 'apoderado', 'fecha_nacimiento', 'numero_matricula', 'direccion', 'activo']
-        widgets = {
-            'usuario':          forms.Select(attrs={'class': SELECT}),
-            'curso':            forms.Select(attrs={'class': SELECT}),
-            'apoderado':        forms.Select(attrs={'class': SELECT}),
-            'fecha_nacimiento': forms.DateInput(attrs={'class': DATE, 'type': 'date'}),
-            'numero_matricula': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Ej: 2026001'}),
-            'direccion':        forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Dirección del alumno'}),
-            'activo':           forms.CheckboxInput(attrs={'class': 'w-4 h-4 accent-primary cursor-pointer'}),
-        }
-        labels = {
-            'usuario':          'Usuario del sistema',
-            'curso':            'Curso',
-            'apoderado':        'Apoderado',
-            'fecha_nacimiento': 'Fecha de nacimiento',
-            'numero_matricula': 'N° de matrícula',
-            'direccion':        'Dirección',
-            'activo':           'Alumno activo',
-        }
 
+# ── Vistas ────────────────────────────────────────────────────────────────────
 
 @login_required
 @user_passes_test(solo_staff, login_url='dashboard:inicio')
@@ -54,21 +44,30 @@ def lista_alumnos(request):
 
 @login_required
 def detalle_alumno(request, pk):
+    """
+    Acceso granular por rol:
+      - Admin/Profesor : cualquier alumno
+      - Apoderado      : solo sus pupilos
+      - Alumno         : solo su propio perfil
+    """
     alumno = get_object_or_404(Alumno, pk=pk)
-    user = request.user
+    user   = request.user
 
-    # Admin y profesor: acceso total
     if user.es_admin or user.es_profesor:
-        pass
-    # Apoderado: solo sus propios pupilos
+        pass  # acceso total
+
     elif user.es_apoderado:
-        if not hasattr(user, 'perfil_apoderado') or \
-           not user.perfil_apoderado.pupilos.filter(pk=pk).exists():
+        perfil = getattr(user, 'perfil_apoderado', None)
+        if not perfil or not perfil.pupilos.filter(pk=pk).exists():
+            messages.error(request, 'No tienes permiso para ver este alumno.')
             return redirect('dashboard:inicio')
-    # Alumno: solo su propio perfil
+
     elif user.es_alumno:
-        if not hasattr(user, 'perfil_alumno') or user.perfil_alumno.pk != pk:
+        perfil = getattr(user, 'perfil_alumno', None)
+        if not perfil or perfil.pk != pk:
+            messages.error(request, 'Solo puedes ver tu propio perfil.')
             return redirect('dashboard:inicio')
+
     else:
         return redirect('dashboard:inicio')
 
@@ -96,8 +95,9 @@ def crear_alumno(request):
             return redirect('alumnos:lista')
     else:
         form = AlumnoForm()
+
     return render(request, 'alumnos/form.html', {
-        'form':  form,
+        'form':   form,
         'titulo': 'Crear Alumno',
         'breadcrumbs': [
             {'label': 'Alumnos', 'url': reverse('alumnos:lista')},
@@ -110,6 +110,7 @@ def crear_alumno(request):
 @user_passes_test(solo_admin, login_url='dashboard:inicio')
 def editar_alumno(request, pk):
     alumno = get_object_or_404(Alumno, pk=pk)
+
     if request.method == 'POST':
         form = AlumnoForm(request.POST, instance=alumno)
         if form.is_valid():
@@ -118,8 +119,9 @@ def editar_alumno(request, pk):
             return redirect('alumnos:detalle', pk=pk)
     else:
         form = AlumnoForm(instance=alumno)
+
     return render(request, 'alumnos/form.html', {
-        'form':  form,
+        'form':   form,
         'titulo': 'Editar Alumno',
         'breadcrumbs': [
             {'label': 'Alumnos',              'url': reverse('alumnos:lista')},
