@@ -21,19 +21,27 @@ def solo_profesor_o_admin(user):
 
 @login_required
 def libro_notas_curso(request, curso_id):
+    # Solo admin y profesores pueden acceder al libro de notas de un curso.
+    user = request.user
+    if not (user.es_admin or user.es_profesor):
+        messages.error(request, 'No tienes permiso para ver el libro de notas.')
+        return redirect('dashboard:inicio')
+
     curso       = get_object_or_404(Curso, pk=curso_id)
     alumnos     = Alumno.objects.filter(curso=curso, activo=True).select_related('usuario')
     asignaturas = Asignatura.objects.filter(curso=curso, activo=True)
+
+    # Optimizacion: una sola query en lugar de N*M individuales
+    promedios_qs = PromedioAsignatura.objects.filter(
+        alumno__in=alumnos, asignatura__in=asignaturas
+    ).select_related('alumno', 'asignatura')
+    promedios_map = {(p.alumno_id, p.asignatura_id): p.promedio for p in promedios_qs}
 
     libro = {}
     for alumno in alumnos:
         libro[alumno] = {}
         for asig in asignaturas:
-            try:
-                promedio_obj = PromedioAsignatura.objects.get(alumno=alumno, asignatura=asig)
-                libro[alumno][asig] = promedio_obj.promedio
-            except PromedioAsignatura.DoesNotExist:
-                libro[alumno][asig] = None
+            libro[alumno][asig] = promedios_map.get((alumno.pk, asig.pk))
 
     return render(request, 'notas/libro_notas.html', {
         'curso':       curso,
@@ -50,6 +58,27 @@ def libro_notas_curso(request, curso_id):
 def notas_alumno_asignatura(request, alumno_id, asignatura_id):
     alumno     = get_object_or_404(Alumno,     pk=alumno_id)
     asignatura = get_object_or_404(Asignatura, pk=asignatura_id)
+
+    # Acceso granular por rol:
+    #   Admin/Profesor : cualquier alumno
+    #   Apoderado      : solo sus pupilos
+    #   Alumno         : solo su propio perfil
+    user = request.user
+    if user.es_admin or user.es_profesor:
+        pass
+    elif user.es_apoderado:
+        perfil = getattr(user, 'perfil_apoderado', None)
+        if not perfil or not perfil.pupilos.filter(pk=alumno_id).exists():
+            messages.error(request, 'No tienes permiso para ver las notas de este alumno.')
+            return redirect('dashboard:inicio')
+    elif user.es_alumno:
+        perfil = getattr(user, 'perfil_alumno', None)
+        if not perfil or perfil.pk != alumno_id:
+            messages.error(request, 'Solo puedes ver tus propias notas.')
+            return redirect('dashboard:inicio')
+    else:
+        return redirect('dashboard:inicio')
+
     notas = Nota.objects.filter(
         alumno=alumno, asignatura=asignatura
     ).order_by('fecha')

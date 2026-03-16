@@ -54,55 +54,58 @@ Responde en español, de forma clara y profesional. Máximo 5 líneas."""
 
 def _buscar_contexto_bd(pregunta):
     """
-    Busca en la BD información relevante según la pregunta.
+    Busca en la BD informacion relevante segun la pregunta.
     Retorna un string con los datos encontrados para pasarlos a la IA.
+
+    NOTA DE PRIVACIDAD: los datos de alumnos que se incluyen en el contexto
+    se envian a la API de Groq (servicio externo) para generar la respuesta.
+    Solo se incluyen datos academicos (promedios, asistencia, anotaciones),
+    nunca informacion de contacto personal.
     """
     from alumnos.models import Alumno
+    from cursos.models import Curso
 
     contexto = ""
     pregunta_lower = pregunta.lower()
 
-    # Extraer posible nombre del alumno de la pregunta
-    # Busca cualquier alumno cuyo nombre aparezca en la pregunta
-    alumnos = Alumno.objects.filter(activo=True).select_related(
-        'usuario', 'curso'
-    )
+    # Filtrar directamente en BD usando palabras de la pregunta (> 3 chars)
+    palabras = [p for p in pregunta_lower.split() if len(p) > 3]
+    if palabras:
+        from django.db.models import Q
+        filtro = Q()
+        for palabra in palabras:
+            filtro |= Q(usuario__first_name__icontains=palabra)
+            filtro |= Q(usuario__last_name__icontains=palabra)
 
-    alumnos_encontrados = []
-    for alumno in alumnos:
-        nombre = alumno.nombre_completo.lower()
-        # Busca si alguna palabra del nombre aparece en la pregunta
-        palabras_nombre = nombre.split()
-        if any(palabra in pregunta_lower for palabra in palabras_nombre if len(palabra) > 3):
-            alumnos_encontrados.append(alumno)
+        alumnos_encontrados = Alumno.objects.filter(
+            filtro, activo=True
+        ).select_related('usuario', 'curso')[:3]  # maximo 3 resultados
 
-    if alumnos_encontrados:
-        contexto += "DATOS REALES DE LA BASE DE DATOS:\n\n"
-        for alumno in alumnos_encontrados[:3]:  # máximo 3 alumnos
-            promedio   = alumno.get_promedio_general()
-            asistencia = alumno.get_porcentaje_asistencia()
-            anot_neg   = alumno.anotaciones.filter(tipo='negativa').count()
-            anot_pos   = alumno.anotaciones.filter(tipo='positiva').count()
+        if alumnos_encontrados.exists():
+            contexto += "DATOS REALES DE LA BASE DE DATOS:\n\n"
+            for alumno in alumnos_encontrados:
+                promedio   = alumno.get_promedio_general()
+                asistencia = alumno.get_porcentaje_asistencia()
+                anot_neg   = alumno.anotaciones.filter(tipo='negativa').count()
+                anot_pos   = alumno.anotaciones.filter(tipo='positiva').count()
 
-            contexto += f"Alumno: {alumno.nombre_completo}\n"
-            contexto += f"  Curso: {alumno.curso}\n"
-            contexto += f"  Promedio general: {promedio if promedio else 'Sin notas'}\n"
-            contexto += f"  Asistencia: {asistencia if asistencia else 'Sin registros'}%\n"
-            contexto += f"  Anotaciones positivas: {anot_pos}\n"
-            contexto += f"  Anotaciones negativas: {anot_neg}\n"
+                contexto += f"Alumno: {alumno.nombre_completo}\n"
+                contexto += f"  Curso: {alumno.curso}\n"
+                contexto += f"  Promedio general: {promedio if promedio else 'Sin notas'}\n"
+                contexto += f"  Asistencia: {asistencia if asistencia else 'Sin registros'}%\n"
+                contexto += f"  Anotaciones positivas: {anot_pos}\n"
+                contexto += f"  Anotaciones negativas: {anot_neg}\n"
 
-            # Promedios por asignatura
-            promedios = alumno.get_promedio_por_asignatura()
-            if promedios:
-                contexto += "  Notas por asignatura:\n"
-                for asig, prom in promedios.items():
-                    if prom is not None:
-                        estado = "reprobado" if prom < 4.0 else "aprobado"
-                        contexto += f"    - {asig.nombre}: {prom} ({estado})\n"
-            contexto += "\n"
+                promedios = alumno.get_promedio_por_asignatura()
+                if promedios:
+                    contexto += "  Notas por asignatura:\n"
+                    for asig, prom in promedios.items():
+                        if prom is not None:
+                            estado = "reprobado" if prom < 4.0 else "aprobado"
+                            contexto += f"    - {asig.nombre}: {prom} ({estado})\n"
+                contexto += "\n"
 
     # Si pregunta por curso completo (ej: "3ro B", "4to A")
-    from cursos.models import Curso
     cursos = Curso.objects.filter(activo=True)
     for curso in cursos:
         nombre_curso = str(curso).lower()

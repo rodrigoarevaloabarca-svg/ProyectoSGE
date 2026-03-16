@@ -101,6 +101,8 @@ def editar_usuario(request, pk):
 @login_required
 @user_passes_test(solo_admin)
 def desactivar_usuario(request, pk):
+    if request.method != 'POST':
+        return redirect('usuarios:lista')
     usuario = get_object_or_404(Usuario, pk=pk)
     if usuario == request.user:
         messages.error(request, 'No puedes desactivar tu propia cuenta.')

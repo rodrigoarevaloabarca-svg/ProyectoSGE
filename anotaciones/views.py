@@ -40,7 +40,28 @@ def solo_staff(user):
 
 @login_required
 def anotaciones_alumno(request, alumno_id):
-    alumno      = get_object_or_404(Alumno, pk=alumno_id)
+    alumno = get_object_or_404(Alumno, pk=alumno_id)
+
+    # Acceso granular por rol:
+    #   Admin/Profesor : cualquier alumno
+    #   Apoderado      : solo sus pupilos
+    #   Alumno         : solo su propio perfil
+    user = request.user
+    if user.es_admin or user.es_profesor:
+        pass
+    elif user.es_apoderado:
+        perfil = getattr(user, 'perfil_apoderado', None)
+        if not perfil or not perfil.pupilos.filter(pk=alumno_id).exists():
+            messages.error(request, 'No tienes permiso para ver las anotaciones de este alumno.')
+            return redirect('dashboard:inicio')
+    elif user.es_alumno:
+        perfil = getattr(user, 'perfil_alumno', None)
+        if not perfil or perfil.pk != alumno_id:
+            messages.error(request, 'Solo puedes ver tus propias anotaciones.')
+            return redirect('dashboard:inicio')
+    else:
+        return redirect('dashboard:inicio')
+
     anotaciones = alumno.anotaciones.order_by('-fecha').select_related('creado_por', 'asignatura')
     return render(request, 'anotaciones/lista.html', {
         'alumno':      alumno,

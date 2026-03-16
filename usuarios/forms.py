@@ -111,6 +111,16 @@ class UsuarioCreacionForm(UserCreationForm):
 
         return rut_limpio
 
+    def clean_foto_perfil(self):
+        foto = self.cleaned_data.get('foto_perfil')
+        if foto:
+            if foto.size > 2 * 1024 * 1024:
+                raise forms.ValidationError('La imagen no puede superar 2 MB.')
+            ext = foto.name.rsplit('.', 1)[-1].lower() if '.' in foto.name else ''
+            if ext not in ('jpg', 'jpeg', 'png', 'webp'):
+                raise forms.ValidationError('Solo se permiten imágenes JPG, PNG o WebP.')
+        return foto
+
 
 class UsuarioEdicionForm(forms.ModelForm):
     """
@@ -152,3 +162,13 @@ class UsuarioEdicionForm(forms.ModelForm):
             )
 
         return rut_limpio
+
+    def clean_foto_perfil(self):
+        foto = self.cleaned_data.get('foto_perfil')
+        if foto and hasattr(foto, 'size'):
+            if foto.size > 2 * 1024 * 1024:
+                raise forms.ValidationError('La imagen no puede superar 2 MB.')
+            ext = foto.name.rsplit('.', 1)[-1].lower() if '.' in foto.name else ''
+            if ext not in ('jpg', 'jpeg', 'png', 'webp'):
+                raise forms.ValidationError('Solo se permiten imágenes JPG, PNG o WebP.')
+        return foto

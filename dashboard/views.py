@@ -271,15 +271,32 @@ def chatbot_ia(request):
     if not (request.user.es_admin or request.user.es_profesor):
         return JsonResponse({'error': 'Sin permiso'}, status=403)
 
-    datos = json.loads(request.body)
+    try:
+        datos = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Formato de solicitud inválido'}, status=400)
+
     pregunta = datos.get('pregunta', '').strip()
-    historial = datos.get('historial', [])
+    historial_raw = datos.get('historial', [])
 
     if not pregunta:
         return JsonResponse({'error': 'Pregunta vacía'}, status=400)
 
+    if len(pregunta) > 1000:
+        return JsonResponse({'error': 'Pregunta demasiado larga (máx. 1000 caracteres)'}, status=400)
+
+    # Validar y sanitizar el historial: solo roles permitidos, máximo 10 turnos,
+    # y que el contenido sea strings. Evita inyección de mensajes system.
+    historial = [
+        {'role': m['role'], 'content': str(m['content'])[:2000]}
+        for m in historial_raw
+        if isinstance(m, dict)
+        and m.get('role') in ('user', 'assistant')
+        and isinstance(m.get('content'), str)
+    ][-10:]  # máximo los últimos 10 mensajes
+
     try:
         respuesta = chatbot_consulta(pregunta, historial)
         return JsonResponse({'respuesta': respuesta})
-    except Exception as e:
+    except Exception:
         return JsonResponse({'error': 'Error al conectar con la IA'}, status=500)

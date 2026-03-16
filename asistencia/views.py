@@ -13,6 +13,18 @@ from asignaturas.models import Asignatura
 @login_required
 def tomar_asistencia(request, asignatura_id):
     asignatura = get_object_or_404(Asignatura, pk=asignatura_id)
+
+    # Solo admin puede tomar asistencia en cualquier asignatura.
+    # El profesor solo puede hacerlo en SUS propias asignaturas.
+    user = request.user
+    if not user.es_admin:
+        if not user.es_profesor:
+            messages.error(request, 'No tienes permiso para registrar asistencia.')
+            return redirect('dashboard:inicio')
+        perfil = getattr(user, 'perfil_profesor', None)
+        if perfil is None or asignatura.profesor != perfil:
+            messages.error(request, 'Solo puedes tomar asistencia en tus propias asignaturas.')
+            return redirect('dashboard:inicio')
     alumnos    = Alumno.objects.filter(
         curso=asignatura.curso, activo=True
     ).select_related('usuario').order_by('usuario__last_name')
@@ -58,6 +70,18 @@ def tomar_asistencia(request, asignatura_id):
 @login_required
 def resumen_asignatura(request, asignatura_id):
     asignatura = get_object_or_404(Asignatura, pk=asignatura_id)
+
+    # Solo admin y profesores (de esa asignatura) pueden ver el resumen completo.
+    user = request.user
+    if not user.es_admin:
+        if not user.es_profesor:
+            messages.error(request, 'No tienes permiso para ver este resumen.')
+            return redirect('dashboard:inicio')
+        perfil = getattr(user, 'perfil_profesor', None)
+        if perfil is None or asignatura.profesor != perfil:
+            messages.error(request, 'Solo puedes ver la asistencia de tus propias asignaturas.')
+            return redirect('dashboard:inicio')
+
     registros  = RegistroAsistencia.objects.filter(
         asignatura=asignatura
     ).select_related('alumno__usuario').order_by('-fecha')
@@ -75,7 +99,27 @@ def resumen_asignatura(request, asignatura_id):
 
 @login_required
 def asistencia_alumno(request, alumno_id):
-    alumno    = get_object_or_404(Alumno, pk=alumno_id)
+    alumno = get_object_or_404(Alumno, pk=alumno_id)
+
+    # Acceso granular por rol (igual que detalle_alumno):
+    #   Admin/Profesor : cualquier alumno
+    #   Apoderado      : solo sus pupilos
+    #   Alumno         : solo su propio perfil
+    user = request.user
+    if user.es_admin or user.es_profesor:
+        pass
+    elif user.es_apoderado:
+        perfil = getattr(user, 'perfil_apoderado', None)
+        if not perfil or not perfil.pupilos.filter(pk=alumno_id).exists():
+            messages.error(request, 'No tienes permiso para ver la asistencia de este alumno.')
+            return redirect('dashboard:inicio')
+    elif user.es_alumno:
+        perfil = getattr(user, 'perfil_alumno', None)
+        if not perfil or perfil.pk != alumno_id:
+            messages.error(request, 'Solo puedes ver tu propia asistencia.')
+            return redirect('dashboard:inicio')
+    else:
+        return redirect('dashboard:inicio')
     registros = RegistroAsistencia.objects.filter(
         alumno=alumno
     ).select_related('asignatura').order_by('-fecha')
