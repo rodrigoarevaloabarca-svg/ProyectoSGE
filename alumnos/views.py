@@ -4,7 +4,7 @@ ARCHIVO: views.py
 
 Vistas para gestión de alumnos.
 Control de acceso por rol en cada vista:
-  - lista_alumnos : admin y profesor
+  - lista_alumnos : admin y profesor (con paginación y filtro por curso)
   - detalle_alumno: admin, profesor, el propio alumno, apoderado de ese alumno
   - crear_alumno  : solo admin
   - editar_alumno : solo admin
@@ -12,6 +12,7 @@ Control de acceso por rol en cada vista:
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.urls import reverse
 
 from .models import Alumno
@@ -33,9 +34,36 @@ def solo_staff(user):
 @login_required
 @user_passes_test(solo_staff, login_url='dashboard:inicio')
 def lista_alumnos(request):
-    alumnos = Alumno.objects.filter(activo=True).select_related('usuario', 'curso__nivel')
+    # Filtro opcional por curso via GET (?curso=<id>)
+    curso_id = request.GET.get('curso', '')
+
+    alumnos_qs = Alumno.objects.filter(activo=True).select_related(
+        'usuario', 'curso__nivel'
+    ).order_by('usuario__last_name', 'usuario__first_name')
+
+    if curso_id:
+        alumnos_qs = alumnos_qs.filter(curso_id=curso_id)
+
+    # Conteo antes de paginar (1 sola query, no usa alumnos.count en template)
+    total = alumnos_qs.count()
+
+    # Paginación: 20 alumnos por página
+    paginator   = Paginator(alumnos_qs, 20)
+    page_number = request.GET.get('page', 1)
+    page_obj    = paginator.get_page(page_number)
+
+    # Cursos para el filtro desplegable
+    from cursos.models import Curso
+    cursos = Curso.objects.filter(activo=True).select_related('nivel').order_by(
+        'nivel', 'grado', 'letra'
+    )
+
     return render(request, 'alumnos/lista.html', {
-        'alumnos': alumnos,
+        'alumnos':  page_obj,
+        'page_obj': page_obj,
+        'total':    total,
+        'cursos':   cursos,
+        'curso_id': curso_id,
         'breadcrumbs': [
             {'label': 'Alumnos', 'url': ''},
         ],
@@ -54,7 +82,7 @@ def detalle_alumno(request, pk):
     user   = request.user
 
     if user.es_admin or user.es_profesor:
-        pass  # acceso total
+        pass
 
     elif user.es_apoderado:
         perfil = getattr(user, 'perfil_apoderado', None)

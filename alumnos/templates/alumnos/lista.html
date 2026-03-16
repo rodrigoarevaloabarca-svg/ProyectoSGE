@@ -5,32 +5,66 @@
 <div class="flex items-center justify-between mb-8">
     <div>
         <h2 class="text-3xl font-extrabold text-navy-deep dark:text-white">Gestión de Alumnos</h2>
-        <p class="text-muted-blue mt-1">Total registrados: <span class="font-bold text-primary">{{ alumnos.count }}</span></p>
+        <p class="text-muted-blue mt-1">
+            Total registrados: <span class="font-bold text-primary">{{ total }}</span>
+            {% if curso_id %}<span class="text-xs ml-2 text-muted-blue">(filtrado por curso)</span>{% endif %}
+        </p>
     </div>
+    {% if request.user.es_admin %}
     <a href="{% url 'alumnos:crear' %}"
        class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
         <span class="material-symbols-outlined">person_add</span>
         Nuevo Alumno
     </a>
+    {% endif %}
 </div>
 
 <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm overflow-hidden">
-    <div class="p-4 border-b border-soft-grey dark:border-slate-800 flex gap-3">
-        <input type="text" id="buscador" placeholder="Buscar alumno por nombre o RUT..."
+
+    {# ── Barra de filtros ── #}
+    <div class="p-4 border-b border-soft-grey dark:border-slate-800 flex flex-col sm:flex-row gap-3">
+
+        {# Búsqueda por nombre/RUT #}
+        <input type="text" id="buscador"
+               placeholder="Buscar alumno por nombre o RUT..."
                class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                onkeyup="filtrarTabla()"/>
+
+        {# Filtro por curso #}
+        <form method="get" class="flex gap-2 shrink-0">
+            <select name="curso"
+                    onchange="this.form.submit()"
+                    style="width:180px;"
+                    class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                <option value="">Todos los cursos</option>
+                {% for curso in cursos %}
+                <option value="{{ curso.pk }}" {% if curso_id == curso.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ curso }}
+                </option>
+                {% endfor %}
+            </select>
+            {% if curso_id %}
+            <a href="{% url 'alumnos:lista' %}"
+               class="flex items-center px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-muted-blue hover:text-red-500 hover:border-red-300 transition-all"
+               title="Limpiar filtro">
+                <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
+            </a>
+            {% endif %}
+        </form>
     </div>
+
+    {# ── Tabla con anchos fijos ── #}
     <div class="overflow-x-auto">
-        <table class="w-full text-sm" id="tablaAlumnos">
+        <table class="w-full text-sm" id="tablaAlumnos" style="table-layout:fixed;">
             <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
                 <tr>
-                    <th class="px-6 py-3 text-left">Alumno</th>
-                    <th class="px-6 py-3 text-left">RUT</th>
-                    <th class="px-6 py-3 text-left">Curso</th>
-                    <th class="px-6 py-3 text-left">Matrícula</th>
-                    <th class="px-6 py-3 text-center">Promedio</th>
-                    <th class="px-6 py-3 text-center">Estado</th>
-                    <th class="px-6 py-3 text-center">Acciones</th>
+                    <th class="px-6 py-3 text-left"  style="width:33%;">Alumno</th>
+                    <th class="px-6 py-3 text-left"  style="width:12%;">RUT</th>
+                    <th class="px-6 py-3 text-left"  style="width:17%;">Curso</th>
+                    <th class="px-6 py-3 text-left"  style="width:8%;">Matrícula</th>
+                    <th class="px-6 py-3 text-center" style="width:8%;">Promedio</th>
+                    <th class="px-6 py-3 text-center" style="width:10%;">Estado</th>
+                    <th class="px-6 py-3 text-center" style="width:12%;">Acciones</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
@@ -38,12 +72,12 @@
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                            <div class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0">
                                 {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
                             </div>
-                            <div>
-                                <p class="font-semibold text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</p>
-                                <p class="text-xs text-muted-blue">{{ alumno.usuario.email }}</p>
+                            <div class="min-w-0">
+                                <p class="font-semibold text-navy-deep dark:text-white truncate">{{ alumno.nombre_completo }}</p>
+                                <p class="text-xs text-muted-blue truncate">{{ alumno.usuario.email }}</p>
                             </div>
                         </div>
                     </td>
@@ -78,16 +112,22 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="{% url 'alumnos:detalle' alumno.pk %}" ...>
+                            <a href="{% url 'alumnos:detalle' alumno.pk %}"
+                               class="p-1.5 rounded-lg text-muted-blue hover:text-primary hover:bg-primary/10 transition-all"
+                               title="Ver detalle">
                                 <span class="material-symbols-outlined text-sm">visibility</span>
                             </a>
                             {% if request.user.es_admin %}
-                            <a href="{% url 'alumnos:editar' alumno.pk %}" ...>
+                            <a href="{% url 'alumnos:editar' alumno.pk %}"
+                               class="p-1.5 rounded-lg text-muted-blue hover:text-amber-500 hover:bg-amber-50 transition-all"
+                               title="Editar">
                                 <span class="material-symbols-outlined text-sm">edit</span>
                             </a>
                             {% endif %}
                             {% if request.user.es_admin or request.user.es_profesor %}
-                            <a href="{% url 'anotaciones:alumno' alumno.pk %}" ...>
+                            <a href="{% url 'anotaciones:alumno' alumno.pk %}"
+                               class="p-1.5 rounded-lg text-muted-blue hover:text-purple-500 hover:bg-purple-50 transition-all"
+                               title="Anotaciones">
                                 <span class="material-symbols-outlined text-sm">notes</span>
                             </a>
                             {% endif %}
@@ -98,14 +138,56 @@
                 <tr>
                     <td colspan="7" class="px-6 py-12 text-center text-muted-blue">
                         <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">group</span>
-                        No hay alumnos registrados.
-                        <a href="{% url 'alumnos:crear' %}" class="text-primary font-bold hover:underline block mt-1">Registrar el primero</a>
+                        {% if curso_id %}
+                            No hay alumnos en este curso.
+                            <a href="{% url 'alumnos:lista' %}" class="text-primary font-bold hover:underline block mt-1">Ver todos</a>
+                        {% else %}
+                            No hay alumnos registrados.
+                            {% if request.user.es_admin %}
+                            <a href="{% url 'alumnos:crear' %}" class="text-primary font-bold hover:underline block mt-1">Registrar el primero</a>
+                            {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    {# ── Paginación ── #}
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="px-6 py-4 border-t border-soft-grey dark:border-slate-800 flex items-center justify-between text-sm">
+        <p class="text-muted-blue">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            · {{ total }} alumno{{ total|pluralize }}
+        </p>
+        <div class="flex items-center gap-1">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if curso_id %}&curso={{ curso_id }}{% endif %}"
+               class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-muted-blue hover:bg-primary/10 hover:text-primary transition-all">
+                <span class="material-symbols-outlined text-sm">chevron_left</span>
+            </a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <span class="px-3 py-1.5 rounded-lg bg-primary text-white font-bold text-xs">{{ num }}</span>
+                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                <a href="?page={{ num }}{% if curso_id %}&curso={{ curso_id }}{% endif %}"
+                   class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-muted-blue hover:bg-primary/10 hover:text-primary transition-all text-xs">
+                    {{ num }}
+                </a>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if curso_id %}&curso={{ curso_id }}{% endif %}"
+               class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-muted-blue hover:bg-primary/10 hover:text-primary transition-all">
+                <span class="material-symbols-outlined text-sm">chevron_right</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
 <script>
