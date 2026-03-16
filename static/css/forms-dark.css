@@ -1,12 +1,3 @@
-/* ============================================================
-   forms-dark.css — SGE · Inputs visibles en modo oscuro
-   Colocar en: static/css/forms-dark.css
-   Y agregar en base.html:
-     <link rel="stylesheet" href="{% static 'css/forms-dark.css' %}">
-
-   O bien copiar estas reglas al final de tu estilos.css
-   ============================================================ */
-
 /* ──────────────────────────────────────────────────────────
    1. INPUTS, TEXTAREAS Y SELECTS — Modo oscuro
       El plugin @tailwindcss/forms resetea los estilos nativos,

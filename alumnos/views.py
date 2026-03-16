@@ -11,7 +11,7 @@ SELECT = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slat
 DATE   = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
 
 def solo_admin(user):
-    return user.is_authenticated and (user.es_admin)
+    return user.is_authenticated and user.es_admin
 
 def solo_staff(user):
     return user.is_authenticated and (user.es_admin or user.es_profesor)
@@ -53,9 +53,25 @@ def lista_alumnos(request):
 
 
 @login_required
-#@user_passes_test(solo_staff, login_url='dashboard:inicio')Q no puedan entrar a menos q sea profesor o administrador
 def detalle_alumno(request, pk):
     alumno = get_object_or_404(Alumno, pk=pk)
+    user = request.user
+
+    # Admin y profesor: acceso total
+    if user.es_admin or user.es_profesor:
+        pass
+    # Apoderado: solo sus propios pupilos
+    elif user.es_apoderado:
+        if not hasattr(user, 'perfil_apoderado') or \
+           not user.perfil_apoderado.pupilos.filter(pk=pk).exists():
+            return redirect('dashboard:inicio')
+    # Alumno: solo su propio perfil
+    elif user.es_alumno:
+        if not hasattr(user, 'perfil_alumno') or user.perfil_alumno.pk != pk:
+            return redirect('dashboard:inicio')
+    else:
+        return redirect('dashboard:inicio')
+
     return render(request, 'alumnos/detalle.html', {
         'alumno':                alumno,
         'promedios':             alumno.get_promedio_por_asignatura(),

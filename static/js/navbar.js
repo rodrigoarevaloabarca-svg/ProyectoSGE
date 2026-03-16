@@ -1,8 +1,4 @@
 /* ============================================================
-   navbar.js — SGE · Menú móvil + Dark Mode persistente
-   Colocar en: static/js/navbar.js
-   Cargar con: <script src="{% static 'js/navbar.js' %}" defer></script>
-
    IMPORTANTE: El bloque anti-FOUC que va en el <head> del
    base.html NO va aquí porque debe ejecutarse de forma síncrona
    antes de que el DOM pinte (ver base.html).

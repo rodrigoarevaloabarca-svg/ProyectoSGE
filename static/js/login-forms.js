@@ -1,13 +1,3 @@
-/* ============================================================
-   login-forms.js — SGE · JS del área pública (login y formularios)
-   Colocar en: static/js/login-forms.js
-
-   Maneja funcionalidades de los formularios del área pública:
-   - Toggle mostrar/ocultar contraseña
-   - Formato automático de RUT chileno
-   - Auto-dismiss de mensajes flash (ya cubierto por navbar.js,
-     incluido aquí como fallback si navbar.js no está presente)
-   ============================================================ */
 
 (function () {
     "use strict";
