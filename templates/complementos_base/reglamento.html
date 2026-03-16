@@ -60,7 +60,7 @@
         <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Institución  • Versión 1.1 • Última actualización: Marzo 2026</p>
         </div>
         <div class="flex gap-2">
-        <a href="/static/doc/reglamento.pdf" download="Nombre_del_Archivo.pdf" class="no-underline">
+        <a href="{% static 'doc/reglamento.pdf'  %}" download="reglamento.pdf" class="no-underline">
           <button class="flex items-center gap-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2 text-sm font-bold shadow-sm hover:opacity-90 transition-opacity">
             <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
             Descargar PDF
