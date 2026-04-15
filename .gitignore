@@ -38,7 +38,10 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
 # ── Carpetas ─────────────────────────────────
 staticfiles/
 privado/
 media/
+.claude
+CLAUDE.md

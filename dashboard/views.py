@@ -11,10 +11,21 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from SGE.ia_utils import chatbot_consulta
 
+import time
+
 def contacto(request):
     form = ContactoForm()
 
     if request.method == 'POST':
+        # Simple antispam usando sesión temporal (1 envío cada 60 seg)
+        ultimo_envio = request.session.get('ultimo_envio_contacto', 0)
+        ahora = time.time()
+        
+        if ahora - ultimo_envio < 60:
+            tiempo_restante = int(60 - (ahora - ultimo_envio))
+            messages.error(request, f'Por favor, espera {tiempo_restante} segundos antes de enviar otro mensaje.')
+            return render(request, 'complementos_login/contacto.html', {'form': form})
+
         form = ContactoForm(request.POST)
         if form.is_valid():
             nombre  = form.cleaned_data['nombre']
@@ -43,6 +54,7 @@ def contacto(request):
                 fail_silently=False,
             )
 
+            request.session['ultimo_envio_contacto'] = ahora
             messages.success(request, '¡Mensaje enviado correctamente! Te responderemos en menos de 24 horas.')
             form = ContactoForm()
 
@@ -296,7 +308,7 @@ def chatbot_ia(request):
     ][-10:]  # máximo los últimos 10 mensajes
 
     try:
-        respuesta = chatbot_consulta(pregunta, historial)
+        respuesta = chatbot_consulta(pregunta, request.user, historial)
         return JsonResponse({'respuesta': respuesta})
     except Exception:
         return JsonResponse({'error': 'Error al conectar con la IA'}, status=500)

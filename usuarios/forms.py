@@ -172,3 +172,14 @@ class UsuarioEdicionForm(forms.ModelForm):
             if ext not in ('jpg', 'jpeg', 'png', 'webp'):
                 raise forms.ValidationError('Solo se permiten imágenes JPG, PNG o WebP.')
         return foto
+
+class UsuarioPerfilForm(UsuarioEdicionForm):
+    """
+    Formulario para que el propio usuario edite su perfil.
+    Excluimos campos sensibles como 'rol' e 'is_active'.
+    """
+    class Meta(UsuarioEdicionForm.Meta):
+        fields = [
+            'first_name', 'last_name', 'email',
+            'rut', 'telefono', 'foto_perfil',
+        ]

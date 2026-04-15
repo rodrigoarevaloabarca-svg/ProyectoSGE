@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 
 from .models import Usuario
-from .forms import UsuarioCreacionForm, UsuarioEdicionForm, LoginForm
+from .forms import UsuarioCreacionForm, UsuarioEdicionForm, LoginForm, UsuarioPerfilForm
 
 
 def solo_admin(user):
@@ -27,13 +27,17 @@ class LogoutPersonalizado(LogoutView):
 @login_required
 def perfil(request):
     if request.method == 'POST':
-        form = UsuarioEdicionForm(request.POST, request.FILES, instance=request.user)
+        if not request.user.es_admin:
+            messages.error(request, 'No tienes permiso para editar tus datos personales. Solo puedes cambiar tu contraseña.')
+            return redirect('usuarios:perfil')
+
+        form = UsuarioPerfilForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Perfil actualizado correctamente.')
             return redirect('usuarios:perfil')
     else:
-        form = UsuarioEdicionForm(instance=request.user)
+        form = UsuarioPerfilForm(instance=request.user) if request.user.es_admin else None
     return render(request, 'usuarios/perfil.html', {
         'usuario': request.user,
         'form':    form,

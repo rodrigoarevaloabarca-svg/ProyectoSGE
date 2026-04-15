@@ -52,21 +52,28 @@ Responde en español, de forma clara y profesional. Máximo 5 líneas."""
     return respuesta.choices[0].message.content
 
 
-def _buscar_contexto_bd(pregunta):
+def _buscar_contexto_bd(pregunta, usuario):
     """
     Busca en la BD informacion relevante segun la pregunta.
-    Retorna un string con los datos encontrados para pasarlos a la IA.
-
-    NOTA DE PRIVACIDAD: los datos de alumnos que se incluyen en el contexto
-    se envian a la API de Groq (servicio externo) para generar la respuesta.
-    Solo se incluyen datos academicos (promedios, asistencia, anotaciones),
-    nunca informacion de contacto personal.
+    Filtra los datos según el rol del usuario (IDOR fix).
+    Anonimiza la información enviando IDs en lugar de nombres (Privacy fix).
+    Retorna (contexto_string, map_nombres)
     """
     from alumnos.models import Alumno
     from cursos.models import Curso
 
     contexto = ""
+    map_nombres = {}
     pregunta_lower = pregunta.lower()
+
+    # Base queryset (siempre activo=True)
+    qs_alumnos = Alumno.objects.filter(activo=True)
+    qs_cursos = Curso.objects.filter(activo=True)
+
+    # Restringir por permisos del profesor
+    if usuario and not usuario.es_admin and usuario.es_profesor:
+        qs_alumnos = qs_alumnos.filter(curso__asignaturas__profesor=usuario.perfil_profesor).distinct()
+        qs_cursos = qs_cursos.filter(asignaturas__profesor=usuario.perfil_profesor).distinct()
 
     # Filtrar directamente en BD usando palabras de la pregunta (> 3 chars)
     palabras = [p for p in pregunta_lower.split() if len(p) > 3]
@@ -77,19 +84,22 @@ def _buscar_contexto_bd(pregunta):
             filtro |= Q(usuario__first_name__icontains=palabra)
             filtro |= Q(usuario__last_name__icontains=palabra)
 
-        alumnos_encontrados = Alumno.objects.filter(
-            filtro, activo=True
+        alumnos_encontrados = qs_alumnos.filter(
+            filtro
         ).select_related('usuario', 'curso')[:3]  # maximo 3 resultados
 
         if alumnos_encontrados.exists():
             contexto += "DATOS REALES DE LA BASE DE DATOS:\n\n"
             for alumno in alumnos_encontrados:
+                anon_id = f"ESTUDIANTE_{alumno.pk}"
+                map_nombres[anon_id] = alumno.nombre_completo
+
                 promedio   = alumno.get_promedio_general()
                 asistencia = alumno.get_porcentaje_asistencia()
                 anot_neg   = alumno.anotaciones.filter(tipo='negativa').count()
                 anot_pos   = alumno.anotaciones.filter(tipo='positiva').count()
 
-                contexto += f"Alumno: {alumno.nombre_completo}\n"
+                contexto += f"Alumno: {anon_id}\n"
                 contexto += f"  Curso: {alumno.curso}\n"
                 contexto += f"  Promedio general: {promedio if promedio else 'Sin notas'}\n"
                 contexto += f"  Asistencia: {asistencia if asistencia else 'Sin registros'}%\n"
@@ -106,40 +116,41 @@ def _buscar_contexto_bd(pregunta):
                 contexto += "\n"
 
     # Si pregunta por curso completo (ej: "3ro B", "4to A")
-    cursos = Curso.objects.filter(activo=True)
-    for curso in cursos:
+    for curso in qs_cursos:
         nombre_curso = str(curso).lower()
         if nombre_curso in pregunta_lower or any(
             p in pregunta_lower for p in nombre_curso.split() if len(p) > 2
         ):
-            alumnos_curso = Alumno.objects.filter(
-                curso=curso, activo=True
+            alumnos_curso = qs_alumnos.filter(
+                curso=curso
             ).select_related('usuario')
 
             if alumnos_curso.exists():
                 contexto += f"ALUMNOS DEL CURSO {curso}:\n"
                 for a in alumnos_curso:
+                    anon_id = f"ESTUDIANTE_{a.pk}"
+                    map_nombres[anon_id] = a.nombre_completo
                     prom = a.get_promedio_general()
                     asis = a.get_porcentaje_asistencia()
-                    contexto += f"  - {a.nombre_completo}: "
+                    contexto += f"  - {anon_id}: "
                     contexto += f"promedio {prom if prom else 'sin notas'}, "
                     contexto += f"asistencia {asis if asis else 'sin registros'}%\n"
                 contexto += "\n"
             break
 
-    return contexto
+    return contexto, map_nombres
 
 
-def chatbot_consulta(pregunta, historial=None):
+def chatbot_consulta(pregunta, usuario, historial=None):
     """
     Responde preguntas consultando primero la BD para obtener
-    datos reales de alumnos y cursos.
+    datos reales de alumnos y cursos anonimizados.
     """
     if historial is None:
         historial = []
 
-    # Buscar datos relevantes en la BD
-    contexto_bd = _buscar_contexto_bd(pregunta)
+    # Buscar datos relevantes en la BD (anonimizados)
+    contexto_bd, map_nombres = _buscar_contexto_bd(pregunta, usuario)
 
     sistema = """Eres un asistente del Sistema de Gestión Escolar (SGE) 
 de un colegio chileno. Ayudas a administradores y profesores respondiendo 
@@ -163,4 +174,10 @@ Si no encuentras información de un alumno específico, dilo claramente."""
         messages=mensajes,
         max_tokens=400
     )
-    return respuesta.choices[0].message.content
+    respuesta_final = respuesta.choices[0].message.content
+
+    # Re-mapear los IDs anonimizados a los nombres reales
+    for anon_id, nombre_real in map_nombres.items():
+        respuesta_final = respuesta_final.replace(anon_id, nombre_real)
+
+    return respuesta_final
