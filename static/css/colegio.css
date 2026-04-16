@@ -1,0 +1,45 @@
+/* Custom Styles for Colegio Landing */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.editorial-grid { display: grid; grid-template-columns: repeat(12, 1fr); }
+
+/* Mobile menu animation */
+#mobile-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+#mobile-menu.open {
+  max-height: 400px;
+  opacity: 1;
+}
+
+/* Scroll-to-top button */
+#scroll-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(12px);
+}
+#scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Dark mode overrides for dynamic elements */
+.dark #scroll-top-btn button {
+  background-color: #b42725;
+  color: #fff;
+}
+
+/* Mission/Vision card hover */
+.mv-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.mv-card:hover { transform: translateY(-4px); }
