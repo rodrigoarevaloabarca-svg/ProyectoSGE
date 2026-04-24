@@ -227,7 +227,6 @@
         <form class="fu" method="POST" action="https://formsubmit.co/adm.alonsodeercilla@gmail.com">
           <!-- ── Configuración FormSubmit ── -->
           <input type="hidden" name="_subject" value="Admisiones 2027 — Nueva solicitud · Colegio Alonso de Ercilla">
-          <input type="hidden" name="_next" value="{{ request.scheme }}://{{ request.get_host }}{% url 'inicio' %}">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_autoresponse" value="Hemos recibido su solicitud de información para Admisiones 2027. Nos pondremos en contacto a la brevedad. — Colegio Alonso de Ercilla">
@@ -330,6 +329,18 @@
       </div>
     </div>
   </footer>
+
+  <!-- ── MODAL CONFIRMACIÓN FORMULARIO ───────────────────────────────────────── -->
+  <div id="form-modal" class="fmodal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fmodal-title">
+    <div class="fmodal-box">
+      <div class="fmodal-icon">
+        <span class="ic" style="font-size:26px">check_circle</span>
+      </div>
+      <h3 class="fmodal-title" id="fmodal-title">¡Solicitud Recibida!</h3>
+      <p class="fmodal-msg">Hemos recibido su solicitud de información para Admisiones 2027. Nos pondremos en contacto a la brevedad.</p>
+      <button class="fmodal-btn" onclick="closeFormModal()">Cerrar</button>
+    </div>
+  </div>
 
   <!-- ── SCRIPTS ──────────────────────────────────────────────────────────────── -->
   <script src="{% static 'js/colegio.js' %}"></script>

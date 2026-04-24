@@ -21,6 +21,50 @@ document.addEventListener('click', e => { if (!ham.contains(e.target) && !mob.co
 const s2t = document.getElementById('s2t');
 window.addEventListener('scroll', () => s2t.classList.toggle('vis', scrollY > 320), { passive: true });
 
+// Modal confirmación formulario
+function openFormModal() {
+  const m = document.getElementById('form-modal');
+  m.classList.add('open');
+  m.setAttribute('aria-hidden', 'false');
+}
+function closeFormModal() {
+  const m = document.getElementById('form-modal');
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
+}
+document.getElementById('form-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeFormModal();
+});
+
+// Envío AJAX del formulario de contacto
+const contactForm = document.querySelector('.scon form');
+if (contactForm) {
+  contactForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = contactForm.querySelector('.fsub');
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/adm.alonsodeercilla@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(contactForm)
+      });
+      const data = await res.json();
+      if (data.success === 'true' || data.success === true) {
+        contactForm.reset();
+        openFormModal();
+      }
+    } catch {
+      contactForm.submit();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+}
+
 // Scroll fade-in
 const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }) }, { threshold: .08, rootMargin: '0px 0px -30px 0px' });
 document.querySelectorAll('.fu').forEach(el => {
