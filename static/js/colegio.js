@@ -1,44 +1,30 @@
-// ── Dark mode toggle ──────────────────────────────────────
-const html = document.documentElement;
-const themeToggle = document.getElementById('theme-toggle');
-
-// Persist preference
-if (localStorage.getItem('theme') === 'dark' ||
-    (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  html.classList.add('dark');
+// Tema claro / oscuro
+function toggleTheme() {
+  const h = document.documentElement, d = h.getAttribute('data-theme') === 'dark', n = d ? 'light' : 'dark';
+  h.setAttribute('data-theme', n); localStorage.setItem('cae-theme', n); syncMobLabel(n);
 }
+function syncMobLabel(t) {
+  const l = document.getElementById('mtl'), i = document.getElementById('mti');
+  if (l) l.textContent = t === 'dark' ? 'claro' : 'oscuro';
+  if (i) i.textContent = t === 'dark' ? 'light_mode' : 'dark_mode';
+}
+document.getElementById('tbtn').addEventListener('click', toggleTheme);
+syncMobLabel(document.documentElement.getAttribute('data-theme'));
 
-themeToggle.addEventListener('click', () => {
-  html.classList.toggle('dark');
-  localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+// Hamburger
+const ham = document.getElementById('ham'), mob = document.getElementById('mob');
+function closeMob() { ham.classList.remove('open'); mob.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); mob.setAttribute('aria-hidden', 'true') }
+ham.addEventListener('click', () => { const o = ham.classList.toggle('open'); mob.classList.toggle('open', o); ham.setAttribute('aria-expanded', o); mob.setAttribute('aria-hidden', !o) });
+document.addEventListener('click', e => { if (!ham.contains(e.target) && !mob.contains(e.target)) closeMob() });
+
+// Scroll-to-top
+const s2t = document.getElementById('s2t');
+window.addEventListener('scroll', () => s2t.classList.toggle('vis', scrollY > 320), { passive: true });
+
+// Scroll fade-in
+const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }) }, { threshold: .08, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fu').forEach(el => {
+  const s = [...(el.parentElement?.querySelectorAll(':scope > .fu') || [])], i = s.indexOf(el);
+  if (i > 0) el.style.transitionDelay = (i * .1) + 's';
+  io.observe(el);
 });
-
-// ── Hamburger menu ────────────────────────────────────────
-const hamburgerBtn = document.getElementById('hamburger-btn');
-const hamburgerIcon = document.getElementById('hamburger-icon');
-const mobileMenu = document.getElementById('mobile-menu');
-let menuOpen = false;
-
-hamburgerBtn.addEventListener('click', () => {
-  menuOpen = !menuOpen;
-  mobileMenu.classList.toggle('open', menuOpen);
-  hamburgerIcon.textContent = menuOpen ? 'close' : 'menu';
-  hamburgerBtn.setAttribute('aria-expanded', menuOpen);
-});
-
-// Close menu on link click
-mobileMenu.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    menuOpen = false;
-    mobileMenu.classList.remove('open');
-    hamburgerIcon.textContent = 'menu';
-    hamburgerBtn.setAttribute('aria-expanded', false);
-  });
-});
-
-// ── Scroll-to-top button ──────────────────────────────────
-const scrollBtn = document.getElementById('scroll-top-btn');
-
-window.addEventListener('scroll', () => {
-  scrollBtn.classList.toggle('visible', window.scrollY > 400);
-}, { passive: true });
