@@ -30,8 +30,8 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     env:
+      DJANGO_SETTINGS_MODULE: SGE.settings.testing
       SECRET_KEY: ci-secret-key-not-for-production
-      DEBUG: "True"
       DB_NAME: sge_db
       DB_USER: root
       DB_PASSWORD: rootpassword

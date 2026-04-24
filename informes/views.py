@@ -12,6 +12,7 @@ from django.utils import timezone
 from .models import Periodo, ComentarioInforme
 from .pdf_generator import generar_pdf_informe
 from .forms import PeriodoForm, ComentarioInformeForm
+from .services import InformeService
 from alumnos.models import Alumno
 from cursos.models import Curso
 
@@ -121,7 +122,7 @@ def ver_informe(request, alumno_id, periodo_id):
         return redirect('informes:seleccionar')
     periodo = get_object_or_404(Periodo, pk=periodo_id)
 
-    datos = _recopilar_datos_informe(alumno, periodo)
+    datos = InformeService.recopilar_datos(alumno, periodo)
 
     # Comentario existente o nuevo
     comentario_obj, _ = ComentarioInforme.objects.get_or_create(
@@ -161,7 +162,7 @@ def descargar_pdf(request, alumno_id, periodo_id):
         messages.error(request, 'No tienes acceso al informe de este alumno.')
         return redirect('informes:seleccionar')
     periodo = get_object_or_404(Periodo, pk=periodo_id)
-    datos   = _recopilar_datos_informe(alumno, periodo)
+    datos   = InformeService.recopilar_datos(alumno, periodo)
 
     comentario_obj = ComentarioInforme.objects.filter(alumno=alumno, periodo=periodo).first()
     comentario_texto = comentario_obj.comentario if comentario_obj else ''
@@ -179,85 +180,6 @@ def descargar_pdf(request, alumno_id, periodo_id):
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
     return response
-
-
-# ── HELPER ───────────────────────────────────────────────────────────────────
-
-def _recopilar_datos_informe(alumno, periodo):
-    """Recopila notas, asistencia y anotaciones del alumno en el período."""
-    from notas.models import Nota
-    from asistencia.models import RegistroAsistencia
-    from anotaciones.models import Anotacion
-
-    fecha_i = periodo.fecha_inicio
-    fecha_f = periodo.fecha_fin
-
-    # ── Notas del período ──
-    notas_qs = Nota.objects.filter(
-        alumno=alumno,
-        fecha__gte=fecha_i,
-        fecha__lte=fecha_f,
-    ).select_related('asignatura', 'tipo_evaluacion').order_by('asignatura__nombre', 'fecha')
-
-    # Agrupar notas por asignatura
-    notas_por_asignatura = {}
-    for nota in notas_qs:
-        nombre_asig = nota.asignatura.nombre
-        if nombre_asig not in notas_por_asignatura:
-            notas_por_asignatura[nombre_asig] = {
-                'asignatura': nota.asignatura,
-                'notas': [],
-                'promedio': None,
-            }
-        notas_por_asignatura[nombre_asig]['notas'].append(nota)
-
-    # Calcular promedio por asignatura en el período
-    for key, data in notas_por_asignatura.items():
-        valores = [float(n.valor) for n in data['notas']]
-        data['promedio'] = round(sum(valores) / len(valores), 1) if valores else None
-
-    # Promedio general del período
-    todos_promedios = [d['promedio'] for d in notas_por_asignatura.values() if d['promedio']]
-    promedio_general = round(sum(todos_promedios) / len(todos_promedios), 1) if todos_promedios else None
-
-    # ── Asistencia del período ──
-    asistencias = RegistroAsistencia.objects.filter(
-        alumno=alumno,
-        fecha__gte=fecha_i,
-        fecha__lte=fecha_f,
-    )
-    total_clases  = asistencias.count()
-    presentes     = asistencias.filter(estado='presente').count()
-    ausentes      = asistencias.filter(estado='ausente').count()
-    atrasados     = asistencias.filter(estado='atrasado').count()
-    justificados  = asistencias.filter(estado='justificado').count()
-    pct_asistencia = round((presentes / total_clases * 100), 1) if total_clases > 0 else 0
-
-    # ── Anotaciones del período ──
-    anotaciones = Anotacion.objects.filter(
-        alumno=alumno,
-        fecha__gte=fecha_i,
-        fecha__lte=fecha_f,
-    ).select_related('creado_por', 'asignatura').order_by('fecha')
-
-    positivas = anotaciones.filter(tipo='positiva')
-    negativas = anotaciones.filter(tipo='negativa')
-
-    return {
-        'notas_por_asignatura': notas_por_asignatura,
-        'promedio_general':     promedio_general,
-        'asistencia': {
-            'total':        total_clases,
-            'presentes':    presentes,
-            'ausentes':     ausentes,
-            'atrasados':    atrasados,
-            'justificados': justificados,
-            'porcentaje':   pct_asistencia,
-        },
-        'anotaciones':  anotaciones,
-        'positivas':    positivas,
-        'negativas':    negativas,
-    }
 
 
 # ── INFORME POR CURSO ─────────────────────────────────────────────────────────
@@ -605,7 +527,7 @@ def _impresion_masiva_periodo(request, curso_id, periodo_id):
             from PyPDF2 import PdfMerger as _Merger
             merger = _Merger()
             for alumno in alumnos:
-                datos = _recopilar_datos_informe(alumno, periodo)
+                datos = InformeService.recopilar_datos(alumno, periodo)
                 comentario_obj = ComentarioInforme.objects.filter(alumno=alumno, periodo=periodo).first()
                 comentario_txt = comentario_obj.comentario if comentario_obj else ''
                 pdf_bytes = generar_pdf_informe(alumno, periodo, datos, comentario_txt, logo_path)
@@ -625,7 +547,7 @@ def _impresion_masiva_periodo(request, curso_id, periodo_id):
     else:
         writer = PdfWriter()
         for alumno in alumnos:
-            datos = _recopilar_datos_informe(alumno, periodo)
+            datos = InformeService.recopilar_datos(alumno, periodo)
             comentario_obj = ComentarioInforme.objects.filter(alumno=alumno, periodo=periodo).first()
             comentario_txt = comentario_obj.comentario if comentario_obj else ''
             pdf_bytes = generar_pdf_informe(alumno, periodo, datos, comentario_txt, logo_path)

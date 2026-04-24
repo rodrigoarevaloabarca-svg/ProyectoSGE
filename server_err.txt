@@ -1,1 +1,2 @@
 Watching for file changes with StatReloader
+D:\Proyectos\Gestion\Proyecto SGE\usuarios\forms.py changed, reloading.

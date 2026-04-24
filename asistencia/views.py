@@ -8,6 +8,7 @@ from django.utils import timezone
 from .models import RegistroAsistencia
 from alumnos.models import Alumno
 from asignaturas.models import Asignatura
+from usuarios.decorators import puede_ver_alumno
 
 
 @login_required
@@ -98,28 +99,9 @@ def resumen_asignatura(request, asignatura_id):
 
 
 @login_required
+@puede_ver_alumno('alumno_id')
 def asistencia_alumno(request, alumno_id):
     alumno = get_object_or_404(Alumno, pk=alumno_id)
-
-    # Acceso granular por rol (igual que detalle_alumno):
-    #   Admin/Profesor : cualquier alumno
-    #   Apoderado      : solo sus pupilos
-    #   Alumno         : solo su propio perfil
-    user = request.user
-    if user.es_admin or user.es_profesor:
-        pass
-    elif user.es_apoderado:
-        perfil = getattr(user, 'perfil_apoderado', None)
-        if not perfil or not perfil.pupilos.filter(pk=alumno_id).exists():
-            messages.error(request, 'No tienes permiso para ver la asistencia de este alumno.')
-            return redirect('dashboard:inicio')
-    elif user.es_alumno:
-        perfil = getattr(user, 'perfil_alumno', None)
-        if not perfil or perfil.pk != alumno_id:
-            messages.error(request, 'Solo puedes ver tu propia asistencia.')
-            return redirect('dashboard:inicio')
-    else:
-        return redirect('dashboard:inicio')
     registros = RegistroAsistencia.objects.filter(
         alumno=alumno
     ).select_related('asignatura').order_by('-fecha')

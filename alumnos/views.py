@@ -17,6 +17,7 @@ from django.urls import reverse
 from .models import Alumno
 from .forms import AlumnoForm
 from SGE.ia_utils import analizar_riesgo_alumno
+from usuarios.decorators import puede_ver_alumno
 
 
 # ── Predicados de rol ─────────────────────────────────────────────────────────
@@ -71,33 +72,10 @@ def lista_alumnos(request):
 
 
 @login_required
+@puede_ver_alumno('pk')
 def detalle_alumno(request, pk):
-    """
-    Acceso granular por rol:
-      - Admin/Profesor : cualquier alumno
-      - Apoderado      : solo sus pupilos
-      - Alumno         : solo su propio perfil
-    """
     alumno = get_object_or_404(Alumno, pk=pk)
     user   = request.user
-
-    if user.es_admin or user.es_profesor:
-        pass
-
-    elif user.es_apoderado:
-        perfil = getattr(user, 'perfil_apoderado', None)
-        if not perfil or not perfil.pupilos.filter(pk=pk).exists():
-            messages.error(request, 'No tienes permiso para ver este alumno.')
-            return redirect('dashboard:inicio')
-
-    elif user.es_alumno:
-        perfil = getattr(user, 'perfil_alumno', None)
-        if not perfil or perfil.pk != pk:
-            messages.error(request, 'Solo puedes ver tu propio perfil.')
-            return redirect('dashboard:inicio')
-
-    else:
-        return redirect('dashboard:inicio')
 
     analisis_ia = None
     if user.es_admin or user.es_profesor:

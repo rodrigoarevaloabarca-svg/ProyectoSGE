@@ -90,7 +90,10 @@
             </div>
         </div>
         {% if analisis_ia %}
-        <div class="mt-6 rounded-xl border-l-4 p-5
+        <p class="mt-4 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg px-3 py-2">
+          ⚠️ Este análisis fue generado enviando datos académicos <strong>anonimizados</strong> a Groq (servicio de IA externo).
+        </p>
+        <div class="mt-2 rounded-xl border-l-4 p-5
                     {% if 'ALTO' in analisis_ia %}
                         border-red-500 bg-red-50 dark:bg-red-950/30
                     {% elif 'MEDIO' in analisis_ia %}

@@ -8,6 +8,7 @@ de autenticación de Django más los roles del colegio.
 """
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from usuarios.validators import validar_rut
 
 
 class Usuario(AbstractUser):
@@ -43,7 +44,8 @@ class Usuario(AbstractUser):
         null=True,
         blank=True,
         verbose_name='RUT',
-        help_text='Formato: 12345678-9'
+        help_text='Formato: 12345678-9',
+        validators=[validar_rut],
     )
 
     telefono = models.CharField(

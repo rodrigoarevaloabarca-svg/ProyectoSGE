@@ -13,6 +13,7 @@ from alumnos.models import Alumno
 from asignaturas.models import Asignatura
 from cursos.models import Curso
 from historial.utils import snapshot_nota, registrar_cambio_nota
+from usuarios.decorators import puede_ver_alumno
 
 
 def solo_profesor_o_admin(user):
@@ -55,29 +56,10 @@ def libro_notas_curso(request, curso_id):
 
 
 @login_required
+@puede_ver_alumno('alumno_id')
 def notas_alumno_asignatura(request, alumno_id, asignatura_id):
     alumno     = get_object_or_404(Alumno,     pk=alumno_id)
     asignatura = get_object_or_404(Asignatura, pk=asignatura_id)
-
-    # Acceso granular por rol:
-    #   Admin/Profesor : cualquier alumno
-    #   Apoderado      : solo sus pupilos
-    #   Alumno         : solo su propio perfil
-    user = request.user
-    if user.es_admin or user.es_profesor:
-        pass
-    elif user.es_apoderado:
-        perfil = getattr(user, 'perfil_apoderado', None)
-        if not perfil or not perfil.pupilos.filter(pk=alumno_id).exists():
-            messages.error(request, 'No tienes permiso para ver las notas de este alumno.')
-            return redirect('dashboard:inicio')
-    elif user.es_alumno:
-        perfil = getattr(user, 'perfil_alumno', None)
-        if not perfil or perfil.pk != alumno_id:
-            messages.error(request, 'Solo puedes ver tus propias notas.')
-            return redirect('dashboard:inicio')
-    else:
-        return redirect('dashboard:inicio')
 
     notas = Nota.objects.filter(
         alumno=alumno, asignatura=asignatura

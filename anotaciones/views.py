@@ -7,6 +7,7 @@ from .models import Anotacion
 from alumnos.models import Alumno
 from historial.utils import snapshot_anotacion, registrar_cambio_anotacion
 from django import forms
+from usuarios.decorators import puede_ver_alumno
 
 INPUT    = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
 SELECT   = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
@@ -39,28 +40,9 @@ def solo_staff(user):
 
 
 @login_required
+@puede_ver_alumno('alumno_id')
 def anotaciones_alumno(request, alumno_id):
     alumno = get_object_or_404(Alumno, pk=alumno_id)
-
-    # Acceso granular por rol:
-    #   Admin/Profesor : cualquier alumno
-    #   Apoderado      : solo sus pupilos
-    #   Alumno         : solo su propio perfil
-    user = request.user
-    if user.es_admin or user.es_profesor:
-        pass
-    elif user.es_apoderado:
-        perfil = getattr(user, 'perfil_apoderado', None)
-        if not perfil or not perfil.pupilos.filter(pk=alumno_id).exists():
-            messages.error(request, 'No tienes permiso para ver las anotaciones de este alumno.')
-            return redirect('dashboard:inicio')
-    elif user.es_alumno:
-        perfil = getattr(user, 'perfil_alumno', None)
-        if not perfil or perfil.pk != alumno_id:
-            messages.error(request, 'Solo puedes ver tus propias anotaciones.')
-            return redirect('dashboard:inicio')
-    else:
-        return redirect('dashboard:inicio')
 
     from django.core.paginator import Paginator
     anotaciones_qs = alumno.anotaciones.order_by('-fecha').select_related('creado_por', 'asignatura')

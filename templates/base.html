@@ -21,6 +21,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="Sistema de Gestión Escolar — SGE"/>
+    <meta name="csrf-token" content="{{ csrf_token }}"/>
     <title>{% block titulo %}Sistema de Gestión Escolar (SGE){% endblock %}</title>
 
     {# ── Tailwind ── #}
@@ -513,6 +514,13 @@
                      cursor:pointer; font-size:18px; line-height:1;">×</button>
     </div>
 
+    <!-- Aviso privacidad Groq -->
+    <div style="padding:8px 14px; background:#fef9c3; border-bottom:1px solid #fde68a;
+                font-size:11px; color:#92400e; line-height:1.4;">
+      ⚠️ Esta función envía datos académicos <strong>anonimizados</strong> a Groq (IA externa).
+      Al utilizarla aceptas este procesamiento.
+    </div>
+
     <!-- Mensajes -->
     <div id="chat-messages"
          style="flex:1; overflow-y:auto; padding:14px;
@@ -579,7 +587,7 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken')
+        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content || ''
       },
       body: JSON.stringify({ pregunta, historial: historialChat })
     });
@@ -608,12 +616,7 @@
     }
   }
 
-  function getCookie(name) {
-    return document.cookie.split(';')
-      .map(c => c.trim())
-      .find(c => c.startsWith(name + '='))
-      ?.split('=')[1] || '';
-  }
+
 </script>
 
 {% endif %}
