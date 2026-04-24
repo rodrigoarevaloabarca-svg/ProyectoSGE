@@ -62,7 +62,10 @@ def anotaciones_alumno(request, alumno_id):
     else:
         return redirect('dashboard:inicio')
 
-    anotaciones = alumno.anotaciones.order_by('-fecha').select_related('creado_por', 'asignatura')
+    from django.core.paginator import Paginator
+    anotaciones_qs = alumno.anotaciones.order_by('-fecha').select_related('creado_por', 'asignatura')
+    paginator   = Paginator(anotaciones_qs, 30)
+    anotaciones = paginator.get_page(request.GET.get('page', 1))
     return render(request, 'anotaciones/lista.html', {
         'alumno':      alumno,
         'anotaciones': anotaciones,

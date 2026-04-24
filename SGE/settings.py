@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'axes',
     'usuarios',
     'alumnos',
     'profesores',
@@ -78,6 +79,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -127,13 +129,25 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {'min_length': 8},
+        'OPTIONS': {'min_length': 12},
     },
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# ── django-axes: bloqueo por fuerza bruta ────────────────────────────────────
+AXES_FAILURE_LIMIT       = 5        # intentos fallidos antes de bloquear
+AXES_COOLOFF_TIME        = 1        # horas de bloqueo
+AXES_LOCKOUT_PARAMETERS  = ['username', 'ip_address']
+AXES_RESET_ON_SUCCESS    = True     # desbloquear tras login exitoso
+AXES_ENABLE_ADMIN        = True
 
 
 # ── Internacionalización ──────────────────────────────────────────────────────
@@ -160,7 +174,7 @@ LOGOUT_REDIRECT_URL = '/usuarios/login/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE      = 60 * 60 * 8   # 8 horas (jornada escolar)
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Strict'
 
 
 # ── Mensajes ──────────────────────────────────────────────────────────────────
@@ -189,8 +203,8 @@ CONTACTO_EMAIL_ADMIN = env('CONTACTO_EMAIL_ADMIN', '')
 SECURE_BROWSER_XSS_FILTER   = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS              = 'DENY'
-CSRF_COOKIE_HTTPONLY         = False   # JS necesita leer el token CSRF
-CSRF_COOKIE_SAMESITE         = 'Lax'
+CSRF_COOKIE_HTTPONLY         = True
+CSRF_COOKIE_SAMESITE         = 'Strict'
 CSRF_TRUSTED_ORIGINS         = env_list(
     'CSRF_TRUSTED_ORIGINS',
     default='http://localhost,http://127.0.0.1'
@@ -225,8 +239,10 @@ if not DEBUG:
         'handlers': {
             'file': {
                 'level': 'ERROR',
-                'class': 'logging.FileHandler',
+                'class': 'logging.handlers.RotatingFileHandler',
                 'filename': BASE_DIR / 'logs' / 'errores.log',
+                'maxBytes': 10 * 1024 * 1024,  # 10 MB
+                'backupCount': 5,
                 'formatter': 'verbose',
             },
         },

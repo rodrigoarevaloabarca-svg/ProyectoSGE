@@ -55,7 +55,7 @@ class RutValidationTest(TestCase):
 
     def test_validar_dv_rut_incorrecto(self):
         self.assertFalse(_validar_dv_rut("12345678-9")) # Es incorrecto (es 5)
-        self.assertFalse(_validar_dv_rut("99999999-9"))
+        self.assertFalse(_validar_dv_rut("99999999-0"))  # DV correcto es 9, no 0
         self.assertFalse(_validar_dv_rut("abc-1")) # Inválido
 
 class UsuarioPerfilFormTest(TestCase):

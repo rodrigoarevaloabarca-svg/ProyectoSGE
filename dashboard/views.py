@@ -101,7 +101,7 @@ def inicio(request):
             'total_profesores':   Profesor.objects.filter(activo=True).count(),
             'total_cursos':       Curso.objects.count(),
             'total_asignaturas':  Asignatura.objects.count(),
-            'cursos':             Curso.objects.select_related().all(),
+            'cursos':             Curso.objects.select_related('nivel', 'profesor_jefe__usuario').all(),
             'ultimas_anotaciones': Anotacion.objects.select_related(
                 'alumno__usuario', 'creado_por'
             ).order_by('-fecha')[:5],
@@ -191,7 +191,7 @@ def inicio(request):
                 'alumno':                alumno,
                 'promedio_general':      alumno.get_promedio_general(),
                 'porcentaje_asistencia': alumno.get_porcentaje_asistencia(),
-                'anotaciones_recientes': alumno.anotaciones.order_by('-fecha')[:3],
+                'anotaciones_recientes': alumno.anotaciones.select_related('creado_por').order_by('-fecha')[:3],
                 'ausencias_recientes':   ausencias,
             })
 
@@ -307,8 +307,11 @@ def chatbot_ia(request):
         and isinstance(m.get('content'), str)
     ][-10:]  # máximo los últimos 10 mensajes
 
+    import logging
+    logger = logging.getLogger(__name__)
     try:
         respuesta = chatbot_consulta(pregunta, request.user, historial)
         return JsonResponse({'respuesta': respuesta})
-    except Exception:
+    except Exception as e:
+        logger.error("Error en chatbot endpoint para usuario %s: %s", request.user.pk, e, exc_info=True)
         return JsonResponse({'error': 'Error al conectar con la IA'}, status=500)

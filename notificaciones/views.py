@@ -30,10 +30,14 @@ def _solo_puede_escribir_al_admin(user):
 @login_required
 def bandeja(request):
     """Lista todas las notificaciones recibidas por el usuario."""
-    notifs      = Notificacion.objects.filter(destinatario=request.user).select_related('remitente')
-    no_leidas   = notifs.filter(leida=False).count()
-    leidas      = notifs.filter(leida=True)
-    sin_leer    = notifs.filter(leida=False)
+    from django.core.paginator import Paginator
+    notifs_qs = Notificacion.objects.filter(destinatario=request.user).select_related('remitente')
+    no_leidas = notifs_qs.filter(leida=False).count()
+
+    paginator = Paginator(notifs_qs, 20)
+    notifs    = paginator.get_page(request.GET.get('page', 1))
+    sin_leer  = notifs_qs.filter(leida=False)
+    leidas    = notifs_qs.filter(leida=True)
 
     return render(request, 'notificaciones/bandeja.html', {
         'notifs':    notifs,

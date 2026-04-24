@@ -106,6 +106,12 @@ class Nota(models.Model):
         verbose_name = 'Nota'
         verbose_name_plural = 'Notas'
         ordering = ['alumno', 'asignatura', 'fecha']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['alumno', 'asignatura', 'tipo_evaluacion', 'fecha', 'descripcion'],
+                name='unique_nota_por_evaluacion',
+            )
+        ]
 
     def __str__(self):
         return f"{self.alumno.nombre_completo} - {self.asignatura.nombre}: {self.valor}"

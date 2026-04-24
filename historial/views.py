@@ -40,8 +40,12 @@ def lista_historial(request):
         rol__in=['admin', 'profesor']
     ).order_by('last_name')
 
+    from django.core.paginator import Paginator
+    paginator = Paginator(qs, 50)
+    historial = paginator.get_page(request.GET.get('page', 1))
+
     return render(request, 'historial/lista.html', {
-        'historial':      qs[:100],  # máximo 100 registros por página
+        'historial':      historial,
         'usuarios_staff': usuarios_staff,
         'filtros': {
             'modelo':      modelo,

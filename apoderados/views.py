@@ -5,9 +5,11 @@ from django.contrib import messages
 from django.urls import reverse
 from .models import Apoderado
 from .forms import ApoderadoForm
+from usuarios.decorators import solo_admin
 
 
 @login_required
+@solo_admin
 def lista_apoderados(request):
     apoderados = Apoderado.objects.filter(activo=True).select_related('usuario')
     return render(request, 'apoderados/lista.html', {
@@ -21,6 +23,12 @@ def lista_apoderados(request):
 @login_required
 def detalle_apoderado(request, pk):
     apoderado = get_object_or_404(Apoderado, pk=pk)
+    # Admin ve cualquier apoderado; el propio apoderado solo el suyo
+    user = request.user
+    if not user.es_admin:
+        perfil = getattr(user, 'perfil_apoderado', None)
+        if not perfil or perfil.pk != pk:
+            return redirect('dashboard:inicio')
     return render(request, 'apoderados/detalle.html', {
         'apoderado': apoderado,
         'breadcrumbs': [
@@ -31,6 +39,7 @@ def detalle_apoderado(request, pk):
 
 
 @login_required
+@solo_admin
 def crear_apoderado(request):
     if request.method == 'POST':
         form = ApoderadoForm(request.POST)
@@ -51,6 +60,7 @@ def crear_apoderado(request):
 
 
 @login_required
+@solo_admin
 def editar_apoderado(request, pk):
     apoderado = get_object_or_404(Apoderado, pk=pk)
     if request.method == 'POST':
@@ -73,6 +83,7 @@ def editar_apoderado(request, pk):
 
 
 @login_required
+@solo_admin
 def eliminar_apoderado(request, pk):
     apoderado = get_object_or_404(Apoderado, pk=pk)
     if request.method == 'POST':

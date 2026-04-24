@@ -73,7 +73,14 @@ def seleccionar_informe(request):
 
     periodos = Periodo.objects.filter(activo=True)
     cursos   = Curso.objects.all()
-    alumnos  = Alumno.objects.filter(activo=True).select_related('usuario', 'curso')
+    alumnos  = Alumno.objects.filter(activo=True).select_related('usuario', 'curso', 'curso__nivel')
+
+    # Profesores solo ven alumnos de sus propios cursos
+    if request.user.es_profesor:
+        perfil_prof = getattr(request.user, 'perfil_profesor', None)
+        if perfil_prof:
+            cursos  = cursos.filter(asignaturas__profesor=perfil_prof).distinct()
+            alumnos = alumnos.filter(curso__asignaturas__profesor=perfil_prof).distinct()
 
     # Filtrar por curso si se selecciona
     curso_id = request.GET.get('curso')
@@ -89,6 +96,19 @@ def seleccionar_informe(request):
     })
 
 
+def _puede_acceder_informe(user, alumno):
+    """Verifica que el usuario tenga acceso al informe de este alumno."""
+    if user.es_admin:
+        return True
+    if user.es_profesor:
+        perfil_prof = getattr(user, 'perfil_profesor', None)
+        if perfil_prof:
+            return alumno.curso and alumno.curso.asignaturas.filter(
+                profesor=perfil_prof
+            ).exists()
+    return False
+
+
 @login_required
 def ver_informe(request, alumno_id, periodo_id):
     """Paso 2: ver el informe en pantalla con opción de agregar comentario."""
@@ -96,6 +116,9 @@ def ver_informe(request, alumno_id, periodo_id):
         return redirect('dashboard:inicio')
 
     alumno  = get_object_or_404(Alumno, pk=alumno_id)
+    if not _puede_acceder_informe(request.user, alumno):
+        messages.error(request, 'No tienes acceso al informe de este alumno.')
+        return redirect('informes:seleccionar')
     periodo = get_object_or_404(Periodo, pk=periodo_id)
 
     datos = _recopilar_datos_informe(alumno, periodo)
@@ -134,6 +157,9 @@ def descargar_pdf(request, alumno_id, periodo_id):
         return redirect('dashboard:inicio')
 
     alumno  = get_object_or_404(Alumno, pk=alumno_id)
+    if not _puede_acceder_informe(request.user, alumno):
+        messages.error(request, 'No tienes acceso al informe de este alumno.')
+        return redirect('informes:seleccionar')
     periodo = get_object_or_404(Periodo, pk=periodo_id)
     datos   = _recopilar_datos_informe(alumno, periodo)
 

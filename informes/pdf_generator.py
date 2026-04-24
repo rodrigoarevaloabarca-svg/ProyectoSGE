@@ -5,6 +5,7 @@ ARCHIVO: pdf_generator.py
 Genera el PDF del informe académico usando ReportLab.
 """
 import io
+from html import escape as html_escape
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib import colors
@@ -402,7 +403,7 @@ def generar_pdf_informe(alumno, periodo, datos, comentario, logo_path=None):
         story.append(_seccion_header('COMENTARIO DEL PROFESOR', AZUL_PRIMARY))
         story.append(Spacer(1, 6))
         t_com = Table(
-            [[Paragraph(comentario, estilo_comentario)]],
+            [[Paragraph(html_escape(comentario), estilo_comentario)]],
             colWidths=[17*cm]
         )
         t_com.setStyle(TableStyle([

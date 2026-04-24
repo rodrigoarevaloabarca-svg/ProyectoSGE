@@ -119,6 +119,13 @@ class UsuarioCreacionForm(UserCreationForm):
             ext = foto.name.rsplit('.', 1)[-1].lower() if '.' in foto.name else ''
             if ext not in ('jpg', 'jpeg', 'png', 'webp'):
                 raise forms.ValidationError('Solo se permiten imágenes JPG, PNG o WebP.')
+            try:
+                from PIL import Image
+                img = Image.open(foto)
+                img.verify()
+                foto.seek(0)
+            except Exception:
+                raise forms.ValidationError('El archivo no es una imagen válida.')
         return foto
 
 

@@ -81,6 +81,10 @@ class RegistroAsistencia(models.Model):
         # No puede haber dos registros del mismo alumno en la misma asignatura y fecha
         unique_together = ['alumno', 'asignatura', 'fecha']
         ordering = ['-fecha', 'alumno__usuario__last_name']
+        indexes = [
+            models.Index(fields=['alumno', 'fecha']),
+            models.Index(fields=['fecha']),
+        ]
 
     def __str__(self):
         return f"{self.alumno.nombre_completo} - {self.asignatura.nombre} - {self.fecha}: {self.get_estado_display()}"

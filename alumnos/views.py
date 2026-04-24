@@ -101,17 +101,20 @@ def detalle_alumno(request, pk):
 
     analisis_ia = None
     if user.es_admin or user.es_profesor:
+        import logging
         try:
             analisis_ia = analizar_riesgo_alumno(alumno)
-        except Exception:
-            analisis_ia = None
+        except Exception as e:
+            logging.getLogger(__name__).error(
+                "Error en analizar_riesgo_alumno para alumno %s: %s", alumno.pk, e
+            )
 
     return render(request, 'alumnos/detalle.html', {
         'alumno':                alumno,
         'promedios':             alumno.get_promedio_por_asignatura(),
         'promedio_general':      alumno.get_promedio_general(),
         'porcentaje_asistencia': alumno.get_porcentaje_asistencia(),
-        'anotaciones':           alumno.anotaciones.order_by('-fecha')[:20],
+        'anotaciones':           alumno.anotaciones.select_related('creado_por', 'asignatura').order_by('-fecha')[:20],
         'analisis_ia':           analisis_ia,
         'breadcrumbs': [
             {'label': 'Alumnos',              'url': reverse('alumnos:lista')},

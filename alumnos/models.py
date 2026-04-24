@@ -31,11 +31,12 @@ class Alumno(models.Model):
     # ForeignKey: muchos alumnos pertenecen a un curso
     curso = models.ForeignKey(
         'cursos.Curso',
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name='alumnos',
-        verbose_name='Curso'
+        verbose_name='Curso',
+        db_index=True,
     )
 
     # ForeignKey: un apoderado puede tener varios alumnos

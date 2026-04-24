@@ -5,9 +5,11 @@ from django.contrib import messages
 from django.urls import reverse
 from .models import Profesor
 from .forms import ProfesorForm
+from usuarios.decorators import solo_admin
 
 
 @login_required
+@solo_admin
 def lista_profesores(request):
     profesores = Profesor.objects.filter(activo=True).select_related('usuario')
     return render(request, 'profesores/lista.html', {
@@ -19,6 +21,7 @@ def lista_profesores(request):
 
 
 @login_required
+@solo_admin
 def detalle_profesor(request, pk):
     profesor    = get_object_or_404(Profesor, pk=pk)
     asignaturas = profesor.asignaturas.filter(activo=True).select_related('curso')
@@ -33,6 +36,7 @@ def detalle_profesor(request, pk):
 
 
 @login_required
+@solo_admin
 def crear_profesor(request):
     if request.method == 'POST':
         form = ProfesorForm(request.POST, request.FILES)
@@ -53,6 +57,7 @@ def crear_profesor(request):
 
 
 @login_required
+@solo_admin
 def editar_profesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     if request.method == 'POST':
@@ -75,6 +80,7 @@ def editar_profesor(request, pk):
 
 
 @login_required
+@solo_admin
 def eliminar_profesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     if request.method == 'POST':
