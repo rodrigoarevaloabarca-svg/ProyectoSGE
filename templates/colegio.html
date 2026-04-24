@@ -1,497 +1,1476 @@
-<!DOCTYPE html>
 {% load static %}
-<html class="light" lang="es">
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&family=Epilogue:wght@300;400;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "surface-variant": "#e2e2e2",
-          "surface-container-high": "#e8e8e8",
-          "on-tertiary-fixed": "#002201",
-          "surface-container": "#eeeeee",
-          "on-tertiary-container": "#a5d998",
-          "on-background": "#1a1c1c",
-          "primary-fixed-dim": "#ffb4ac",
-          "secondary-fixed": "#e3e2e2",
-          "secondary-container": "#e3e2e2",
-          "outline-variant": "#e2beba",
-          "on-surface": "#1a1c1c",
-          "surface-container-low": "#f3f3f3",
-          "secondary-fixed-dim": "#c7c6c6",
-          "on-secondary-container": "#646464",
-          "on-secondary-fixed-variant": "#464747",
-          "on-tertiary-fixed-variant": "#23501e",
-          "on-error-container": "#93000a",
-          "surface-dim": "#dadada",
-          "tertiary-fixed": "#bcf0ae",
-          "tertiary-fixed-dim": "#a1d494",
-          "on-primary-container": "#ffbbb4",
-          "inverse-on-surface": "#f1f1f1",
-          "on-primary-fixed": "#410002",
-          "error-container": "#ffdad6",
-          "secondary": "#5e5e5e",
-          "on-primary": "#ffffff",
-          "primary-container": "#a81e1e",
-          "tertiary-container": "#33602c",
-          "on-error": "#ffffff",
-          "inverse-primary": "#ffb4ac",
-          "error": "#ba1a1a",
-          "on-surface-variant": "#5a413e",
-          "surface": "#f9f9f9",
-          "surface-container-highest": "#e2e2e2",
-          "primary": "#84000b",
-          "on-primary-fixed-variant": "#910810",
-          "on-secondary": "#ffffff",
-          "primary-fixed": "#ffdad6",
-          "on-tertiary": "#ffffff",
-          "inverse-surface": "#2f3131",
-          "background": "#f9f9f9",
-          "tertiary": "#1b4817",
-          "surface-container-lowest": "#ffffff",
-          "outline": "#8e706d",
-          "on-secondary-fixed": "#1b1c1c",
-          "surface-bright": "#f9f9f9",
-          "surface-tint": "#b42725"
-        },
-        borderRadius: {
-          DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"
-        },
-        fontFamily: {
-          headline: ["Epilogue", "sans-serif"],
-          body: ["Inter", "sans-serif"],
-          label: ["Inter", "sans-serif"]
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Colegio Alonso de Ercilla</title>
+  <!-- Anti-FOUC: aplica el tema guardado ANTES de pintar la página -->
+  <script>(function () { var t = localStorage.getItem('cae-theme'); document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark') })();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400;1,9..40,700&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* Logo SVG inline */
+    .logo-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ── TOKENS: DARK ──────────────────────────────────────────────────────── */
+    :root,
+    [data-theme="dark"] {
+      --bg: #0d0e12;
+      --bg2: #13151b;
+      --card: #1a1d24;
+      --border: rgba(255, 255, 255, .07);
+      --text: #ede8e1;
+      --muted: #7c7c8a;
+      --red: #c0262b;
+      --red2: #e03535;
+      --nav-bg: rgba(13, 14, 18, .92);
+      --nav-text: rgba(237, 232, 225, .85);
+      --nav-border: rgba(255, 255, 255, .07);
+      --tag-bg: rgba(192, 38, 43, .15);
+      --tag-text: #e05555;
+      --footer-bg: #070809;
+      --hero-fade: #0d0e12;
+      --inp-bg: #1a1d24;
+      --inp-c: #ede8e1;
+      --logo-sh: 0 2px 8px rgba(0, 0, 0, .5);
+    }
+
+    /* ── TOKENS: LIGHT ─────────────────────────────────────────────────────── */
+    [data-theme="light"] {
+      --bg: #f5f2ee;
+      --bg2: #ede9e3;
+      --card: #fff;
+      --border: rgba(0, 0, 0, .09);
+      --text: #1a1410;
+      --muted: #6e6560;
+      --red: #9b0010;
+      --red2: #c2001a;
+      --nav-bg: rgba(245, 242, 238, .96);
+      --nav-text: #1a1410;
+      --nav-border: rgba(0, 0, 0, .08);
+      --tag-bg: rgba(155, 0, 16, .08);
+      --tag-text: #9b0010;
+      --footer-bg: #18140f;
+      --hero-fade: #f5f2ee;
+      --inp-bg: #fff;
+      --inp-c: #1a1410;
+      --logo-sh: 0 2px 8px rgba(0, 0, 0, .15);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s
+    }
+
+    .ic {
+      font-family: 'Material Symbols Outlined';
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px;
+      vertical-align: middle;
+      line-height: 1;
+      user-select: none
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: var(--nav-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--nav-border);
+      transition: background .3s, border-color .3s
+    }
+
+    .ni {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem
+    }
+
+    .nb {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      flex-shrink: 0
+    }
+
+    .lw {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--logo-sh);
+      padding: 3px;
+      transition: box-shadow .3s;
+      overflow: hidden
+    }
+
+    .lw img,
+    .lw svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block
+    }
+
+    .nb-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--nav-text);
+      letter-spacing: -.01em;
+      display: block;
+      transition: color .3s
+    }
+
+    .nb-sub {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--red);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 1px
+    }
+
+    .nl {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      list-style: none;
+      flex: 1;
+      justify-content: flex-end
+    }
+
+    .nl a {
+      color: var(--nav-text);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: background .18s, color .18s;
+      white-space: nowrap
+    }
+
+    [data-theme="dark"] .nl a:hover {
+      background: rgba(255, 255, 255, .07);
+      color: #fff
+    }
+
+    [data-theme="light"] .nl a:hover {
+      background: rgba(0, 0, 0, .05);
+      color: var(--red)
+    }
+
+    .np {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      background: var(--red) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+      padding: 7px 14px !important;
+      margin-left: 4px;
+      transition: background .18s, transform .12s !important
+    }
+
+    .np:hover {
+      background: var(--red2) !important;
+      transform: scale(1.03) !important
+    }
+
+    .tbtn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--nav-text);
+      transition: background .18s;
+      flex-shrink: 0
+    }
+
+    [data-theme="dark"] .tbtn:hover {
+      background: rgba(255, 255, 255, .08)
+    }
+
+    [data-theme="light"] .tbtn:hover {
+      background: rgba(0, 0, 0, .06)
+    }
+
+    .i-sun {
+      display: none
+    }
+
+    .i-moon {
+      display: inline
+    }
+
+    [data-theme="light"] .i-sun {
+      display: inline
+    }
+
+    [data-theme="light"] .i-moon {
+      display: none
+    }
+
+    .ham {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 38px;
+      height: 38px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 6px;
+      transition: background .18s;
+      flex-shrink: 0
+    }
+
+    [data-theme="dark"] .ham:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    [data-theme="light"] .ham:hover {
+      background: rgba(0, 0, 0, .06)
+    }
+
+    .ham span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--nav-text);
+      border-radius: 2px;
+      transform-origin: center;
+      transition: transform .25s, opacity .25s, width .25s
+    }
+
+    .ham.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg)
+    }
+
+    .ham.open span:nth-child(2) {
+      opacity: 0;
+      width: 0
+    }
+
+    .ham.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg)
+    }
+
+    .mob {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s cubic-bezier(.4, 0, .2, 1);
+      border-top: 1px solid transparent
+    }
+
+    .mob.open {
+      max-height: 580px;
+      border-top-color: var(--nav-border)
+    }
+
+    .mob-in {
+      padding: 10px 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(24px);
+      transition: background .3s
+    }
+
+    .mob-hd {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: rgba(128, 128, 128, .06);
+      border-radius: 10px
+    }
+
+    .mob-hd .lw {
+      width: 34px;
+      height: 34px
+    }
+
+    .mob-hd-n {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--nav-text);
+      transition: color .3s
+    }
+
+    .mob-hd-s {
+      font-size: 10px;
+      color: var(--red);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    .ml {
+      color: var(--nav-text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 11px 12px;
+      border-radius: 9px;
+      transition: background .15s, color .15s;
+      display: block
+    }
+
+    [data-theme="dark"] .ml:hover {
+      background: rgba(255, 255, 255, .07);
+      color: #fff
+    }
+
+    [data-theme="light"] .ml:hover {
+      background: rgba(0, 0, 0, .05);
+      color: var(--red)
+    }
+
+    .mob-plat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: background .18s
+    }
+
+    .mob-plat:hover {
+      background: var(--red2)
+    }
+
+    .mob-theme {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      padding: 11px 12px;
+      border-radius: 9px;
+      cursor: pointer;
+      color: var(--nav-text);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+      font-family: 'DM Sans', sans-serif
+    }
+
+    [data-theme="dark"] .mob-theme:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    [data-theme="light"] .mob-theme:hover {
+      background: rgba(0, 0, 0, .05)
+    }
+
+    .s2t {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 300;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .25s, transform .25s, background .18s
+    }
+
+    .s2t.vis {
+      opacity: 1;
+      pointer-events: auto;
+      transform: none
+    }
+
+    .s2t:hover {
+      background: var(--red2)
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100svh;
+      padding-top: 66px;
+      background: var(--hero-fade);
+      transition: background .3s
+    }
+
+    .hl {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 3.5rem 5rem 5.5rem
+    }
+
+    .htag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 1.75rem;
+      width: fit-content;
+      transition: background .3s, color .3s
+    }
+
+    .hh1 {
+      font-size: clamp(2.8rem, 4.8vw, 4.4rem);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -.035em;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      text-wrap: balance;
+      transition: color .3s
+    }
+
+    [data-theme="dark"] .hh1 {
+      color: #f0ede6
+    }
+
+    .hh1 em {
+      font-style: italic;
+      color: var(--red)
+    }
+
+    .hdesc {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 460px;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+      transition: color .3s
+    }
+
+    [data-theme="dark"] .hdesc {
+      color: rgba(237, 232, 225, .5)
+    }
+
+    .hact {
+      display: flex;
+      gap: 11px;
+      flex-wrap: wrap
+    }
+
+    .btp {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background .18s, transform .12s;
+      letter-spacing: -.01em
+    }
+
+    .btp:hover {
+      background: var(--red2);
+      transform: translateY(-2px)
+    }
+
+    .bts {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background .18s
+    }
+
+    [data-theme="dark"] .bts {
+      border: 1.5px solid rgba(255, 255, 255, .15);
+      color: rgba(237, 232, 225, .7)
+    }
+
+    [data-theme="dark"] .bts:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    [data-theme="light"] .bts {
+      border: 1.5px solid var(--border);
+      color: var(--muted)
+    }
+
+    [data-theme="light"] .bts:hover {
+      background: var(--bg2)
+    }
+
+    .hr {
+      position: relative;
+      overflow: hidden
+    }
+
+    .hr img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .hr::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to right, var(--hero-fade) 0%, transparent 35%);
+      transition: background .3s
+    }
+
+    .stats {
+      background: #8b000b;
+      padding: 2.25rem 2rem
+    }
+
+    .si {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem
+    }
+
+    .st {
+      text-align: center
+    }
+
+    .stn {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.04em;
+      line-height: 1;
+      margin-bottom: 5px
+    }
+
+    .stl {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .65);
+      text-transform: uppercase;
+      letter-spacing: .09em
+    }
+
+    section {
+      padding: 5.5rem 2rem;
+      transition: background .3s
+    }
+
+    .sec {
+      max-width: 1300px;
+      margin: 0 auto
+    }
+
+    .ey {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: .85rem
+    }
+
+    .sh {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -.035em;
+      color: var(--text);
+      margin-bottom: 1rem;
+      text-wrap: balance;
+      transition: color .3s
+    }
+
+    [data-theme="dark"] .sh {
+      color: #f0ede6
+    }
+
+    .sp {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.75;
+      transition: color .3s
+    }
+
+    .smv {
+      background: var(--bg2)
+    }
+
+    .mvg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 3rem
+    }
+
+    .mvc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform .22s, box-shadow .22s, background .3s, border-color .3s
+    }
+
+    [data-theme="dark"] .mvc {
+      background: #1e2230
+    }
+
+    .mvc:hover {
+      transform: translateY(-4px)
+    }
+
+    [data-theme="dark"] .mvc:hover {
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .5)
+    }
+
+    [data-theme="light"] .mvc:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .1)
+    }
+
+    .mva {
+      position: absolute;
+      left: 0;
+      top: 10%;
+      bottom: 10%;
+      width: 3px;
+      border-radius: 0 3px 3px 0
+    }
+
+    .mva.r {
+      background: var(--red)
+    }
+
+    .mva.g {
+      background: #3a9c33
+    }
+
+    .mvi {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.35rem;
+      transition: background .3s
+    }
+
+    .mvi.r {
+      background: var(--tag-bg);
+      color: var(--tag-text)
+    }
+
+    .mvi.g {
+      background: rgba(58, 156, 51, .1);
+      color: #3a9c33
+    }
+
+    .mvh {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: .9rem;
+      letter-spacing: -.025em;
+      color: var(--text);
+      transition: color .3s
+    }
+
+    [data-theme="dark"] .mvh {
+      color: #f0ede6
+    }
+
+    .mvp {
+      font-size: .92rem;
+      color: var(--muted);
+      line-height: 1.78;
+      transition: color .3s
+    }
+
+    .spi {
+      background: var(--bg)
+    }
+
+    .pig {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 3rem
+    }
+
+    .pc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2rem 1.75rem;
+      transition: transform .2s, background .3s, border-color .3s
+    }
+
+    .pc:hover {
+      transform: translateY(-3px)
+    }
+
+    .pn {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 1.2rem;
+      letter-spacing: -.05em
+    }
+
+    [data-theme="dark"] .pn {
+      color: rgba(255, 255, 255, .04)
+    }
+
+    [data-theme="light"] .pn {
+      color: rgba(0, 0, 0, .06)
+    }
+
+    .ph {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .7rem;
+      letter-spacing: -.02em;
+      color: var(--text);
+      transition: color .3s
+    }
+
+    [data-theme="dark"] .ph {
+      color: #f0ede6
+    }
+
+    .pp {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.75;
+      transition: color .3s
+    }
+
+    .sgal {
+      background: var(--bg2);
+      padding-bottom: 5.5rem
+    }
+
+    .gg {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 1rem;
+      height: 560px;
+      margin-top: 3rem
+    }
+
+    .gi {
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative
+    }
+
+    .gi:first-child {
+      grid-row: 1/3
+    }
+
+    .gi img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .5s
+    }
+
+    .gi:hover img {
+      transform: scale(1.05)
+    }
+
+    .gc {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .72) 0%, transparent 55%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.25rem 1.5rem;
+      opacity: 0;
+      transition: opacity .3s
+    }
+
+    .gi:hover .gc {
+      opacity: 1
+    }
+
+    .gc span {
+      color: #fff;
+      font-size: .88rem;
+      font-weight: 600
+    }
+
+    .scon {
+      background: var(--bg)
+    }
+
+    .cg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-top: 3rem
+    }
+
+    .fg {
+      margin-bottom: 1.1rem
+    }
+
+    .fl {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--muted);
+      margin-bottom: 7px;
+      transition: color .3s
+    }
+
+    .fi {
+      width: 100%;
+      background: var(--inp-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 15px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      color: var(--inp-c);
+      outline: none;
+      transition: border-color .18s, background .3s, color .3s;
+      appearance: none
+    }
+
+    .fi:focus {
+      border-color: var(--red)
+    }
+
+    .fi::placeholder {
+      color: var(--muted);
+      opacity: .5
+    }
+
+    textarea.fi {
+      resize: vertical;
+      min-height: 108px
+    }
+
+    .fsub {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s, transform .12s;
+      letter-spacing: -.01em
+    }
+
+    .fsub:hover {
+      background: var(--red2);
+      transform: translateY(-2px)
+    }
+
+    .cin {
+      display: flex;
+      flex-direction: column;
+      gap: 1.35rem
+    }
+
+    .cit {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem
+    }
+
+    .cico {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      transition: background .3s
+    }
+
+    .cla {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--muted);
+      margin-bottom: 3px;
+      transition: color .3s
+    }
+
+    .cva {
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: color .18s;
+      display: block
+    }
+
+    .cva:hover {
+      color: var(--red)
+    }
+
+    .mw {
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 1rem;
+      border: 1px solid var(--border)
+    }
+
+    .mw iframe {
+      width: 100%;
+      height: 190px;
+      border: 0;
+      display: block
+    }
+
+    footer {
+      background: var(--footer-bg);
+      padding: 2.5rem 2rem;
+      transition: background .3s
+    }
+
+    .fi2 {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem
+    }
+
+    .fb {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .fb .lw {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      padding: 2px;
+      opacity: .7
+    }
+
+    .fb span {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, .4)
+    }
+
+    .fli {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap
+    }
+
+    .fli a {
+      color: rgba(255, 255, 255, .3);
+      font-size: 12.5px;
+      text-decoration: none;
+      transition: color .18s
+    }
+
+    .fli a:hover {
+      color: rgba(255, 255, 255, .75)
+    }
+
+    .fu {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .55s ease, transform .55s ease
+    }
+
+    .fu.in {
+      opacity: 1;
+      transform: none
+    }
+
+    @media(max-width:900px) {
+      .hero {
+        grid-template-columns: 1fr
+      }
+
+      .hr {
+        height: 260px
+      }
+
+      .hr::after {
+        background: linear-gradient(to bottom, var(--hero-fade) 0%, transparent 50%)
+      }
+
+      .hl {
+        padding: 4.5rem 1.5rem 3rem
+      }
+
+      .si {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .mvg,
+      .pig,
+      .cg {
+        grid-template-columns: 1fr
+      }
+
+      .gg {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        height: auto
+      }
+
+      .gi:first-child {
+        grid-row: auto;
+        height: 220px
+      }
+
+      .gi {
+        height: 160px
+      }
+
+      .nl {
+        display: none
+      }
+
+      .ham {
+        display: flex
+      }
+
+      .s2t {
+        bottom: 28px
       }
     }
-  }
-</script>
-<link rel="stylesheet" href="{% static 'css/colegio.css' %}">
+  </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white dark:bg-zinc-950 dark:text-zinc-100 transition-colors duration-300">
+<body>
 
-<!-- ─── TOP NAV ─────────────────────────────────────────────────────────────── -->
-<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl shadow-sm">
-  <div class="max-w-7xl mx-auto px-6 md:px-8">
-    <div class="flex justify-between items-center py-4">
-
-      <!-- Logo -->
-      <div class="flex flex-col items-center">
-        <div class="text-xl font-black tracking-tighter text-red-900 dark:text-red-400 uppercase font-['Montserrat']">
-          Colegio Alonso De Ercilla
+  <!-- ── NAV ─────────────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="ni">
+      <a href="" class="nb">
+        <div class="lw">
+          <img src="https://i.ibb.co/7JMGG2Vx/logo-colegio.png" alt="Escudo AE" />
         </div>
-        <span class="text-xs font-medium text-black dark:text-white normal-case tracking-normal opacity-80">Particular Pagado</span>
-      </div>
-
-      <!-- Desktop links -->
-      <div class="hidden md:flex items-center gap-8">
-        <a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-red-800 dark:hover:text-red-400 transition-colors" href="#contacto">Admisiones</a>
-        <a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-red-800 dark:hover:text-red-400 transition-colors" href="#mision-vision">Misión &amp; Visión</a>
-        <a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-red-800 dark:hover:text-red-400 transition-colors" href="#vida-academia">Comunidad</a>
-        <a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-red-800 dark:hover:text-red-400 transition-colors" href="#">Institucional</a>
-      </div>
-
-      <!-- Right controls -->
-      <div class="flex items-center gap-2">
-        <!-- Social links -->
-        <a href="https://www.facebook.com/p/Colegio-Alonso-De-Ercilla-Rancagua-100057368481964/" target="_blank" aria-label="Facebook"
-          class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white hover:bg-blue-700 transition-colors">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.77,7.46H14.5v-1.9c0-.9.6-1.1,1-1.1h3V.5h-4.33C10.24.5,9.5,3.44,9.5,5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4Z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/colegioalonsodeercilla" target="_blank" aria-label="Instagram"
-          class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center text-white hover:opacity-90 transition-opacity">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.668.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.947.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.947-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/><path d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z"/><path d="M16.5 7.916a1.44 1.44 0 100-2.881 1.44 1.44 0 001.442 1.44z"/></svg>
-        </a>
-
-        <!-- Dark mode toggle -->
-        <button id="theme-toggle" aria-label="Cambiar tema"
-          class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
-          <span class="material-symbols-outlined text-[20px] block dark:hidden">light_mode</span>
-          <span class="material-symbols-outlined text-[20px] hidden dark:block">dark_mode</span>
-        </button>
-
-        <!-- CTA (hidden on small) -->
-          <a href="{% url 'plataforma' %}" class="hidden md:block bg-primary hover:bg-primary-container text-on-primary px-5 py-2.5 rounded-lg font['Montserrat'] font-bold text-sm tracking-tight scale-95 active:scale-90 transition-transform text-center">
-              Acceso Plataforma
-          </a>
-
-        <!-- Hamburger (mobile only) -->
-        <button id="hamburger-btn" aria-label="Abrir menú" aria-expanded="false"
-          class="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
-          <span id="hamburger-icon" class="material-symbols-outlined text-[24px]">menu</span>
-        </button>
-      </div>
+        <div>
+          <span class="nb-name">Colegio Alonso de Ercilla</span>
+          <span class="nb-sub">Particular Pagado · Rancagua</span>
+        </div>
+      </a>
+      <ul class="nl">
+        <li><a href="#mision">Misión &amp; Visión</a></li>
+        <li><a href="#pilares">Programas</a></li>
+        <li><a href="#galeria">Comunidad</a></li>
+        <li><a href="#contacto">Admisiones 2027</a></li>
+        <li><a href="{% url 'plataforma' %}" class="np">
+            <span class="ic" style="font-size:15px">lock</span>Plataforma
+          </a></li>
+      </ul>
+      <button class="tbtn" id="tbtn" aria-label="Cambiar tema">
+        <span class="ic i-sun">light_mode</span>
+        <span class="ic i-moon">dark_mode</span>
+      </button>
+      <button class="ham" id="ham" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
 
-    <!-- Mobile dropdown menu -->
-    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
-      <div class="flex flex-col gap-1 pb-5">
-        <a class="px-4 py-3 rounded-xl text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" href="#contacto">Admisiones</a>
-        <a class="px-4 py-3 rounded-xl text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" href="#">Programas</a>
-        <a class="px-4 py-3 rounded-xl text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" href="#mision-vision">Misión &amp; Visión</a>
-        <a class="px-4 py-3 rounded-xl text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" href="#vida-academia">Comunidad</a>
-      <div class="pt-2 border-t border-zinc-200 dark:border-zinc-700 mt-2">
-          <a href="{% url 'plataforma' %}" class="w-full block text-center bg-primary text-on-primary py-3 rounded-xl font-['Montserrat'] font-bold text-sm tracking-tight">
-            Acceso Plataforma de Gestión
-          </a>
+    <div class="mob" id="mob" aria-hidden="true">
+      <div class="mob-in">
+        <div class="mob-hd">
+          <div class="lw">
+            <div class="lw">
+          <img src="https://i.ibb.co/7JMGG2Vx/logo-colegio.png" alt="Escudo AE" />
         </div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- ─── SCROLL TO TOP BUTTON ────────────────────────────────────────────────── -->
-<div id="scroll-top-btn">
-  <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba"
-    class="w-12 h-12 rounded-full bg-primary text-on-primary shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform">
-    <span class="material-symbols-outlined text-[22px]">arrow_upward</span>
-  </button>
-</div>
-
-<!-- ─── MAIN CONTENT ──────────────────────────────────────────────────────────── -->
-<main class="pt-20">
-
-  <!-- HERO -->
-  <section class="relative min-h-[921px] flex items-center overflow-hidden px-8">
-    <div class="max-w-7xl mx-auto w-full editorial-grid gap-8">
-      <div class="col-span-12 lg:col-span-7 z-10 py-12">
-        <span class="inline-block text-primary dark:text-red-400 font-headline font-bold tracking-widest uppercase text-sm mb-6">Establecida 23 Sept. 1974</span>
-        <h1 class="text-6xl md:text-8xl font-headline font-extrabold text-on-background dark:text-white tracking-tighter leading-[0.9] mb-8">
-          Educación<br/>
-          <span class="text-primary dark:text-red-400 italic">Integral</span> <br/>
-          Con Valores.
-
-        </h1>
-        <p class="text-secondary dark:text-zinc-400 text-xl max-w-xl leading-relaxed mb-10">
-          Facilitamos aprendizajes significativos para formar buenos ciudadanos, fortaleciendo la identidad nacional y la autonomía en un entorno académico, artístico y deportivo.
-        </p>
-        <div class="flex flex-wrap gap-4">
-          <a href="#mision-vision" class="inline-block bg-primary text-on-primary px-10 py-4 rounded-xl font-headline font-bold uppercase tracking-wider shadow-xl shadow-primary/20 hover:scale-105 transition-transform text-center">
-              Descubrir Programas
-          </a>
-         <a href="#contacto" class="inline-block border border-on-surface/15 dark:border-zinc-600 text-on-surface dark:text-zinc-200 px-10 py-4 rounded-xl font-headline font-bold uppercase tracking-wider hover:bg-surface-container-low dark:hover:bg-zinc-800 transition-colors text-center">
-              Admisiones 2027
-         </a>
-
-        </div>
-      </div>
-      <div class="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
-        <div class="relative w-full h-full">
-          <img alt="Campus Architecture" class="w-full h-full object-cover" src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/667376500_1465226818732920_1471946778624402995_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=b895b5&_nc_ohc=PLWNVDby6rIQ7kNvwFtcYs_&_nc_oc=AdrYGQILdIAwUGRBYCZuvSeXoLQ2zJWos35ZWgN9c1_TIM7LlSj8iJBDdF9headSF-A&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=k_--enonNKpy2IPgKFWN8A&_nc_ss=7a3a8&oh=00_Af3Lk7TU-TUbv4L6kQSeBObpsoDMQ--NTrZ2DqmXOlko5w&oe=69E61664"/>
-          <div class="absolute inset-0 bg-gradient-to-r from-surface dark:from-zinc-950 via-transparent to-transparent"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MISIÓN & VISIÓN -->
-  <section id="mision-vision" class="py-32 bg-white dark:bg-zinc-900">
-    <div class="max-w-7xl mx-auto px-8">
-      <div class="text-center mb-16">
-        <span class="inline-block text-primary dark:text-red-400 font-headline font-bold tracking-widest uppercase text-sm mb-4">Nuestra Esencia</span>
-        <h2 class="text-5xl font-headline font-extrabold text-on-background dark:text-white tracking-tight mb-4">Misión &amp; Visión</h2>
-        <div class="w-20 h-1 bg-primary mx-auto"></div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-         <!-- Visión -->
-                <div class="mv-card relative bg-surface-container-low dark:bg-zinc-800 rounded-2xl p-10 border border-transparent hover:border-tertiary/30 dark:hover:border-green-700/40 shadow-sm hover:shadow-xl">
-                  <div class="w-14 h-14 bg-tertiary/10 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6">
-                    <span class="material-symbols-outlined text-tertiary dark:text-green-400 text-[28px]">visibility</span>
-                  </div>
-                  <h3 class="text-3xl font-headline font-extrabold text-on-background dark:text-white mb-4">Visión</h3>
-                  <p class="text-secondary dark:text-zinc-400 leading-relaxed text-lg">
-                    Es un colegio que imparte una educación integral en lo académico, valórico, artístico y deportivo. Además, fomenta en el alumnado la creatividad y
-                      el emprendimiento, el espíritu crítico y la reflexión, la seguridad en sí mismos y sentimientos y actitudes de humildad, solidaridad y compasión.
-                      “Lograr construir entre todos los actores educativos una sólida organización, capaz de brindar una educación de calidad a todos sus alumnos, alcanzando
-                      notables grados de autonomía e innovación en su gestión directiva como en su gestión pedagógica.
-                  </p>
-                  <div class="absolute bottom-0 left-0 w-1 h-full bg-tertiary rounded-l-2xl"></div>
-                </div>
-
-        <!-- Misión -->
-        <div class="mv-card relative bg-surface-container-low dark:bg-zinc-800 rounded-2xl p-10 border border-transparent hover:border-primary/30 dark:hover:border-red-700/40 shadow-sm hover:shadow-xl">
-          <div class="w-14 h-14 bg-primary/10 dark:bg-red-900/30 rounded-xl flex items-center justify-center mb-6">
-            <span class="material-symbols-outlined text-primary dark:text-red-400 text-[28px]">rocket_launch</span>
           </div>
-          <h3 class="text-3xl font-headline font-extrabold text-on-background dark:text-white mb-4">Misión</h3>
-          <p class="text-secondary dark:text-zinc-400 leading-relaxed text-lg">
-            De acuerdo con la visión del colegio, este se ha propuesto como misión: “Facilitar los aprendizajes pertinentes y significativos que promuevan el
-              desarrollo integral del individuo y así contribuir a formar buenos ciudadanos, fortaleciendo la identidad nacional, como así mismo, personas
-              con una alta autoestima, tolerantes y solidarias que puedan enfrentar con equilibrio desafíos futuros
-          </p>
-          <div class="absolute bottom-0 left-0 w-1 h-full bg-primary rounded-l-2xl"></div>
-        </div>
-
-
-
-      </div>
-
-      <!-- Stats strip -->
-      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="text-center p-6 bg-surface-container-low dark:bg-zinc-800 rounded-xl">
-          <div class="text-4xl font-headline font-extrabold text-primary dark:text-red-400 mb-2">+50</div>
-          <div class="text-sm text-secondary dark:text-zinc-400 font-medium uppercase tracking-wide">Años de Historia</div>
-        </div>
-        <div class="text-center p-6 bg-surface-container-low dark:bg-zinc-800 rounded-xl">
-          <div class="text-4xl font-headline font-extrabold text-primary dark:text-red-400 mb-2">1.400</div>
-          <div class="text-sm text-secondary dark:text-zinc-400 font-medium uppercase tracking-wide">Estudiantes Egresados</div>
-        </div>
-        <div class="text-center p-6 bg-surface-container-low dark:bg-zinc-800 rounded-xl">
-          <div class="text-4xl font-headline font-extrabold text-primary dark:text-red-400 mb-2">0%</div>
-          <div class="text-sm text-secondary dark:text-zinc-400 font-medium uppercase tracking-wide">Metrica</div>
-        </div>
-        <div class="text-center p-6 bg-surface-container-low dark:bg-zinc-800 rounded-xl">
-          <div class="text-4xl font-headline font-extrabold text-primary dark:text-red-400 mb-2">#1</div>
-          <div class="text-sm text-secondary dark:text-zinc-400 font-medium uppercase tracking-wide">Logros</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PILARES -->
-  <section class="py-32 bg-surface-container-low dark:bg-zinc-950">
-    <div class="max-w-7xl mx-auto px-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-        <div class="relative">
-          <div class="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
-            <img alt="Academic Excellence" class="w-full h-full object-cover" src="https://scontent.fqrc2-1.fna.fbcdn.net/v/t39.30808-6/515540525_24337894382471147_5762987939376529037_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=53a332&_nc_ohc=tIxemyRBp88Q7kNvwHn2kiQ&_nc_oc=AdpjhPrdX1Hl3VtwEJUDQQmysgAGTEt_9-bilto0EM9BOkruw_iGhO1aPPqbyOxFYMo&_nc_zt=23&_nc_ht=scontent.fqrc2-1.fna&_nc_gid=l02FmVLP8qNb6Sy73z-w4w&_nc_ss=7a3a8&oh=00_Af0_JnHJBnZrjxWmdq1H00aQYPCbgtdAkIWKj1mcq3G8ww&oe=69E6189B"/>
-          </div>
-          <div class="absolute -bottom-8 -right-8 bg-white dark:bg-zinc-800 p-8 rounded-xl shadow-xl border-l-8 border-tertiary max-w-xs">
-            <h4 class="font-headline font-bold text-primary dark:text-red-400 text-lg mb-2">Reconocimeinto</h4>
-            <p class="text-sm text-secondary dark:text-zinc-400 leading-snug">Reconocimiento</p>
-          </div>
-        </div>
-        <div class="space-y-12">
           <div>
-            <h2 class="text-4xl font-headline font-extrabold text-on-background dark:text-white mb-6">Nuestros Pilares</h2>
-            <div class="w-20 h-1 bg-primary mb-8"></div>
-          </div>
-          <div class="space-y-8">
-            <div class="flex gap-6">
-              <div class="flex-shrink-0 w-12 h-12 bg-primary/10 dark:bg-red-900/30 rounded-lg flex items-center justify-center text-primary dark:text-red-400">
-                <span class="material-symbols-outlined">school</span>
-              </div>
-              <div>
-                <h3 class="text-2xl font-headline font-bold dark:text-white mb-2">Creatividad y Reflexión</h3>
-                <p class="text-secondary dark:text-zinc-400">Fomentamos en el alumnado el espíritu crítico, el emprendimiento y la seguridad en sí mismos para innovar en su aprendizaje.</p>
-              </div>
-            </div>
-            <div class="flex gap-6">
-              <div class="flex-shrink-0 w-12 h-12 bg-tertiary/10 dark:bg-green-900/30 rounded-lg flex items-center justify-center text-tertiary dark:text-green-400">
-                <span class="material-symbols-outlined">verified_user</span>
-              </div>
-              <div>
-                <h3 class="text-2xl font-headline font-bold dark:text-white mb-2">Valores Sólidos</h3>
-                <p class="text-secondary dark:text-zinc-400">Promovemos sentimientos de humildad, solidaridad y compasión, formando personas tolerantes y comprometidas con su sociedad.</p>
-              </div>
-            </div>
-            <div class="flex gap-6">
-              <div class="flex-shrink-0 w-12 h-12 bg-secondary-container dark:bg-zinc-700 rounded-lg flex items-center justify-center text-secondary dark:text-zinc-300">
-                <span class="material-symbols-outlined">trending_up</span>
-              </div>
-              <div>
-                <h3 class="text-2xl font-headline font-bold dark:text-white mb-2">Desarrollo Integral</h3>
-                <p class="text-secondary dark:text-zinc-400">Brindamos una educación de calidad que equilibra lo académico con lo valórico, lo artístico y lo deportivo.</p>
-              </div>
-            </div>
+            <div class="mob-hd-n">Colegio Alonso de Ercilla</div>
+            <div class="mob-hd-s">Particular Pagado · Rancagua</div>
           </div>
         </div>
+        <a href="#mision" class="ml" onclick="closeMob()">Misión &amp; Visión</a>
+        <a href="#pilares" class="ml" onclick="closeMob()">Programas</a>
+        <a href="#galeria" class="ml" onclick="closeMob()">Comunidad</a>
+        <a href="#contacto" class="ml" onclick="closeMob()">Admisiones 2027</a>
+        <button class="mob-theme" onclick="toggleTheme()">
+          Cambiar a modo <span id="mtl">claro</span>
+          <span class="ic" id="mti">light_mode</span>
+        </button>
+        <a href="{% url 'plataforma' %}" class="mob-plat">
+          <span class="ic" style="font-size:16px">lock</span>Acceso Plataforma
+        </a>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <!-- GALLERY -->
-  <section id="vida-academia" class="py-32 bg-surface dark:bg-zinc-900">
-    <div class="max-w-7xl mx-auto px-8">
-      <div class="text-center mb-20">
-        <h2 class="text-5xl font-headline font-extrabold text-on-background dark:text-white mb-4 tracking-tight">Vida Escolar</h2>
-        <p class="text-secondary dark:text-zinc-400 max-w-2xl mx-auto italic">Lograr construir entre todos una organización sólida, capaz de brindar educación de calidad y autonomía pedagógica.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-[800px]">
-        <div class="md:col-span-8 relative overflow-hidden group rounded-xl">
-          <img alt="Student life" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/599959532_1375074114414858_7585089818026416098_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=7b2446&_nc_ohc=qTiryfebh-UQ7kNvwEvOQRY&_nc_oc=Adqv3MWc-e7uUrGAegG2jaWGCDQPmBsPvZ0ujJs3QGLkQBTVnnn7OS8sC8UlQZi48y8&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=Ndb2KtGq8_WAma6N8fJl2Q&_nc_ss=7a3a8&oh=00_Af02U9xVb59GDrGQtGNBBe6eR-LiSNQVG9DG5JvRGY7uxg&oe=69E63661"/>
-          <div class="absolute inset-0 bg-gradient-to-t from-on-background/80 to-transparent flex items-end p-12">
-            <div>
-              <span class="text-white/70 text-sm uppercase tracking-widest font-headline">Flamenco</span>
-              <h3 class="text-white text-3xl font-headline font-bold">Taller Flamenco</h3>
-            </div>
-          </div>
-        </div>
-        <div class="md:col-span-4 grid grid-rows-2 gap-6">
-          <div class="relative overflow-hidden group rounded-xl">
-            <img alt="Athletics" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                 src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/558974925_1316392133616390_3919389133798167539_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=7b2446&_nc_ohc=29vmeor4nusQ7kNvwFfF-eT&_nc_oc=AdqHQt16GiVNqzbaXYQ4UTeFktnKLAy2gbBuLeVFEk-siUdTL_aazMM81-de4d_WKgs&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=Uc8p7fdAx55fXLPPwgfhnw&_nc_ss=7a3a8&oh=00_Af1e-3kSxcIe2qTDKp1azS0HbIGeM0L3xQO8dC3Tz4LYRg&oe=69E61D37"/>
-            <div class="absolute inset-0 bg-on-background/20 group-hover:bg-on-background/40 transition-colors"></div>
-          </div>
-          <div class="relative overflow-hidden group rounded-xl">
-            <img alt="Culture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                 src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/577594042_1344598960795707_923255574093907749_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=7b2446&_nc_ohc=-KX36WlpDnsQ7kNvwFYTDV_&_nc_oc=AdqQkaOgZLFekjHIK45m84NmusG70Ob6jtXtcnAeaMRSav5GQ-MaM9HV-aja_fE9A8Y&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=jiv2CYZA3UDShRwnhlK89w&_nc_ss=7a3a8&oh=00_Af1y2tnVjfaPBdRXGuJ7S98kkNMF5uuCsSor3M_AHPSyTw&oe=69E61117"/>
-            <div class="absolute inset-0 bg-on-background/20 group-hover:bg-on-background/40 transition-colors"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <button class="s2t" id="s2t" aria-label="Volver arriba" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <span class="ic">arrow_upward</span>
+  </button>
 
-<!-- CONTACT FORM -->
-  <section id="contacto" class="py-32 bg-white dark:bg-zinc-950">
-    <div class="max-w-6xl mx-auto px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <!-- Formulario -->
-        <div class="bg-surface-container-low dark:bg-zinc-900 rounded-3xl p-12 md:p-16 relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-          <div class="relative z-10 text-center mb-12">
-            <h2 class="text-4xl font-headline font-extrabold text-on-background dark:text-white mb-4">Contactanos</h2>
-            <p class="text-secondary dark:text-zinc-400">Complete el formulario y un asesor de admisiones se pondra en contacto con usted.</p>
-          </div>
-          <form class="relative z-10 space-y-6">
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-secondary dark:text-zinc-400 px-2">Nombre Completo</label>
-              <input class="w-full px-6 py-4 rounded-xl border-none bg-white dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 focus:ring-2 focus:ring-primary transition-all" placeholder="Ej: Julian Martinez" type="text"/>
-            </div>
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-secondary dark:text-zinc-400 px-2">Correo Electronico</label>
-              <input class="w-full px-6 py-4 rounded-xl border-none bg-white dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 focus:ring-2 focus:ring-primary transition-all" placeholder="julian@ejemplo.com" type="email"/>
-            </div>
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-secondary dark:text-zinc-400 px-2">Curso de Interes</label>
-              <select class="w-full px-6 py-4 rounded-xl border-none bg-white dark:bg-zinc-800 dark:text-zinc-100 focus:ring-2 focus:ring-primary transition-all">
-                <option>Educacion Parvularia</option>
-                <option>Ensenanza Basica</option>
-                <option>Ensenanza Media</option>
-                <option>Consulta General</option>
-              </select>
-            </div>
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-secondary dark:text-zinc-400 px-2">Mensaje</label>
-              <textarea class="w-full px-6 py-4 rounded-xl border-none bg-white dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 focus:ring-2 focus:ring-primary transition-all" placeholder="Como podemos ayudarle?" rows="4"></textarea>
-            </div>
-            <div class="mt-4">
-              <button class="w-full bg-primary text-on-primary py-5 rounded-xl font-headline font-bold uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform" type="submit">
-                Enviar Solicitud de Informacion
-              </button>
-            </div>
-          </form>
-        </div>
-        <!-- Mapa y datos de contacto -->
-        <div class="space-y-6">
-          <div class="rounded-xl overflow-hidden h-64">
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3328.38!2d-70.7424467!3d-34.167815!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x966343151939a3a1%3A0x6c09dad515c3b931!2sColegio%20Alonso%20de%20Ercilla!5e0!3m2!1ses!2scl!4v1700000000000"
-              width="100%" 
-              height="100%" 
-              style="border:0;" 
-              allowfullscreen="" 
-              loading="lazy" 
-              referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
-          </div>
-          <div class="bg-white dark:bg-zinc-800 rounded-xl p-6 space-y-4">
-            <div class="flex items-start gap-4">
-              <a href="https://www.google.com/maps/search/Colegio+Alonso+de+Ercilla+Rancagua" target="_blank" class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0 hover:bg-red-600 transition-colors">
-                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              </a>
-              <div>
-                <p class="text-sm text-secondary dark:text-zinc-400 uppercase tracking-wider font-bold mb-1">Direccion</p>
-                <a href="https://www.google.com/maps/search/Colegio+Alonso+de+Ercilla+Rancagua" target="_blank" class="text-on-background dark:text-white font-medium hover:text-primary dark:hover:text-red-400 transition-colors">
-                  Jose Domingo Mujica 558, Rancagua, Chile
-                </a>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <a href="https://wa.me/56966233891?text=Hola,%20quisiera%20información%20sobre%20el%20colegio" target="_blank" class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0 hover:bg-green-600 transition-colors">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-              </a>
-              <div>
-                <p class="text-sm text-secondary dark:text-zinc-400 uppercase tracking-wider font-bold mb-1">WhatsApp</p>
-                <a href="https://wa.me/56966233891?text=Hola,%20quisiera%20información%20sobre%20el%20colegio" 
-                   target="_blank"
-                   class="text-on-background dark:text-white font-medium hover:text-primary dark:hover:text-red-400 transition-colors flex items-center gap-2">
-                   +56 9 6623 3891
-                </a>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <a href="https://www.facebook.com/p/Colegio-Alonso-De-Ercilla-Rancagua-100057368481964/" target="_blank" class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 hover:bg-blue-700 transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.77,7.46H14.5v-1.9c0-.9.6-1.1,1-1.1h3V.5h-4.33C10.24.5,9.5,3.44,9.5,5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4Z"/></svg>
-              </a>
-              <div>
-                <p class="text-sm text-secondary dark:text-zinc-400 uppercase tracking-wider font-bold mb-1">Facebook</p>
-                <a href="https://www.facebook.com/p/Colegio-Alonso-De-Ercilla-Rancagua-100057368481964/" 
-                   target="_blank"
-                   class="text-on-background dark:text-white font-medium hover:text-primary dark:hover:text-red-400 transition-colors">
-                   Colegio Alonso De Ercilla
-                </a>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <a href="https://www.instagram.com/colegioalonsodeercilla" target="_blank" class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:opacity-80 transition-opacity">
-                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.668.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.947.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.947-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/><path d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z"/><path d="M16.5 7.916a1.44 1.44 0 100-2.881 1.44 1.44 0 001.442 1.44z"/></svg>
-              </a>
-              <div>
-                <p class="text-sm text-secondary dark:text-zinc-400 uppercase tracking-wider font-bold mb-1">Instagram</p>
-                <a href="https://www.instagram.com/colegioalonsodeercilla" 
-                   target="_blank"
-                   class="text-on-background dark:text-white font-medium hover:text-primary dark:hover:text-red-400 transition-colors">
-                   @colegioalonsodeercilla
-                </a>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <a href="mailto:adm.alonsodeercilla@gmail.com?subject=Consulta%20desde%20web%20-%20Información%20Admisiones" class="w-10 h-10 bg-zinc-600 rounded-lg flex items-center justify-center flex-shrink-0 hover:bg-zinc-500 transition-colors">
-                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-              </a>
-              <div>
-                <p class="text-sm text-secondary dark:text-zinc-400 uppercase tracking-wider font-bold mb-1">Correo</p>
-                <a href="mailto:adm.alonsodeercilla@gmail.com?subject=Consulta%20desde%20web%20-%20Información%20Admisiones" 
-                   class="text-on-background dark:text-white font-medium hover:text-primary dark:hover:text-red-400 transition-colors">
-                  adm.alonsodeercilla@gmail.com
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- ─── FOOTER ───────────────────────────────────────────────────────────────── -->
-<footer class="w-full py-12 px-8 bg-zinc-100 dark:bg-zinc-900">
-  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-between items-center gap-8 w-full">
-    <div>
-      <div class="font-['Montserrat'] font-bold text-zinc-900 dark:text-zinc-100 text-lg mb-2">Colegio Alonso De Ercilla</div>
-      <p class="text-zinc-500 dark:text-zinc-400 font-['Inter'] text-sm leading-relaxed max-w-sm">
-        © 2024 Colegio Alonso de Ercilla. Formando ciudadanos con alta autoestima, solidarios y preparados para los desafíos del futuro.
+  <!-- ── HERO ─────────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hl fu">
+      <span class="htag">Fundado 23 Sept. 1974</span>
+      <h1 class="hh1">Educación<br /><em>Integral</em><br />Con Valores.</h1>
+      <p class="hdesc">
+        Facilitamos aprendizajes significativos para formar buenos ciudadanos,
+        fortaleciendo la identidad nacional y la autonomía en un entorno
+        académico, artístico y deportivo.
       </p>
+      <div class="hact">
+        <a href="#mision" class="btp">Descubrir programas</a>
+        <a href="#contacto" class="bts">Admisiones 2027</a>
+      </div>
     </div>
-    <div class="flex gap-8 flex-wrap items-center">
-      <a class="text-zinc-500 dark:text-zinc-400 text-sm hover:text-red-700 dark:hover:text-red-300 underline-offset-4 hover:underline transition-all" href="{% url 'terminos' %}">Privacidad</a>
-      <a class="text-zinc-500 dark:text-zinc-400 text-sm hover:text-red-700 dark:hover:text-red-300 underline-offset-4 hover:underline transition-all" href="{% url 'terminos' %}">Términos</a>
-      <a class="text-zinc-500 dark:text-zinc-400 text-sm hover:text-red-700 dark:hover:text-red-300 underline-offset-4 hover:underline transition-all" href="#contacto">Contacto</a>
-<div class="flex gap-3 ml-4">
-          <a href="https://www.facebook.com/p/Colegio-Alonso-De-Ercilla-Rancagua-100057368481964/" target="_blank" aria-label="Facebook" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white hover:bg-blue-700 transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.77,7.46H14.5v-1.9c0-.9.6-1.1,1-1.1h3V.5h-4.33C10.24.5,9.5,3.44,9.5,5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4Z"/></svg>
-          </a>
-          <a href="https://www.instagram.com/colegioalonsodeercilla" target="_blank" aria-label="Instagram" class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center text-white hover:opacity-90 transition-opacity">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.668.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.947.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.947-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/><path d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z"/><path d="M16.5 7.916a1.44 1.44 0 100-2.881 1.44 1.44 0 001.442 1.44z"/></svg>
-          </a>
-        </div>
+    <div class="hr">
+
+      <img src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/667376500_1465226818732920_1471946778624402995_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=b895b5&_nc_ohc=VcoPs14nk3kQ7kNvwFSsJUY&_nc_oc=Adr_T3QFBHU6a9c7O7PcjkQDU9a5FntQYWjWuzeASXe-5IxDIU70aPXUN_pkhr417xw&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=1uqSrEMqxdA212_78ullnw&oh=00_Af0rCnmf2m6haJ4cbacDgedErxru5xpAJ4EVxWP7TrCrnw&oe=69F14B24" onerror="this.style.background='#181c25'"
+        alt="Campus Colegio Alonso de Ercilla" />
+    </div>
+  </section>
+
+  <!-- ── STATS ────────────────────────────────────────────────────────────────── -->
+  <div class="stats">
+    <div class="si">
+      <div class="st fu">
+        <div class="stn">+50</div>
+        <div class="stl">Años de Historia</div>
+      </div>
+      <div class="st fu">
+        <div class="stn">1.400</div>
+        <div class="stl">Egresados</div>
+      </div>
+      <div class="st fu">
+        <div class="stn">Pre&#8209;K</div>
+        <div class="stl">hasta 4° Medio</div>
+      </div>
+      <div class="st fu">
+        <div class="stn">3</div>
+        <div class="stl">Áreas de Formación</div>
+      </div>
     </div>
   </div>
-</footer>
 
-<!-- ─── SCRIPTS ──────────────────────────────────────────────────────────────── -->
-<script src="{% static 'js/colegio.js' %}"></script>
+  <!-- ── MISIÓN & VISIÓN ──────────────────────────────────────────────────────── -->
+  <section class="smv" id="mision">
+    <div class="sec">
+      <div class="fu">
+        <span class="ey">Nuestra Esencia</span>
+        <h2 class="sh">Misión &amp; Visión</h2>
+      </div>
+      <div class="mvg">
+        <div class="mvc fu">
+          <div class="mva r"></div>
+          <div class="mvi r"><span class="ic">rocket_launch</span></div>
+          <h3 class="mvh">Misión</h3>
+          <p class="mvp">Facilitar los aprendizajes pertinentes y significativos que promuevan el desarrollo integral
+            del individuo y contribuir a formar buenos ciudadanos, fortaleciendo la identidad nacional, personas con
+            alta autoestima, tolerantes y solidarias que puedan enfrentar con equilibrio los desafíos del futuro.</p>
+        </div>
+        <div class="mvc fu">
+          <div class="mva g"></div>
+          <div class="mvi g"><span class="ic">visibility</span></div>
+          <h3 class="mvh">Visión</h3>
+          <p class="mvp">Un colegio que imparte una educación integral en lo académico, valórico, artístico y deportivo.
+            Fomenta la creatividad y el emprendimiento, el espíritu crítico y la reflexión, la seguridad en sí mismos y
+            sentimientos de humildad, solidaridad y compasión en toda la comunidad educativa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ── PILARES ──────────────────────────────────────────────────────────────── -->
+  <section class="spi" id="pilares">
+    <div class="sec">
+      <div class="fu">
+        <span class="ey">Lo que nos define</span>
+        <h2 class="sh">Nuestros Pilares</h2>
+        <p class="sp">Tres dimensiones que guían nuestra propuesta educativa y forman personas íntegras.</p>
+      </div>
+      <div class="pig">
+        <div class="pc fu">
+          <div class="pn">01</div>
+          <h3 class="ph">Creatividad y Reflexión</h3>
+          <p class="pp">Fomentamos el espíritu crítico, el emprendimiento y la seguridad en sí mismos para que cada
+            alumno innove en su aprendizaje y su vida.</p>
+        </div>
+        <div class="pc fu">
+          <div class="pn">02</div>
+          <h3 class="ph">Valores Sólidos</h3>
+          <p class="pp">Promovemos la humildad, la solidaridad y la compasión, formando personas tolerantes y
+            comprometidas con su comunidad y su país.</p>
+        </div>
+        <div class="pc fu">
+          <div class="pn">03</div>
+          <h3 class="ph">Desarrollo Integral</h3>
+          <p class="pp">Brindamos una educación que equilibra lo académico con lo artístico y lo deportivo, alcanzando
+            grados de autonomía e innovación pedagógica.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GALERÍA ──────────────────────────────────────────────────────────────── -->
+  <section class="sgal" id="galeria">
+    <div class="sec">
+      <div class="fu">
+        <span class="ey">Vida Escolar</span>
+        <h2 class="sh">Nuestra Comunidad</h2>
+      </div>
+      <div class="gg fu">
+        <!-- Reemplazar src con fotos reales, -->
+        <div class="gi">
+          <img src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/599959532_1375074114414858_7585089818026416098_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=7b2446&_nc_ohc=vJ_M7JAEgsUQ7kNvwELa5i8&_nc_oc=AdrHHS7Svor3uuMCB5NqZdkNYks8zzsb5TInJEFrRhGNWnKeae9LKZ9kd4_LD_V2sX0&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=VOgnJ45nqjBWo5isn90q3Q&oh=00_Af1tXbzLMQ-aASW7IxUaIpgJ71AQzUZZAJ54SiHj4ThkLQ&oe=69F132E1" onerror="this.style.background='#321824'"
+            alt="Taller Flamenco" />
+          <div class="gc"><span>Flamenco</span></div>
+        </div>
+        <div class="gi">
+          <img src="https://scontent.fqrc1-1.fna.fbcdn.net/v/t39.30808-6/577594042_1344598960795707_923255574093907749_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=7b2446&_nc_ohc=dvscrj9L400Q7kNvwHxMZDg&_nc_oc=AdrBNJAHTCYqS5_e0wihEQz2K2XnoAs_ITZu7vJYi9BgWEuTjw4_XckiA_Qy1y8O2ys&_nc_zt=23&_nc_ht=scontent.fqrc1-1.fna&_nc_gid=rionY9X7PFpqYj7zOFyreQ&oh=00_Af18P8vgVlCouneBL1w8xO7nNF4fLDa6K5qL2FLH8CIQlQ&oe=69F145D7" onerror="this.style.background='#162030'"
+            alt="Deporte Escolar" />
+          <div class="gc"><span>Eventos</span></div>
+        </div>
+        <div class="gi">
+          <img src="https://scontent.fqrc2-1.fna.fbcdn.net/v/t39.30808-6/557963672_1316392206949716_464071511896270275_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=7b2446&_nc_ohc=ybNZ4LqQymAQ7kNvwH69Dcl&_nc_oc=Adq5ul7OOeZL2wVdSiNoFYcF-cxmsVIiHSCRou4tzj4WAypuL0PI4qJlyTaRaSzpMzk&_nc_zt=23&_nc_ht=scontent.fqrc2-1.fna&_nc_gid=lMvjxDxJXRRcC0jZgGrobw&oh=00_Af3lpkCt8Yb047FFTUtfzaCIxzk99E98Hn-YUlmg9tFnOA&oe=69F13762" onerror="this.style.background='#182820'"
+            alt="Vida Cultural" />
+          <div class="gc"><span>Desfiles</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACTO / ADMISIONES ────────────────────────────────────────────────── -->
+  <section class="scon" id="contacto">
+    <div class="sec">
+      <div class="fu">
+        <span class="ey">Admisiones 2027</span>
+        <h2 class="sh">Contáctanos</h2>
+        <p class="sp">Complete el formulario y un asesor de admisiones se pondrá en contacto con usted.</p>
+      </div>
+      <div class="cg">
+        <form class="fu" method="post" action="#">
+          {% csrf_token %}
+          <div class="fg"><label class="fl">Nombre Completo</label><input class="fi" type="text" name="nombre"
+              placeholder="Ej: Julián Martínez" required /></div>
+          <div class="fg"><label class="fl">Correo Electrónico</label><input class="fi" type="email" name="email"
+              placeholder="julian@ejemplo.com" required /></div>
+          <div class="fg">
+            <label class="fl">Curso de Interés</label>
+            <select class="fi" name="curso">
+              <option>Educación Parvularia</option>
+              <option>Enseñanza Básica</option>
+              <option>Enseñanza Media</option>
+              <option>Consulta General</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Mensaje</label><textarea class="fi" name="mensaje" rows="4"
+              placeholder="¿Cómo podemos ayudarle?"></textarea></div>
+          <button class="fsub" type="submit">Enviar Solicitud de Información</button>
+        </form>
+        <div class="cin fu">
+          <div class="cit">
+            <div class="cico"><span class="ic">location_on</span></div>
+            <div>
+              <div class="cla">Dirección</div><a
+                href="https://www.google.com/maps/search/Colegio+Alonso+de+Ercilla+Rancagua" target="_blank"
+                class="cva">José Domingo Mujica 558, Rancagua, Chile</a>
+            </div>
+          </div>
+          <div class="cit">
+            <div class="cico"><span class="ic">chat</span></div>
+            <div>
+              <div class="cla">WhatsApp</div><a href="https://wa.me/56966233891" target="_blank" class="cva">+56 9 6623
+                3891</a>
+            </div>
+          </div>
+          <div class="cit">
+            <div class="cico"><span class="ic">mail</span></div>
+            <div>
+              <div class="cla">Correo</div><a href="mailto:adm.alonsodeercilla@gmail.com"
+                class="cva">adm.alonsodeercilla@gmail.com</a>
+            </div>
+          </div>
+          <div class="cit">
+            <div class="cico"><span class="ic">share</span></div>
+            <div>
+              <div class="cla">Redes Sociales</div>
+              <a href="https://www.facebook.com/p/Colegio-Alonso-De-Ercilla-Rancagua-100057368481964/" target="_blank"
+                class="cva">Facebook · Instagram</a>
+            </div>
+          </div>
+          <div class="mw">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3328.38!2d-70.7424467!3d-34.167815!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x966343151939a3a1%3A0x6c09dad515c3b931!2sColegio%20Alonso%20de%20Ercilla!5e0!3m2!1ses!2scl!4v1700000000000"
+              allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fi2">
+      <div class="fb">
+        <div class="lw">
+          <div class="lw">
+          <img src="https://i.ibb.co/7JMGG2Vx/logo-colegio.png" alt="Escudo AE" />
+        </div>
+        </div>
+        <span>© Colegio Alonso de Ercilla. Todos los derechos reservados.</span>
+      </div>
+      <div class="fli">
+        <a href="{% url 'terminos' %}">Privacidad</a>
+        <a href="{% url 'terminos' %}">Términos</a>
+        <a href="{% url 'reglamento' %}">Reglamento</a>
+        <a href="#contacto">Contacto</a>
+        <a href="https://www.facebook.com/p/Colegio-Alonso-De-Ercilla-Rancagua-100057368481964/"
+          target="_blank">Facebook</a>
+        <a href="https://www.instagram.com/colegioalonsodeercilla" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── SCRIPTS ──────────────────────────────────────────────────────────────── -->
+  <script>
+    // Tema claro / oscuro
+    function toggleTheme() {
+      const h = document.documentElement, d = h.getAttribute('data-theme') === 'dark', n = d ? 'light' : 'dark';
+      h.setAttribute('data-theme', n); localStorage.setItem('cae-theme', n); syncMobLabel(n);
+    }
+    function syncMobLabel(t) {
+      const l = document.getElementById('mtl'), i = document.getElementById('mti');
+      if (l) l.textContent = t === 'dark' ? 'claro' : 'oscuro';
+      if (i) i.textContent = t === 'dark' ? 'light_mode' : 'dark_mode';
+    }
+    document.getElementById('tbtn').addEventListener('click', toggleTheme);
+    syncMobLabel(document.documentElement.getAttribute('data-theme'));
+
+    // Hamburger
+    const ham = document.getElementById('ham'), mob = document.getElementById('mob');
+    function closeMob() { ham.classList.remove('open'); mob.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); mob.setAttribute('aria-hidden', 'true') }
+    ham.addEventListener('click', () => { const o = ham.classList.toggle('open'); mob.classList.toggle('open', o); ham.setAttribute('aria-expanded', o); mob.setAttribute('aria-hidden', !o) });
+    document.addEventListener('click', e => { if (!ham.contains(e.target) && !mob.contains(e.target)) closeMob() });
+
+    // Scroll-to-top
+    const s2t = document.getElementById('s2t');
+    window.addEventListener('scroll', () => s2t.classList.toggle('vis', scrollY > 320), { passive: true });
+
+    // Scroll fade-in
+    const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }) }, { threshold: .08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.fu').forEach(el => {
+      const s = [...(el.parentElement?.querySelectorAll(':scope > .fu') || [])], i = s.indexOf(el);
+      if (i > 0) el.style.transitionDelay = (i * .1) + 's';
+      io.observe(el);
+    });
+  </script>
 </body>
+
 </html>
