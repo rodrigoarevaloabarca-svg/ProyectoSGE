@@ -1070,6 +1070,17 @@ footer {
   transform: none
 }
 
+/* Brand icon variants */
+.cico.wa { background: rgba(37, 211, 102, .12); color: #25D366 }
+.cico.fb { background: rgba(24, 119, 242, .12); color: #1877F2 }
+.cico.ig { background: rgba(193, 53, 132, .12); color: #C13584 }
+
+.fli a.social {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px
+}
+
 @media(max-width:900px) {
   .hero {
     grid-template-columns: 1fr
