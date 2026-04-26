@@ -1,10 +1,13 @@
-from django.test import TestCase
+import datetime
+
 from django.contrib.auth import get_user_model
+from django.test import TestCase
+
 from alumnos.models import Alumno
 from asignaturas.models import Asignatura
 from cursos.models import Curso, NivelEducacional
+
 from .models import RegistroAsistencia
-import datetime
 
 Usuario = get_user_model()
 

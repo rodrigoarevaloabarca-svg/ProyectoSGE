@@ -1,5 +1,6 @@
-from .base import *  # noqa: F401, F403
 import logging.handlers  # noqa: F401 — needed for RotatingFileHandler
+
+from .base import *  # noqa: F401, F403
 
 DEBUG = False
 

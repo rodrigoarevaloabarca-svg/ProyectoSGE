@@ -1,4 +1,4 @@
-"""
+r"""
 CONFIGURACIÓN DE EMAIL Y NOTIFICACIONES
 =======================================
 Agrega esto a D:\Gestion\colegio_chile\settings.py

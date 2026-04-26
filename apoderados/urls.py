@@ -1,8 +1,8 @@
 from django.urls import path
+
 from . import views
+
 """apoderados/urls.py — VERSIÓN CORREGIDA"""
-from django.urls import path
-from . import views
 
 app_name = 'apoderados'
 

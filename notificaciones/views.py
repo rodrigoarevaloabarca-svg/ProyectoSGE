@@ -2,18 +2,17 @@
 APP: notificaciones
 ARCHIVO: views.py
 """
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings as django_settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.core.mail import send_mail, EmailMultiAlternatives
-from django.conf import settings as django_settings
-from django.db.models import Q
 
-from .models import Notificacion, EnvioMasivo
 from usuarios.models import Usuario
 
+from .models import EnvioMasivo, Notificacion
 
 # ── Helpers de permisos ───────────────────────────────────────────────────────
 

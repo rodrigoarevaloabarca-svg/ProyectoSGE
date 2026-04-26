@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Periodo, ComentarioInforme
+
+from .models import ComentarioInforme, Periodo
+
 
 @admin.register(Periodo)
 class PeriodoAdmin(admin.ModelAdmin):

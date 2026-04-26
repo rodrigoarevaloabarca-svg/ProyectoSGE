@@ -1,11 +1,13 @@
 """APP: profesores - views.py"""
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import Profesor
-from .forms import ProfesorForm
+
 from usuarios.decorators import solo_admin
+
+from .forms import ProfesorForm
+from .models import Profesor
 
 
 @login_required

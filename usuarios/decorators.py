@@ -5,6 +5,7 @@ ARCHIVO: decorators.py
 Decoradores de control de acceso reutilizables.
 """
 from functools import wraps
+
 from django.contrib import messages
 from django.shortcuts import redirect
 

@@ -1,13 +1,12 @@
 """APP: usuarios - views.py"""
-from django.contrib.auth import login, logout
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse_lazy, reverse
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
 
+from .forms import LoginForm, UsuarioCreacionForm, UsuarioEdicionForm, UsuarioPerfilForm
 from .models import Usuario
-from .forms import UsuarioCreacionForm, UsuarioEdicionForm, LoginForm, UsuarioPerfilForm
 
 
 def solo_admin(user):

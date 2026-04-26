@@ -16,7 +16,7 @@ from django.utils import timezone
 class RegistroAsistencia(models.Model):
     """
     Un registro de asistencia = un alumno en una clase específica en una fecha.
-    
+
     Estado puede ser: presente, ausente, atrasado, justificado
     """
 

@@ -9,16 +9,17 @@ Control de acceso por rol en cada vista:
   - crear_alumno  : solo admin
   - editar_alumno : solo admin
 """
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import Alumno
-from .forms import AlumnoForm
+
 from SGE.ia_utils import analizar_riesgo_alumno
 from usuarios.decorators import puede_ver_alumno
 
+from .forms import AlumnoForm
+from .models import Alumno
 
 # ── Predicados de rol ─────────────────────────────────────────────────────────
 

@@ -1,16 +1,19 @@
 """dashboard/views.py"""
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib import messages
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from historial.models import HistorialCambio
-from SGE.ia_utils import chatbot_consulta
-from .forms import ContactoForm
 import json
 import time
+
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.http import require_POST
+
+from historial.models import HistorialCambio
+from SGE.ia_utils import chatbot_consulta
+
+from .forms import ContactoForm
 
 
 def contacto(request):
@@ -64,11 +67,11 @@ def contacto(request):
 
 def _dashboard_admin(request):
     from alumnos.models import Alumno
-    from profesores.models import Profesor
-    from cursos.models import Curso
-    from asignaturas.models import Asignatura
     from anotaciones.models import Anotacion
-    from notificaciones.models import Notificacion, EnvioMasivo
+    from asignaturas.models import Asignatura
+    from cursos.models import Curso
+    from notificaciones.models import EnvioMasivo, Notificacion
+    from profesores.models import Profesor
 
     user = request.user
     todas_notifs = Notificacion.objects.filter(
@@ -95,9 +98,9 @@ def _dashboard_admin(request):
 
 
 def _dashboard_profesor(request):
+    from alumnos.models import Alumno
     from asignaturas.models import Asignatura
     from cursos.models import Curso
-    from alumnos.models import Alumno
     from notificaciones.models import Notificacion
 
     user = request.user
@@ -166,9 +169,9 @@ def _dashboard_apoderado(request):
 
 
 def _dashboard_alumno(request):
-    from notas.models import PromedioAsignatura
-    from asistencia.models import RegistroAsistencia
     from anotaciones.models import Anotacion
+    from asistencia.models import RegistroAsistencia
+    from notas.models import PromedioAsignatura
     from notificaciones.models import Notificacion
 
     user = request.user

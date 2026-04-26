@@ -2,13 +2,15 @@
 URLs principales del proyecto SGE
 """
 
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
 from django.shortcuts import redirect
-from . import views
+from django.urls import include, path
+
 from SGE.views import error_400, error_403, error_404, error_500
+
+from . import views
 
 handler400 = error_400
 handler403 = error_403

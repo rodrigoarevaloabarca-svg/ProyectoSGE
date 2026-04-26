@@ -6,14 +6,20 @@ Genera el PDF del informe académico usando ReportLab.
 """
 import io
 from html import escape as html_escape
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
+
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import cm
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    HRFlowable, KeepTogether
+    HRFlowable,
+    KeepTogether,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
 )
 from reportlab.platypus import Image as RLImage
 
@@ -46,17 +52,17 @@ def generar_pdf_informe(alumno, periodo, datos, comentario, logo_path=None):
     story  = []
 
     # ── Estilos personalizados ──
-    estilo_titulo = ParagraphStyle('titulo',
+    ParagraphStyle('titulo',
         parent=styles['Normal'],
         fontSize=22, fontName="Helvetica-Bold",
         textColor=AZUL_OSCURO, alignment=TA_CENTER, spaceBefore=0, spaceAfter=0, leading=28)
 
-    estilo_subtitulo = ParagraphStyle('subtitulo',
+    ParagraphStyle('subtitulo',
         parent=styles['Normal'],
         fontSize=12, fontName="Helvetica",
         textColor=AZUL_PRIMARY, alignment=TA_CENTER, spaceBefore=0, spaceAfter=0, leading=16)
 
-    estilo_seccion = ParagraphStyle('seccion',
+    ParagraphStyle('seccion',
         parent=styles['Normal'],
         fontSize=12, fontName='Helvetica-Bold',
         textColor=BLANCO, alignment=TA_LEFT)
@@ -75,12 +81,11 @@ def generar_pdf_informe(alumno, periodo, datos, comentario, logo_path=None):
     # ════════════════════════════════════════════════
     # ENCABEZADO
     # ════════════════════════════════════════════════
-    header_data = []
 
     # ── Encabezado: logo pequeño + nombre colegio + título + datos alumno en una sola banda ──
-    estilo_label = ParagraphStyle('label', fontSize=7, fontName='Helvetica-Bold',
+    ParagraphStyle('label', fontSize=7, fontName='Helvetica-Bold',
                                    textColor=GRIS_TEXTO, leading=10)
-    estilo_valor = ParagraphStyle('valor', fontSize=9, fontName='Helvetica-Bold',
+    ParagraphStyle('valor', fontSize=9, fontName='Helvetica-Bold',
                                    textColor=AZUL_OSCURO, leading=12)
 
     # Logo reducido
@@ -335,7 +340,7 @@ def generar_pdf_informe(alumno, periodo, datos, comentario, logo_path=None):
             str(asist['ausentes']),
             str(asist['atrasados']),
             str(asist['justificados']),
-            Paragraph(f'<font color="#{_hex(color_asist)}" size="12"><b>{pct}%</b></font>', 
+            Paragraph(f'<font color="#{_hex(color_asist)}" size="12"><b>{pct}%</b></font>',
                      ParagraphStyle('c', alignment=TA_CENTER, fontSize=12)),
         ]
     ]

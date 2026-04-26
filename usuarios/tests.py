@@ -1,6 +1,8 @@
 from django.test import TestCase
+
+from .forms import UsuarioPerfilForm, _limpiar_rut, _validar_dv_rut
 from .models import Usuario
-from .forms import _validar_dv_rut, _limpiar_rut, UsuarioPerfilForm
+
 
 class UsuarioModelTest(TestCase):
     def setUp(self):
@@ -48,7 +50,7 @@ class RutValidationTest(TestCase):
     def test_validar_dv_rut_correcto(self):
         # Casos reales válidos (formato: cuerpo-dv)
         self.assertTrue(_validar_dv_rut("11111111-1"))  # Ejemplo rut ficticio si el DV es correcto (11111111-1 no es, el DV de 11111111 es 1)
-        # Probemos con un DV conocido: 12345678-5 
+        # Probemos con un DV conocido: 12345678-5
         # Cálculo de 12345678: 8*2+7*3+6*4+5*5+4*6+3*7+2*2+1*3 = 16+21+24+25+24+21+4+3 = 138. 138%11 = 6. 11-6 = 5. Correcto!
         self.assertTrue(_validar_dv_rut("12345678-5"))
         # Caso termina en K: 19876543-K (Cálculo 19876543: 3*2+4*3+5*4+6*5+7*6+8*7+9*2+1*3 = 6+12+20+30+42+56+18+3=187. 187%11=0 -> 11-0=11->'0'. No, probemos otro para evitar fallos de tests)

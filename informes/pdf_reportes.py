@@ -7,14 +7,21 @@ Genera PDFs para:
   2. Informe de fin de año → resumen anual por alumno con todos los períodos
 """
 import io
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
+
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import cm
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    HRFlowable, KeepTogether, PageBreak
+    HRFlowable,
+    KeepTogether,
+    PageBreak,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
 )
 from reportlab.platypus import Image as RLImage
 
@@ -278,7 +285,6 @@ def generar_pdf_fin_anio(alumnos_data, periodos, anio, logo_path=None):
         }
     periodos: lista de Periodo ordenados
     """
-    import re as _re
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
@@ -302,7 +308,7 @@ def generar_pdf_fin_anio(alumnos_data, periodos, anio, logo_path=None):
                             textColor=BLANCO,   leading=10, alignment=TA_CENTER)
     HDR_L = ParagraphStyle('hdrl', fontSize=8,   fontName='Helvetica-Bold',
                             textColor=BLANCO,   leading=10)
-    BOLD  = ParagraphStyle('bld',  fontSize=8.5, fontName='Helvetica-Bold',
+    ParagraphStyle('bld',  fontSize=8.5, fontName='Helvetica-Bold',
                             textColor=AZUL_OSC, leading=12)
 
     def _sec(texto, color=AZUL):
@@ -329,8 +335,10 @@ def generar_pdf_fin_anio(alumnos_data, periodos, anio, logo_path=None):
 
         # ── ENCABEZADO ────────────────────────────────────────────────────
         if logo_path:
-            try:    col_logo = RLImage(logo_path, width=1.8*cm, height=1.8*cm)
-            except: col_logo = Paragraph('', styles['Normal'])
+            try:
+                col_logo = RLImage(logo_path, width=1.8 * cm, height=1.8 * cm)
+            except Exception:
+                col_logo = Paragraph('', styles['Normal'])
         else:
             col_logo = Paragraph('', styles['Normal'])
 
@@ -368,7 +376,7 @@ def generar_pdf_fin_anio(alumnos_data, periodos, anio, logo_path=None):
         ]
         col_w = [6*cm, 2.5*cm, 3.0*cm, 2.5*cm, 2.5*cm]
         dt = Table(
-            [[Paragraph(l, LBL) for l, _ in campos],
+            [[Paragraph(lbl, LBL) for lbl, _ in campos],
              [Paragraph(v, VAL) for _, v in campos]],
             colWidths=col_w, rowHeights=[0.42*cm, 0.6*cm]
         )
@@ -493,7 +501,9 @@ def generar_pdf_fin_anio(alumnos_data, periodos, anio, logo_path=None):
             pr  = pd.get('asistencia_presentes', 0)
             au  = pd.get('asistencia_ausentes', 0)
             pct = pd.get('asistencia_pct', 0)
-            tot_total += tc; tot_pres += pr; tot_aus += au
+            tot_total += tc
+            tot_pres += pr
+            tot_aus += au
             c_a = VERDE if pct >= 85 else (AMARILLO if pct >= 75 else ROJO)
             asist_data.append([
                 Paragraph(str(p), NRM),
@@ -626,7 +636,7 @@ def generar_pdf_fin_anio(alumnos_data, periodos, anio, logo_path=None):
         ST_FIR = ParagraphStyle('fir', fontSize=8, fontName='Helvetica',
                                  textColor=AZUL_OSC, alignment=TA_CENTER, leading=11)
         # Firmas: línea como guiones en Paragraph para evitar bug de HRFlowable en tabla
-        linea_txt = Paragraph('_' * 28, ParagraphStyle('ln', fontSize=9,
+        Paragraph('_' * 28, ParagraphStyle('ln', fontSize=9,
                                textColor=AZUL_OSC, alignment=TA_CENTER, leading=12))
         def _firma(cargo):
             return [

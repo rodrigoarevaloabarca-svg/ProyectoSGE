@@ -2,8 +2,8 @@
 Configuración base compartida por todos los entornos.
 No usar directamente — importar desde development.py, production.py o testing.py.
 """
-from pathlib import Path
 import os
+from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -151,6 +151,7 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Strict'
 
 from django.contrib.messages import constants as messages  # noqa: E402
+
 MESSAGE_TAGS = {
     messages.DEBUG:   'debug',
     messages.INFO:    'info',

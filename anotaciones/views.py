@@ -1,13 +1,15 @@
 """APP: anotaciones - views.py"""
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.urls import reverse
-from .models import Anotacion
-from alumnos.models import Alumno
-from historial.utils import snapshot_anotacion, registrar_cambio_anotacion
 from django import forms
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+
+from alumnos.models import Alumno
+from historial.utils import registrar_cambio_anotacion, snapshot_anotacion
 from usuarios.decorators import puede_ver_alumno
+
+from .models import Anotacion
 
 INPUT    = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
 SELECT   = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"

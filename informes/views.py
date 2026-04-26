@@ -2,19 +2,20 @@
 APP: informes
 ARCHIVO: views.py
 """
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
-from .models import Periodo, ComentarioInforme
-from .pdf_generator import generar_pdf_informe
-from .forms import PeriodoForm, ComentarioInformeForm
-from .services import InformeService
 from alumnos.models import Alumno
 from cursos.models import Curso
+
+from .forms import ComentarioInformeForm, PeriodoForm
+from .models import ComentarioInforme, Periodo
+from .pdf_generator import generar_pdf_informe
+from .services import InformeService
 
 
 def _solo_admin_o_profesor(user):
@@ -169,6 +170,7 @@ def descargar_pdf(request, alumno_id, periodo_id):
 
     # Logo del colegio (si existe)
     import os
+
     from django.conf import settings
     logo_path = os.path.join(settings.MEDIA_ROOT, 'logo_colegio.png')
     if not os.path.exists(logo_path):
@@ -208,12 +210,15 @@ def informe_ranking_curso(request):
 
 def _descargar_ranking(request, anio):
     import os
+
     from django.conf import settings
-    from notas.models import Nota
-    from asistencia.models import RegistroAsistencia
-    from anotaciones.models import Anotacion
-    from cursos.models import Curso
+
     from alumnos.models import Alumno
+    from anotaciones.models import Anotacion
+    from asistencia.models import RegistroAsistencia
+    from cursos.models import Curso
+    from notas.models import Nota
+
     from .pdf_reportes import generar_pdf_ranking_curso
 
     # Todos los períodos del año
@@ -316,11 +321,14 @@ def informe_fin_anio(request):
 
 def _descargar_fin_anio(request, anio, ids_sel):
     import os
+
     from django.conf import settings
-    from notas.models import Nota
-    from asistencia.models import RegistroAsistencia
-    from anotaciones.models import Anotacion
+
     from alumnos.models import Alumno
+    from anotaciones.models import Anotacion
+    from asistencia.models import RegistroAsistencia
+    from notas.models import Nota
+
     from .pdf_reportes import generar_pdf_fin_anio
 
     periodos = list(Periodo.objects.filter(pk__in=ids_sel).order_by('tipo', 'numero'))
@@ -498,14 +506,15 @@ def impresion_masiva(request):
 
 def _impresion_masiva_periodo(request, curso_id, periodo_id):
     """PDF masivo: todos los alumnos del curso en un período — una página por alumno."""
-    import os, io
+    import io as _io
+    import os
+
     from django.conf import settings
+
     from alumnos.models import Alumno
     from cursos.models import Curso
+
     from .pdf_generator import generar_pdf_informe
-    from reportlab.lib.pagesizes import A4
-    from reportlab.platypus import SimpleDocTemplate, PageBreak
-    import io as _io
 
     curso   = get_object_or_404(Curso, pk=curso_id)
     periodo = get_object_or_404(Periodo, pk=periodo_id)
@@ -538,9 +547,7 @@ def _impresion_masiva_periodo(request, curso_id, periodo_id):
             buffer.seek(0)
         except ImportError:
             # Fallback: concatenar bytes crudos no es válido — usar reportlab para merge
-            from reportlab.platypus import SimpleDocTemplate
             # Sin pypdf/PyPDF2 generamos un único PDF pasando todos los alumnos
-            from .pdf_reportes import generar_pdf_fin_anio as _gen_masivo
             # Reutilizamos el generador de fin de año pero con un solo período
             ids_sel_fake = [str(periodo.pk)]
             return _impresion_masiva_anual(request, curso_id, ids_sel_fake)
@@ -570,12 +577,15 @@ def _impresion_masiva_periodo(request, curso_id, periodo_id):
 def _impresion_masiva_anual(request, curso_id, ids_sel):
     """PDF masivo anual: todos los alumnos del curso — informe de fin de año."""
     import os
+
     from django.conf import settings
+
     from alumnos.models import Alumno
+    from anotaciones.models import Anotacion
+    from asistencia.models import RegistroAsistencia
     from cursos.models import Curso
     from notas.models import Nota
-    from asistencia.models import RegistroAsistencia
-    from anotaciones.models import Anotacion
+
     from .pdf_reportes import generar_pdf_fin_anio
 
     curso   = get_object_or_404(Curso, pk=curso_id)
@@ -610,7 +620,8 @@ def _impresion_masiva_anual(request, curso_id, ids_sel):
 
             todos_prom = [d['promedio'] for d in notas_por_asig.values() if d['promedio']]
             prom = round(sum(todos_prom)/len(todos_prom), 1) if todos_prom else None
-            if prom: promedios_validos.append(prom)
+            if prom:
+                promedios_validos.append(prom)
 
             asist    = RegistroAsistencia.objects.filter(alumno=alumno, fecha__gte=periodo.fecha_inicio, fecha__lte=periodo.fecha_fin)
             total    = asist.count()
@@ -622,7 +633,8 @@ def _impresion_masiva_anual(request, curso_id, ids_sel):
             anot = Anotacion.objects.filter(alumno=alumno, fecha__gte=periodo.fecha_inicio, fecha__lte=periodo.fecha_fin)
             pos  = anot.filter(tipo='positiva').count()
             neg  = anot.filter(tipo='negativa').count()
-            total_pos += pos; total_neg += neg
+            total_pos += pos
+            total_neg += neg
 
             resumen_periodos[periodo.pk] = {
                 'promedio': prom, 'notas_por_asignatura': notas_por_asig,

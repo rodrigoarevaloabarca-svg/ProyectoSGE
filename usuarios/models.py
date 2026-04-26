@@ -8,6 +8,7 @@ de autenticación de Django más los roles del colegio.
 """
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from usuarios.validators import validar_rut
 
 

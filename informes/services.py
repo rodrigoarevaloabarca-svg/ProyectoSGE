@@ -2,9 +2,9 @@
 Servicio de recopilación de datos para informes académicos.
 Centraliza la lógica de negocio separándola de las vistas HTTP.
 """
-from notas.models import Nota
-from asistencia.models import RegistroAsistencia
 from anotaciones.models import Anotacion
+from asistencia.models import RegistroAsistencia
+from notas.models import Nota
 
 
 class InformeService:

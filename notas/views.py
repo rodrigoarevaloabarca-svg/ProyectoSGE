@@ -2,18 +2,19 @@
 APP: notas
 ARCHIVO: views.py
 """
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .models import Nota, PromedioAsignatura
-from .forms import NotaForm
 from alumnos.models import Alumno
 from asignaturas.models import Asignatura
 from cursos.models import Curso
-from historial.utils import snapshot_nota, registrar_cambio_nota
+from historial.utils import registrar_cambio_nota, snapshot_nota
 from usuarios.decorators import puede_ver_alumno
+
+from .forms import NotaForm
+from .models import Nota, PromedioAsignatura
 
 
 def solo_profesor_o_admin(user):

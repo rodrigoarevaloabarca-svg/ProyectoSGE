@@ -7,8 +7,10 @@ Permite filtrar por módulo, usuario y rango de fechas.
 """
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
-from .models import HistorialCambio
+
 from usuarios.models import Usuario
+
+from .models import HistorialCambio
 
 
 def solo_admin(user):

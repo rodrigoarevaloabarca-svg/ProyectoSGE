@@ -1,9 +1,11 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
+
 from alumnos.models import Alumno
 from asignaturas.models import Asignatura
 from cursos.models import Curso, NivelEducacional
-from .models import Nota, TipoEvaluacion, PromedioAsignatura
+
+from .models import Nota, PromedioAsignatura, TipoEvaluacion
 
 Usuario = get_user_model()
 

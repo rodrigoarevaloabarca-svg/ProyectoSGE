@@ -6,6 +6,7 @@ Formulario para gestión de alumnos.
 Separado de views.py para mantener la separación de responsabilidades de Django.
 """
 from django import forms
+
 from .models import Alumno
 
 # Clase CSS compartida para todos los campos del formulario

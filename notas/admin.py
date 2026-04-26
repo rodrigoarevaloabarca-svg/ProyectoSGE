@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Nota, TipoEvaluacion, PromedioAsignatura
+
+from .models import Nota, PromedioAsignatura, TipoEvaluacion
+
+
 @admin.register(TipoEvaluacion)
 class TipoEvaluacionAdmin(admin.ModelAdmin):
     list_display = ['nombre', 'porcentaje_ponderacion']

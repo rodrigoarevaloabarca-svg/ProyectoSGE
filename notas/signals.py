@@ -5,9 +5,11 @@ ARCHIVO: signals.py
 Signals para recalcular promedios automáticamente al guardar/eliminar notas.
 """
 import logging
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
+
 from django.db import transaction
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+
 from .models import Nota, PromedioAsignatura
 
 logger = logging.getLogger(__name__)

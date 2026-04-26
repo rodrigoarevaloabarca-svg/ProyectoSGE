@@ -1,14 +1,15 @@
 """APP: asistencia - views.py"""
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import RegistroAsistencia
 from alumnos.models import Alumno
 from asignaturas.models import Asignatura
 from usuarios.decorators import puede_ver_alumno
+
+from .models import RegistroAsistencia
 
 
 @login_required

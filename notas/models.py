@@ -10,8 +10,8 @@ Relaciones:
     Nota -> Asignatura (ForeignKey)
     Nota -> creado_por/Usuario (ForeignKey, quién ingresó la nota)
 """
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
 
@@ -39,7 +39,7 @@ class TipoEvaluacion(models.Model):
 class Nota(models.Model):
     """
     Registro de una nota individual.
-    
+
     Escala chilena: 1.0 (mínimo) a 7.0 (máximo)
     Nota de aprobación: 4.0
     """
@@ -131,7 +131,7 @@ class PromedioAsignatura(models.Model):
     """
     Tabla de promedios calculados para optimizar consultas frecuentes.
     Se actualiza automáticamente vía signal cuando se guarda una Nota.
-    
+
     Este modelo funciona como caché de promedios.
     """
     alumno = models.ForeignKey(

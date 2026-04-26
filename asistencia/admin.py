@@ -1,5 +1,8 @@
 from django.contrib import admin
+
 from .models import RegistroAsistencia
+
+
 @admin.register(RegistroAsistencia)
 class AsistenciaAdmin(admin.ModelAdmin):
     list_display = ['alumno', 'asignatura', 'fecha', 'estado']

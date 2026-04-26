@@ -1,9 +1,10 @@
-from django.test import TestCase, Client
-from django.urls import reverse
 from django.contrib.auth import get_user_model
-from cursos.models import Curso, NivelEducacional
+from django.test import Client, TestCase
+from django.urls import reverse
+
 from alumnos.models import Alumno
 from apoderados.models import Apoderado
+from cursos.models import Curso, NivelEducacional
 
 Usuario = get_user_model()
 

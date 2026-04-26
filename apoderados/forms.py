@@ -1,5 +1,6 @@
 """APP: apoderados - forms.py"""
 from django import forms
+
 from .models import Apoderado
 
 INPUT  = "w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"

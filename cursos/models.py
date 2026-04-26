@@ -5,8 +5,8 @@ ARCHIVO: models.py
 Modelos para la estructura de cursos del sistema educacional chileno.
 Niveles: 1° a 8° Básico, 1° a 4° Medio
 """
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class NivelEducacional(models.Model):
@@ -36,7 +36,7 @@ class NivelEducacional(models.Model):
 class Curso(models.Model):
     """
     Un curso específico: ej. '3° Básico A', '1° Medio B'
-    
+
     Relaciones:
     - nivel: ForeignKey a NivelEducacional
     - profesor_jefe: ForeignKey a Profesor (nullable, un curso puede no tener jefe aún)

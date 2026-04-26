@@ -11,7 +11,6 @@ Relaciones:
     Alumno -> Apoderado (ForeignKey): alumno tiene un apoderado responsable
 """
 from django.db import models
-from django.core.validators import RegexValidator
 
 
 class Alumno(models.Model):
@@ -107,8 +106,8 @@ class Alumno(models.Model):
         Retorna un diccionario {asignatura: promedio} para el alumno.
         Útil para mostrar el libro de notas.
         """
-        from notas.models import Nota
         from asignaturas.models import Asignatura
+        from notas.models import Nota
 
         resultado = {}
         asignaturas = Asignatura.objects.filter(curso=self.curso)
