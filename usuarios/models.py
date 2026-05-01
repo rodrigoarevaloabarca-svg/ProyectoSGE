@@ -63,9 +63,22 @@ class Usuario(AbstractUser):
         verbose_name='Foto de perfil'
     )
 
+    email = models.EmailField(
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name='Correo electrónico',
+    )
+
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
+
+    def save(self, *args, **kwargs):
+        # Normaliza email vacío a NULL para respetar el UNIQUE constraint.
+        if self.email == '':
+            self.email = None
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.get_rol_display()})"

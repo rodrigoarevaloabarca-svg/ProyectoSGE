@@ -1,6 +1,9 @@
 import logging.handlers  # noqa: F401 — needed for RotatingFileHandler
+import os as _os
 
 from .base import *  # noqa: F401, F403
+
+_os.makedirs(BASE_DIR / 'logs', exist_ok=True)  # noqa: F405 — BASE_DIR viene de base.*
 
 DEBUG = False
 
@@ -19,12 +22,12 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+            'format': '{levelname} {asctime} {module} {process:d} {message}',
             'style': '{',
         },
     },
     'handlers': {
-        'file': {
+        'errores': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'errores.log',  # noqa: F405
@@ -32,12 +35,25 @@ LOGGING = {
             'backupCount': 5,
             'formatter': 'verbose',
         },
+        'seguridad': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'seguridad.log',  # noqa: F405
+            'maxBytes': 5 * 1024 * 1024,
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['errores'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'sge.seguridad': {
+            'handlers': ['seguridad'],
+            'level': 'WARNING',
+            'propagate': False,
         },
     },
 }

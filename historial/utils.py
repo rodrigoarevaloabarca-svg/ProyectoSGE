@@ -58,3 +58,22 @@ def registrar_cambio_anotacion(anotacion_antes, anotacion_despues, usuario, acci
         datos_antes        = {k: v for k, v in anotacion_antes.items() if not k.startswith('_')},
         datos_despues      = anotacion_despues,
     )
+
+
+def registrar_evento_usuario(usuario_pk, accion, datos, modificado_por=None, descripcion=''):
+    """Registra un evento de seguridad asociado a un usuario (login, logout, cambio de rol, etc.)."""
+    from django.apps import apps
+    Usuario = apps.get_model('usuarios', 'Usuario')
+    try:
+        usuario = Usuario.objects.get(pk=usuario_pk)
+    except Usuario.DoesNotExist:
+        return
+    HistorialCambio.objects.create(
+        modelo             = HistorialCambio.MODELO_USUARIO,
+        objeto_id          = usuario_pk,
+        accion             = accion,
+        modificado_por     = modificado_por,
+        descripcion_objeto = descripcion or str(usuario),
+        datos_antes        = datos,
+        datos_despues      = None,
+    )

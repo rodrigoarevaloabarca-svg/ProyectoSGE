@@ -13,18 +13,32 @@ class HistorialCambio(models.Model):
 
     MODELO_NOTA      = 'nota'
     MODELO_ANOTACION = 'anotacion'
+    MODELO_USUARIO   = 'usuario'
 
     MODELOS = [
         (MODELO_NOTA,      'Nota'),
         (MODELO_ANOTACION, 'Anotación'),
+        (MODELO_USUARIO,   'Usuario'),
     ]
 
-    ACCION_EDICION    = 'edicion'
-    ACCION_ELIMINACION = 'eliminacion'
+    ACCION_EDICION          = 'edicion'
+    ACCION_ELIMINACION      = 'eliminacion'
+    ACCION_LOGIN            = 'login'
+    ACCION_LOGOUT           = 'logout'
+    ACCION_LOGIN_FALLIDO    = 'login_fallido'
+    ACCION_CAMBIO_CONTRASENA = 'cambio_contrasena'
+    ACCION_CAMBIO_ROL       = 'cambio_rol'
+    ACCION_DESACTIVACION    = 'desactivacion'
 
     ACCIONES = [
-        (ACCION_EDICION,     'Edición'),
-        (ACCION_ELIMINACION, 'Eliminación'),
+        (ACCION_EDICION,           'Edición'),
+        (ACCION_ELIMINACION,       'Eliminación'),
+        (ACCION_LOGIN,             'Inicio de sesión'),
+        (ACCION_LOGOUT,            'Cierre de sesión'),
+        (ACCION_LOGIN_FALLIDO,     'Intento fallido'),
+        (ACCION_CAMBIO_CONTRASENA, 'Cambio de contraseña'),
+        (ACCION_CAMBIO_ROL,        'Cambio de rol'),
+        (ACCION_DESACTIVACION,     'Desactivación'),
     ]
 
     modelo = models.CharField(

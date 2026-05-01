@@ -2,6 +2,7 @@
 Configuración base compartida por todos los entornos.
 No usar directamente — importar desde development.py, production.py o testing.py.
 """
+import datetime
 import os
 from pathlib import Path
 
@@ -43,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'axes',
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
     'usuarios',
     'alumnos',
     'profesores',
@@ -64,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -124,10 +129,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AXES_FAILURE_LIMIT      = 5
-AXES_COOLOFF_TIME       = 1
+AXES_COOLOFF_TIME       = datetime.timedelta(hours=3)
 AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
 AXES_RESET_ON_SUCCESS   = True
 AXES_ENABLE_ADMIN       = True
+
+OTP_TOTP_ISSUER = env('OTP_TOTP_ISSUER', 'SGE Colegio')
 
 LANGUAGE_CODE = 'es-cl'
 TIME_ZONE     = 'America/Santiago'

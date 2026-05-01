@@ -101,14 +101,14 @@
     {# ── Columna derecha ── #}
     <div class="lg:col-span-2 space-y-6">
 
-        {# ── SOLO admin y profesor pueden editar datos ── #}
-        {% if user.es_admin  %} <!-- or user.es_profesor /agregar dependiendo de si quieres o no q lo edite el profesor-->
+        {# ── Todos los usuarios pueden editar sus datos básicos ── #}
+        {% if form %}
         <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
             <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-6 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary">edit</span>
                 Editar Datos Personales
             </h3>
-            <form method="POST" class="space-y-5">
+            <form method="POST" enctype="multipart/form-data" class="space-y-5">
                 {% csrf_token %}
                 {% for field in form %}
                 <div>
@@ -137,45 +137,6 @@
             </form>
         </div>
 
-        {% else %}
-        {# ── Alumnos y apoderados: solo ven sus datos, no pueden editarlos ── #}
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
-            <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-2 flex items-center gap-2">
-                <span class="material-symbols-outlined text-muted-blue">info</span>
-                Datos Personales
-            </h3>
-            <p class="text-muted-blue text-sm mb-6">
-                Para modificar tus datos personales, contacta al administrador del sistema.
-            </p>
-            <div class="space-y-4 text-sm">
-                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
-                    <span class="text-muted-blue font-medium">Nombre completo</span>
-                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.get_full_name|default:"—" }}</span>
-                </div>
-                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
-                    <span class="text-muted-blue font-medium">Usuario</span>
-                    <span class="font-mono text-sm text-slate-500">{{ user.username }}</span>
-                </div>
-                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
-                    <span class="text-muted-blue font-medium">Email</span>
-                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.email|default:"—" }}</span>
-                </div>
-                <div class="flex justify-between py-3 border-b border-soft-grey dark:border-slate-800">
-                    <span class="text-muted-blue font-medium">RUT</span>
-                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.rut|default:"—" }}</span>
-                </div>
-                <div class="flex justify-between py-3">
-                    <span class="text-muted-blue font-medium">Teléfono</span>
-                    <span class="font-semibold text-navy-deep dark:text-white">{{ user.telefono|default:"—" }}</span>
-                </div>
-            </div>
-            <div class="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
-                <p class="text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">info</span>
-                    ¿Necesitas actualizar tu información? Contacta a secretaría o al administrador del sistema.
-                </p>
-            </div>
-        </div>
         {% endif %}
 
         {# Cambiar contraseña — todos pueden cambiarla #}
@@ -184,12 +145,38 @@
                 <span class="material-symbols-outlined text-amber-500">lock_reset</span>
                 Cambiar Contraseña
             </h3>
-            <p class="text-muted-blue text-sm mb-5">Por seguridad, usa una contraseña con al menos 8 caracteres.</p>
+            <p class="text-muted-blue text-sm mb-5">Mínimo 12 caracteres, no uses contraseñas comunes.</p>
             <a href="{% url 'password_change' %}"
                class="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-amber-100 transition-all border border-amber-200 dark:border-amber-800">
                 <span class="material-symbols-outlined text-sm">lock</span>
                 Ir a Cambiar Contraseña
             </a>
+        </div>
+
+        {# Autenticación de dos factores #}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-soft-grey dark:border-slate-800 shadow-sm p-8">
+            <h3 class="text-lg font-bold text-navy-deep dark:text-white mb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined {% if tiene_2fa %}text-emerald-500{% else %}text-slate-400{% endif %}">security</span>
+                Autenticación de Dos Factores (2FA)
+            </h3>
+            {% if tiene_2fa %}
+            <p class="text-emerald-600 dark:text-emerald-400 text-sm mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">verified</span>
+                2FA está activo en tu cuenta.
+            </p>
+            <a href="{% url 'usuarios:enrollar_2fa' %}"
+               class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all border border-slate-200 dark:border-slate-700">
+                <span class="material-symbols-outlined text-sm">settings</span>
+                Gestionar dispositivo 2FA
+            </a>
+            {% else %}
+            <p class="text-muted-blue text-sm mb-4">Añade una capa extra de seguridad con una aplicación autenticadora (Google Authenticator, Authy, etc.).</p>
+            <a href="{% url 'usuarios:enrollar_2fa' %}"
+               class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-100 transition-all border border-emerald-200 dark:border-emerald-800">
+                <span class="material-symbols-outlined text-sm">add_circle</span>
+                Activar 2FA
+            </a>
+            {% endif %}
         </div>
 
     </div>
