@@ -19,7 +19,7 @@ Incluir en el reporte:
 
 | Componente | Versión | Soporte hasta |
 |---|---|---|
-| SGE | 1.1.x | Activo |
+| SGE | 1.2.x | Activo |
 | Django | 6.0.x | Abril 2028 |
 | Python | 3.10+ | Octubre 2026 |
 | MySQL | 8.0+ | Abril 2028 |
@@ -108,30 +108,54 @@ Django settings de producción (`SGE/settings/production.py`):
 ## Medidas de seguridad implementadas
 
 ### Autenticación y autorización
-- `django-axes`: bloqueo tras 5 intentos fallidos de login durante 1 hora
-- Contraseñas con mínimo 12 caracteres y validadores de complejidad
+
+- **2FA TOTP** (`django-otp`): enrollment disponible para todos los usuarios en `/usuarios/2fa/`. El panel `/admin/` requiere verificación OTP si hay un dispositivo enrollado.
+- `django-axes`: bloqueo tras 5 intentos fallidos de login durante **3 horas**
+- Contraseñas con mínimo 12 caracteres y validadores de complejidad de Django
 - Sesión expira al cerrar el navegador (`SESSION_EXPIRE_AT_BROWSER_CLOSE = True`)
+- `update_session_auth_hash()` preserva la sesión activa al cambiar contraseña, invalidando las demás
 - Control de acceso por rol en todas las vistas (decoradores `solo_admin`, `solo_admin_o_profesor`)
+- Email con `UNIQUE` constraint en base de datos; emails vacíos almacenados como `NULL`
 
 ### IDOR (Insecure Direct Object Reference)
+
 - Decorador `@puede_ver_alumno` valida que el usuario tiene derecho a acceder al alumno en la URL
 - Profesores solo ven alumnos de sus propias asignaturas
 - Apoderados solo ven a sus pupilos registrados
 - Alumnos solo ven su propio perfil
 
 ### Inyección y XSS
+
 - ORM de Django con queries parametrizadas — sin SQL crudo en vistas
 - `html.escape()` en comentarios de informes antes de renderizar con ReportLab
 - CSRF habilitado globalmente (middleware `CsrfViewMiddleware`)
 
 ### Subida de archivos
+
 - Validación de magic bytes con PIL (verifica que el archivo sea realmente una imagen)
 - Límite de 2 MB por archivo de foto de perfil
 - Solo se aceptan extensiones: `.jpg`, `.jpeg`, `.png`, `.webp`
 
 ### Rate limiting
-- Login: `django-axes` (5 intentos → 1 hora de bloqueo)
+
+- Login: `django-axes` (5 intentos → 3 horas de bloqueo)
 - Formulario de contacto: cooldown de 60 segundos por sesión
+- Reset de contraseña: cooldown de 120 segundos entre solicitudes por sesión
+
+### Auditoría y trazabilidad
+
+Los siguientes eventos quedan registrados en `HistorialCambio` **y** en `logs/seguridad.log`:
+
+| Evento | Nivel de log | En historial DB |
+|--------|:------------:|:---------------:|
+| Login exitoso | INFO | ✅ |
+| Logout | INFO | ✅ |
+| Login fallido | WARNING | ❌ (axes lo persiste) |
+| Cambio de contraseña | WARNING | ✅ |
+| Cambio de rol | WARNING | ✅ |
+| Desactivación de cuenta | WARNING | ✅ |
+
+El archivo `logs/seguridad.log` se crea automáticamente y rota en 5 MB (10 backups).
 
 ---
 
@@ -164,5 +188,6 @@ Antes de poner en producción, verificar:
 - [ ] Carpeta `media/` fuera de la raíz pública o acceso controlado
 - [ ] Archivo `.env` con permisos `600` (`chmod 600 .env`)
 - [ ] `GROQ_API_KEY` rotada si alguna vez estuvo en el historial de git
-- [ ] Logs activos y directorio `logs/` con permisos de escritura para el proceso
+- [ ] Directorio `logs/` con permisos de escritura para el proceso WSGI (se crea automáticamente, verificar que no falle)
+- [ ] **2FA enrollado por el administrador** antes de abrir acceso a terceros (ir a Mi Perfil → Activar 2FA)
 - [ ] `python manage.py check --deploy` sin errores críticos

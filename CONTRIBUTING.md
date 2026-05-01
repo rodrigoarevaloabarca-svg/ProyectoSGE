@@ -85,6 +85,7 @@ Archivo `.env` (basado en `.env.example`):
 | `EMAIL_HOST_USER` | Correo Gmail para envío (solo producción) | `noreply@colegio.cl` |
 | `EMAIL_HOST_PASSWORD` | App password Gmail (solo producción) | |
 | `CSRF_TRUSTED_ORIGINS` | Orígenes confiables (solo producción) | `https://example.com` |
+| `OTP_TOTP_ISSUER` | Nombre en apps autenticadoras (opcional) | `SGE Colegio` |
 
 Generar una `SECRET_KEY`:
 ```bash
@@ -280,9 +281,10 @@ datos = InformeService.recopilar_datos(alumno, periodo)
 notas = Nota.objects.filter(alumno=alumno, ...)
 ```
 
-### Auditoría
+### Auditoría académica
 
 Cuando una vista modifica una nota o anotación, registrar el cambio:
+
 ```python
 from historial.utils import snapshot_nota, registrar_cambio_nota
 
@@ -291,6 +293,38 @@ nota.save()
 despues = snapshot_nota(nota)
 registrar_cambio_nota(antes, despues, request.user)
 ```
+
+### Auditoría de eventos de usuario
+
+Para eventos de seguridad sobre un usuario (cambio de rol, desactivación, etc.):
+
+```python
+from historial.models import HistorialCambio
+from historial.utils import registrar_evento_usuario
+
+registrar_evento_usuario(
+    usuario_pk=usuario.pk,
+    accion=HistorialCambio.ACCION_CAMBIO_ROL,   # o ACCION_DESACTIVACION, etc.
+    datos={'campo': 'valor_anterior'},
+    modificado_por=request.user,
+    descripcion=str(usuario),
+)
+```
+
+Los eventos de login/logout/login_fallido se registran **automáticamente** mediante señales Django en `usuarios/signals.py`. No es necesario llamarlos desde las vistas.
+
+### Logging de seguridad
+
+Usar el logger `sge.seguridad` para eventos de seguridad en vistas:
+
+```python
+import logging
+logger = logging.getLogger('sge.seguridad')
+
+logger.warning('ACCIÓN_CRÍTICA | usuario=%s | ip=%s', username, ip)
+```
+
+En desarrollo, los mensajes van a la consola. En producción, se escriben en `logs/seguridad.log`.
 
 ---
 
@@ -328,6 +362,14 @@ from usuarios.decorators import solo_admin, solo_admin_o_profesor, puede_ver_alu
 ### IDOR
 
 El decorador `@puede_ver_alumno` valida que el usuario tiene derecho a ver al alumno especificado en la URL. Aplicar **siempre** en vistas que reciben un `alumno_id` o `pk` en la URL y devuelven datos del alumno.
+
+### Perfil de usuario
+
+Todos los roles pueden editar sus propios datos básicos (nombre, email, RUT, teléfono, foto) usando `UsuarioPerfilForm`. Solo los admins pueden cambiar el `rol` o `is_active` de otros usuarios (via `UsuarioEdicionForm` en la vista `editar_usuario`).
+
+### 2FA
+
+El 2FA es opcional pero recomendado para administradores. El enrollment se hace desde la página de perfil. En desarrollo no es necesario configurarlo. El panel `/admin/` solo exige OTP si el usuario tiene un dispositivo TOTP confirmado.
 
 ---
 

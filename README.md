@@ -29,11 +29,11 @@ Centraliza el manejo de **alumnos, notas, asistencia, anotaciones, informes PDF 
 | **Anotaciones** | Positivas y negativas por alumno, categorizadas, con firma de apoderado y historial auditado |
 | **Informes PDF** | Individual por alumno/período, ranking por curso, informe de fin de año, impresión masiva (pypdf) |
 | **Notificaciones** | Mensajería interna 1:1 y envíos masivos a apoderados, profesores o cursos específicos |
-| **Auditoría** | Historial completo de cambios en notas y anotaciones con snapshots JSON antes/después |
+| **Auditoría** | Historial de cambios académicos (notas, anotaciones) y eventos de seguridad (login, logout, cambio de rol, contraseña) |
 | **IA académica** | Análisis de riesgo por alumno y chatbot pedagógico mediante Groq (llama-3.1-8b-instant) |
 | **Dark / Light mode** | Persistente por navegador, sin flash de tema al cargar |
 | **Responsive** | Menú hamburguesa en móvil, diseño adaptable a cualquier pantalla |
-| **Seguridad** | IDOR prevention, django-axes, CSRF, HSTS, cookies seguras, validación de imágenes con PIL |
+| **Seguridad** | IDOR prevention, 2FA TOTP, django-axes (bloqueo 3 h), CSRF, HSTS, cookies seguras, auditoría de sesiones, logs de seguridad |
 
 ---
 
@@ -44,7 +44,7 @@ Backend     →  Django 6.0 + MySQL 8.0
 Frontend    →  Tailwind CSS 3.x + Material Symbols
 PDF         →  ReportLab + pypdf
 IA          →  Groq API (llama-3.1-8b-instant)
-Auth        →  Django Auth + AbstractUser + django-axes
+Auth        →  Django Auth + AbstractUser + django-axes + django-otp (2FA TOTP)
 CI/CD       →  GitHub Actions (lint + test en MySQL)
 Deploy      →  Gunicorn + Alwaysdata (WSGI)
 ```
@@ -192,7 +192,9 @@ ProyectoSGE/
 |--------|:-----:|:--------:|:------:|:---------:|
 | Gestionar usuarios | ✅ | ❌ | ❌ | ❌ |
 | Ver cualquier alumno | ✅ | ✅ | ❌ | ❌ |
-| Ver propio perfil | ✅ | ✅ | ✅ | ❌ |
+| Editar propio perfil (nombre, email, RUT, teléfono, foto) | ✅ | ✅ | ✅ | ✅ |
+| Cambiar contraseña propia | ✅ | ✅ | ✅ | ✅ |
+| Configurar 2FA propio | ✅ | ✅ | ✅ | ✅ |
 | Ver sus pupilos | ✅ | ✅ | ❌ | ✅ |
 | Crear / editar alumnos | ✅ | ❌ | ❌ | ❌ |
 | Gestionar cursos y asignaturas | ✅ | ❌ | ❌ | ❌ |
@@ -304,6 +306,15 @@ En **Web → Static files**:
 |-----|------------|
 | `/static/` | `/home/TU_CUENTA/ProyectoSGE/staticfiles/` |
 | `/media/` | `/home/TU_CUENTA/ProyectoSGE/media/` |
+
+### Configurar 2FA para el administrador (recomendado)
+
+Una vez creado el superusuario e iniciada sesión:
+
+1. Ir a **Mi Perfil → Activar 2FA**
+2. Escanear el código QR con Google Authenticator, Authy u otra app TOTP
+3. Ingresar el código de 6 dígitos para confirmar
+4. A partir de ahora, el acceso a `/admin/` requerirá el código TOTP
 
 ### Verificar despliegue seguro
 
