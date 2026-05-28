@@ -3,7 +3,23 @@ from django.shortcuts import render
 
 
 def pagina_colegio(request):
-    return render(request, "colegio.html")
+    documentos = [
+        {
+            "icono": "gavel",
+            "titulo": "Reglamento Interno",
+            "resumen": "Normas de convivencia, derechos y deberes de los estudiantes, protocolos de actuación ante faltas, medidas disciplinarias, y disposiciones generales para la sana convivencia escolar.",
+            "archivo": "doc/reglamento.pdf",
+            "tamano": "2.4 MB",
+        },
+        {
+            "icono": "assignment",
+            "titulo": "Reglamento de Evaluación",
+            "resumen": "Criterios de promoción, escalas de calificación (1.0 a 7.0), procedimientos de evaluación diferenciada, eximición, y requisitos de asistencia para la promoción escolar.",
+            "archivo": "doc/reglamento_evaluaciones.pdf",
+            "tamano": "1.8 MB",
+        },
+    ]
+    return render(request, "colegio.html", {"documentos": documentos})
 
 
 def sobre_nosotros(request):

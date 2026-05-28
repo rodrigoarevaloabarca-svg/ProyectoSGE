@@ -870,6 +870,118 @@ section {
   font-weight: 600
 }
 
+.sreg {
+  background: var(--bg2)
+}
+
+.rg {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 3rem
+}
+
+.rc {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform .2s, box-shadow .22s, background .3s, border-color .3s
+}
+
+[data-theme="dark"] .rc {
+  background: #1e2230
+}
+
+.rc:hover {
+  transform: translateY(-4px)
+}
+
+[data-theme="dark"] .rc:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .5)
+}
+
+[data-theme="light"] .rc:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .1)
+}
+
+.rci {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  margin-bottom: 1.25rem;
+  transition: background .3s
+}
+
+.rch {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  color: var(--text);
+  margin-bottom: .75rem;
+  transition: color .3s
+}
+
+[data-theme="dark"] .rch {
+  color: #f0ede6
+}
+
+.rcp {
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.75;
+  flex: 1;
+  margin-bottom: 1.25rem;
+  transition: color .3s
+}
+
+.rcm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .02em;
+  margin-bottom: 1rem;
+  transition: color .3s
+}
+
+.rcm .ic {
+  font-size: 16px
+}
+
+.rcb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--red);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 11px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background .18s, transform .12s;
+  letter-spacing: -.01em;
+  width: fit-content
+}
+
+.rcb:hover {
+  background: var(--red2);
+  transform: translateY(-2px)
+}
+
 .scon {
   background: var(--bg)
 }

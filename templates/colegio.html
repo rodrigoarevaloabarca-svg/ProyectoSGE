@@ -37,6 +37,7 @@
         <li><a href="#mision">Misión &amp; Visión</a></li>
         <li><a href="#pilares">Programas</a></li>
         <li><a href="#galeria">Comunidad</a></li>
+        <li><a href="#reglamento">Reglamentos</a></li>
         <li><a href="#contacto">Admisiones 2027</a></li>
         <li><a href="{% url 'plataforma' %}" class="np">
             <span class="ic" style="font-size:15px">lock</span>Plataforma
@@ -67,6 +68,7 @@
         <a href="#mision" class="ml" onclick="closeMob()">Misión &amp; Visión</a>
         <a href="#pilares" class="ml" onclick="closeMob()">Programas</a>
         <a href="#galeria" class="ml" onclick="closeMob()">Comunidad</a>
+        <a href="#reglamento" class="ml" onclick="closeMob()">Reglamentos</a>
         <a href="#contacto" class="ml" onclick="closeMob()">Admisiones 2027</a>
         <button class="mob-theme" onclick="toggleTheme()">
           Cambiar a modo <span id="mtl">claro</span>
@@ -210,6 +212,30 @@
             alt="Vida Cultural" />
           <div class="gc"><span>Desfiles</span></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── REGLAMENTOS ──────────────────────────────────────────────────────────── -->
+  <section class="sreg" id="reglamento">
+    <div class="sec">
+      <div class="fu">
+        <span class="ey">Documentos Oficiales</span>
+        <h2 class="sh">Reglamentos</h2>
+        <p class="sp">Conoce los documentos normativos que rigen nuestra comunidad educativa.</p>
+      </div>
+      <div class="rg">
+        {% for doc in documentos %}
+        <div class="rc fu">
+          <div class="rci"><span class="ic">{{ doc.icono }}</span></div>
+          <h3 class="rch">{{ doc.titulo }}</h3>
+          <p class="rcp">{{ doc.resumen }}</p>
+          <div class="rcm"><span class="ic">description</span> PDF · {{ doc.tamano }}</div>
+          <a href="{% static doc.archivo %}" class="rcb" download>
+            <span class="ic">download</span> Descargar
+          </a>
+        </div>
+        {% endfor %}
       </div>
     </div>
   </section>
