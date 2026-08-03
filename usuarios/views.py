@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView as _PasswordChangeView
+from django.contrib.auth.views import PasswordResetConfirmView as _PasswordResetConfirmView
 from django.contrib.auth.views import PasswordResetView as _PasswordResetView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -20,8 +21,45 @@ logger = logging.getLogger('sge.seguridad')
 _RESET_COOLDOWN = 120  # segundos entre solicitudes de reset
 
 
+class ResetConfirmContrasenaView(_PasswordResetConfirmView):
+    """Confirmación de restablecimiento de contraseña con registro de auditoría."""
+    template_name = 'registration/password_reset_confirm.html'
+    success_url   = reverse_lazy('password_reset_complete')
+
+    def dispatch(self, *args, **kwargs):
+        response = super().dispatch(*args, **kwargs)
+        if getattr(response, 'status_code', None) == 200 and hasattr(self, 'validlink') and not self.validlink:
+            logger.warning(
+                'RESET CONTRASEÑA | Enlace inválido o expirado | uid=%s | ip=%s',
+                kwargs.get('uidb64', '—'),
+                self.request.META.get('REMOTE_ADDR', '—'),
+            )
+        return response
+
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        from historial.models import HistorialCambio
+        from historial.utils import registrar_evento_usuario
+        ip = self.request.META.get('REMOTE_ADDR', '—')
+        logger.warning(
+            'RESET CONTRASEÑA COMPLETADO | usuario=%s | ip=%s',
+            self.user.username if hasattr(self, 'user') and self.user else '—',
+            ip,
+        )
+        if hasattr(self, 'user') and self.user:
+            registrar_evento_usuario(
+                usuario_pk=self.user.pk,
+                accion=HistorialCambio.ACCION_CAMBIO_CONTRASENA,
+                datos={'ip': ip, 'motivo': 'Restablecimiento de contraseña por correo'},
+                modificado_por=self.user,
+            )
+        return response
+
+
 def solo_admin(user):
     return user.is_authenticated and user.es_admin
+
 
 
 # ── Autenticación ─────────────────────────────────────────────────────────────

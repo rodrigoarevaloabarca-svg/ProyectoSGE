@@ -155,7 +155,8 @@ LOGOUT_REDIRECT_URL = '/usuarios/login/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE      = 60 * 60 * 8
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Lax'
+PASSWORD_RESET_TIMEOUT  = 86400  # 24 horas en segundos
 
 from django.contrib.messages import constants as messages  # noqa: E402
 

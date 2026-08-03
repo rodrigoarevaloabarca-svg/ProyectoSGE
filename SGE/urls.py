@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 from django.urls import include, path
 
 from SGE.views import error_400, error_403, error_404, error_500
-from usuarios.views import CambioContrasenaView, ResetContrasenaView
+from usuarios.views import CambioContrasenaView, ResetConfirmContrasenaView, ResetContrasenaView
 
 from . import views
 
@@ -23,13 +23,9 @@ try:
         def has_permission(self, request):
             if not super(OTPAdminSite.__bases__[0], self).has_permission(request):
                 return False
-            try:
-                from django_otp.plugins.otp_totp.models import TOTPDevice
-                if not TOTPDevice.objects.filter(user=request.user, confirmed=True).exists():
-                    return True  # sin dispositivo: acceso permitido para poder enrollar
-            except Exception:
-                return True
-            return request.user.is_verified()
+            if request.user.is_authenticated and hasattr(request.user, 'totpdevice_set') and request.user.totpdevice_set.filter(confirmed=True).exists():
+                return request.user.is_verified()
+            return True
 
     admin.site.__class__ = _SGEAdminSite
 except ImportError:
@@ -55,7 +51,7 @@ urlpatterns = [
     path("accounts/password_reset/done/",
          auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("accounts/reset/<uidb64>/<token>/",
-         auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+         ResetConfirmContrasenaView.as_view(), name="password_reset_confirm"),
     path("accounts/reset/done/",
          auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
     # Apps del sistema
