@@ -21,13 +21,18 @@ try:
     class _SGEAdminSite(OTPAdminSite):
         """Requiere 2FA solo si el usuario ya tiene un dispositivo enrollado."""
         def has_permission(self, request):
-            if not super(OTPAdminSite.__bases__[0], self).has_permission(request):
+            if not admin.sites.AdminSite.has_permission(self, request):
                 return False
-            if request.user.is_authenticated and hasattr(request.user, 'totpdevice_set') and request.user.totpdevice_set.filter(confirmed=True).exists():
-                return request.user.is_verified()
+            try:
+                if request.user.is_authenticated and hasattr(request.user, 'totpdevice_set') and request.user.totpdevice_set.filter(confirmed=True).exists():
+                    return request.user.is_verified()
+            except Exception:
+                pass
             return True
 
+
     admin.site.__class__ = _SGEAdminSite
+
 except ImportError:
     pass
 
