@@ -46,3 +46,8 @@ media/
 .claude
 CLAUDE.md
 docs/
+
+# ── Archivos de datos sensibles / CSV / Excel ────────────
+*.csv
+*.xlsx
+*.xls
