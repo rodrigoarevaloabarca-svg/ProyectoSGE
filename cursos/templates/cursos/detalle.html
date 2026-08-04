@@ -101,42 +101,43 @@
             <table class="w-full text-sm">
                 <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase">
                     <tr>
-                        <th class="px-6 py-3 text-left">Alumno</th>
-                        <th class="px-6 py-3 text-left">RUT</th>
-                        <th class="px-6 py-3 text-center">Promedio</th>
-                        <th class="px-6 py-3 text-center">Asistencia</th>
-                        <th class="px-6 py-3 text-center">Ver</th>
+                        <th class="px-6 py-3 text-left whitespace-nowrap">Alumno</th>
+                        <th class="px-6 py-3 text-left whitespace-nowrap">RUT</th>
+                        <th class="px-6 py-3 text-center whitespace-nowrap">Promedio</th>
+                        <th class="px-6 py-3 text-center whitespace-nowrap">Asistencia</th>
+                        <th class="px-6 py-3 text-center whitespace-nowrap">Ver</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
                     {% for alumno in alumnos %}
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                        <td class="px-6 py-3">
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <div class="flex items-center gap-3">
-                                <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                                <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
                                     {{ alumno.usuario.first_name|slice:":1" }}{{ alumno.usuario.last_name|slice:":1" }}
                                 </div>
-                                <span class="font-medium text-navy-deep dark:text-white">{{ alumno.nombre_completo }}</span>
+                                <span class="font-medium text-navy-deep dark:text-white whitespace-nowrap">{{ alumno.nombre_completo }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-3 text-muted-blue font-mono text-xs">{{ alumno.rut|default:"—" }}</td>
-                        <td class="px-6 py-3 text-center font-bold
+                        <td class="px-6 py-3 text-muted-blue font-mono text-xs whitespace-nowrap">{{ alumno.rut|default:"—" }}</td>
+                        <td class="px-6 py-3 text-center font-bold whitespace-nowrap
                             {% with p=alumno.get_promedio_general %}
                             {% if p >= 4.0 %}text-emerald-600{% elif p %}text-red-500{% else %}text-slate-300{% endif %}">
                             {{ alumno.get_promedio_general|default:"—" }}
                             {% endwith %}
                         </td>
-                        <td class="px-6 py-3 text-center">
+                        <td class="px-6 py-3 text-center whitespace-nowrap">
                             {% with a=alumno.get_porcentaje_asistencia %}
                             <span class="font-semibold {% if a >= 85 %}text-emerald-600{% elif a %}text-amber-500{% else %}text-slate-300{% endif %}">
                                 {% if a %}{{ a }}%{% else %}—{% endif %}
                             </span>
                             {% endwith %}
                         </td>
-                        <td class="px-6 py-3 text-center">
+                        <td class="px-6 py-3 text-center whitespace-nowrap">
                             <a href="{% url 'alumnos:detalle' alumno.pk %}" class="text-primary hover:underline text-xs font-bold">Ver</a>
                         </td>
                     </tr>
+
                     {% empty %}
                     <tr><td colspan="5" class="px-6 py-8 text-center text-muted-blue">Sin alumnos en este curso.</td></tr>
                     {% endfor %}

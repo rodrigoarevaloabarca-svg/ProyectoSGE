@@ -24,38 +24,39 @@
         <table class="w-full text-sm" id="tabla">
             <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
                 <tr>
-                    <th class="px-6 py-3 text-left">Apoderado</th>
-                    <th class="px-6 py-3 text-left">Parentesco</th>
-                    <th class="px-6 py-3 text-left">Contacto</th>
-                    <th class="px-6 py-3 text-center">Pupilos</th>
-                    <th class="px-6 py-3 text-center">Acciones</th>
+                    <th class="px-6 py-3 text-left whitespace-nowrap">Apoderado</th>
+                    <th class="px-6 py-3 text-left whitespace-nowrap">Parentesco</th>
+                    <th class="px-6 py-3 text-left whitespace-nowrap">Contacto</th>
+                    <th class="px-6 py-3 text-center whitespace-nowrap">Pupilos</th>
+                    <th class="px-6 py-3 text-center whitespace-nowrap">Acciones</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
                 {% for apoderado in apoderados %}
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center gap-3">
-                            <div class="size-9 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm">
+                            <div class="size-9 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm shrink-0">
                                 {{ apoderado.usuario.first_name|slice:":1" }}{{ apoderado.usuario.last_name|slice:":1" }}
                             </div>
                             <div>
-                                <p class="font-semibold text-navy-deep dark:text-white">{{ apoderado.nombre_completo }}</p>
-                                <p class="text-xs text-muted-blue">{{ apoderado.usuario.rut|default:"Sin RUT" }}</p>
+                                <p class="font-semibold text-navy-deep dark:text-white whitespace-nowrap">{{ apoderado.nombre_completo }}</p>
+                                <p class="text-xs text-muted-blue font-mono whitespace-nowrap">{{ apoderado.usuario.rut|default:"Sin RUT" }}</p>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-bold">{{ apoderado.parentesco|default:"—" }}</span>
                     </td>
-                    <td class="px-6 py-4">
-                        <p class="text-sm text-muted-blue">{{ apoderado.usuario.email|default:"—" }}</p>
-                        <p class="text-xs text-slate-400">{{ apoderado.usuario.telefono|default:"Sin teléfono" }}</p>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <p class="text-sm text-muted-blue whitespace-nowrap">{{ apoderado.usuario.email|default:"—" }}</p>
+                        <p class="text-xs text-slate-400 whitespace-nowrap">{{ apoderado.usuario.telefono|default:"Sin teléfono" }}</p>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-4 text-center whitespace-nowrap">
                         <span class="font-bold text-primary text-lg">{{ apoderado.alumnos.count }}</span>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-4 text-center whitespace-nowrap">
+
                         <div class="flex items-center justify-center gap-2">
                             <a href="{% url 'apoderados:detalle' apoderado.pk %}" class="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
                                 <span class="material-symbols-outlined text-sm">visibility</span>

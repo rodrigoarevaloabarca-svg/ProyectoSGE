@@ -104,18 +104,18 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
-                        <th class="px-4 py-3 text-left">Curso</th>
-                        <th class="px-4 py-3 text-left">Nivel</th>
-                        <th class="px-4 py-3 text-left">Profesor Jefe</th>
-                        <th class="px-4 py-3 text-center">Alumnos</th>
-                        <th class="px-4 py-3 text-center">Acción</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">Curso</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">Nivel</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">Profesor Jefe</th>
+                        <th class="px-4 py-3 text-center whitespace-nowrap">Alumnos</th>
+                        <th class="px-4 py-3 text-center whitespace-nowrap">Acción</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
                     {% for curso in cursos %}
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                        <td class="px-4 py-3 font-bold text-navy-deep dark:text-white">{{ curso }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-4 py-3 font-bold text-navy-deep dark:text-white whitespace-nowrap">{{ curso }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">
                             {# Color según tipo de nivel: basica=azul, media=verde #}
                             <span class="px-2 py-1 rounded-full text-xs font-bold
                                 {% if curso.nivel.tipo == 'basica' %}bg-blue-100 text-blue-700
@@ -123,16 +123,17 @@
                                 {{ curso.nivel.nombre }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-muted-blue dark:text-slate-400">
+                        <td class="px-4 py-3 text-muted-blue dark:text-slate-400 whitespace-nowrap">
                             {% if curso.profesor_jefe %}{{ curso.profesor_jefe.nombre_completo }}
                             {% else %}<span class="text-red-400 text-xs italic">Sin asignar</span>{% endif %}
                         </td>
-                        <td class="px-4 py-3 text-center font-bold text-navy-deep dark:text-white">{{ curso.alumnos.count }}</td>
-                        <td class="px-4 py-3 text-center">
+                        <td class="px-4 py-3 text-center font-bold text-navy-deep dark:text-white whitespace-nowrap">{{ curso.alumnos.count }}</td>
+                        <td class="px-4 py-3 text-center whitespace-nowrap">
                             <a href="{% url 'cursos:detalle' curso.pk %}" class="text-primary hover:underline text-xs font-bold">
                                 Ver detalle
                             </a>
                         </td>
+
                     </tr>
                     {% empty %}
                     <tr>

@@ -57,12 +57,12 @@
         <table class="w-full text-sm">
             <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
                 <tr>
-                    <th class="px-4 py-3 text-left">Fecha y Hora</th>
-                    <th class="px-4 py-3 text-left">Módulo</th>
-                    <th class="px-4 py-3 text-left">Acción</th>
-                    <th class="px-4 py-3 text-left">Objeto afectado</th>
-                    <th class="px-4 py-3 text-left">Modificado por</th>
-                    <th class="px-4 py-3 text-center">Detalle</th>
+                    <th class="px-4 py-3 text-left whitespace-nowrap">Fecha y Hora</th>
+                    <th class="px-4 py-3 text-left whitespace-nowrap">Módulo</th>
+                    <th class="px-4 py-3 text-left whitespace-nowrap">Acción</th>
+                    <th class="px-4 py-3 text-left whitespace-nowrap">Objeto afectado</th>
+                    <th class="px-4 py-3 text-left whitespace-nowrap">Modificado por</th>
+                    <th class="px-4 py-3 text-center whitespace-nowrap">Detalle</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
@@ -71,39 +71,40 @@
                     <td class="px-4 py-3 text-muted-blue font-mono text-xs whitespace-nowrap">
                         {{ cambio.fecha|date:"d/m/Y H:i" }}
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 whitespace-nowrap">
                         <span class="px-2 py-1 rounded-full text-xs font-bold
                             {% if cambio.modelo == 'nota' %}bg-blue-100 text-blue-700
                             {% else %}bg-purple-100 text-purple-700{% endif %}">
                             {{ cambio.get_modelo_display }}
                         </span>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 whitespace-nowrap">
                         <span class="px-2 py-1 rounded-full text-xs font-bold
                             {% if cambio.accion == 'edicion' %}bg-amber-100 text-amber-700
                             {% else %}bg-red-100 text-red-700{% endif %}">
                             {{ cambio.get_accion_display }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-navy-deep dark:text-white text-xs">
+                    <td class="px-4 py-3 text-navy-deep dark:text-white text-xs whitespace-nowrap">
                         {{ cambio.descripcion_objeto|default:"—" }}
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 whitespace-nowrap">
                         <div>
-                            <p class="font-semibold text-navy-deep dark:text-white text-xs">
+                            <p class="font-semibold text-navy-deep dark:text-white text-xs whitespace-nowrap">
                                 {{ cambio.modificado_por.get_full_name|default:"Sistema" }}
                             </p>
-                            <p class="text-xs text-muted-blue">
+                            <p class="text-xs text-muted-blue whitespace-nowrap">
                                 {{ cambio.modificado_por.get_rol_display|default:"—" }}
                             </p>
                         </div>
                     </td>
-                    <td class="px-4 py-3 text-center">
+                    <td class="px-4 py-3 text-center whitespace-nowrap">
                         <button onclick="toggleDetalle('detalle-{{ cambio.pk }}')"
                                 class="text-primary hover:underline text-xs font-bold">
                             Ver cambios
                         </button>
                     </td>
+
                 </tr>
                 {# Fila expandible con el diff #}
                 <tr id="detalle-{{ cambio.pk }}" class="hidden bg-slate-50 dark:bg-slate-800/30">

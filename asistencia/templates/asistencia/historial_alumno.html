@@ -54,23 +54,23 @@
         <table class="w-full text-sm" id="tabla">
             <thead class="bg-slate-50 dark:bg-slate-800 text-muted-blue text-xs font-bold uppercase tracking-wider">
                 <tr>
-                    <th class="px-6 py-3 text-left">Fecha</th>
-                    <th class="px-6 py-3 text-left">Asignatura</th>
-                    <th class="px-6 py-3 text-center">Estado</th>
+                    <th class="px-6 py-3 text-left whitespace-nowrap">Fecha</th>
+                    <th class="px-6 py-3 text-left whitespace-nowrap">Asignatura</th>
+                    <th class="px-6 py-3 text-center whitespace-nowrap">Estado</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-soft-grey dark:divide-slate-800">
                 {% for reg in registros %}
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors
                            {% if reg.estado == 'ausente' %}bg-red-50/50 dark:bg-red-900/5{% endif %}">
-                    <td class="px-6 py-3 font-mono text-sm text-navy-deep dark:text-white font-semibold">
+                    <td class="px-6 py-3 font-mono text-sm text-navy-deep dark:text-white font-semibold whitespace-nowrap">
                         {{ reg.fecha|date:"d/m/Y" }}
                         <span class="text-xs text-muted-blue ml-1">{{ reg.fecha|date:"l" }}</span>
                     </td>
-                    <td class="px-6 py-3 text-slate-600 dark:text-slate-400">
+                    <td class="px-6 py-3 text-slate-600 dark:text-slate-400 whitespace-nowrap">
                         {{ reg.asignatura }}
                     </td>
-                    <td class="px-6 py-3 text-center">
+                    <td class="px-6 py-3 text-center whitespace-nowrap">
                         <span class="px-3 py-1 rounded-full text-xs font-bold
                             {% if reg.estado == 'presente' %}bg-emerald-100 text-emerald-700
                             {% elif reg.estado == 'ausente' %}bg-red-100 text-red-600
